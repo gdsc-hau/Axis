@@ -4,6 +4,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "GDG HAU ID Platform",
   description: "The digital identity and membership verification hub for GDG HAU.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function RootLayout({
