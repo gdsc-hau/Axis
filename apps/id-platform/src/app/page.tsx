@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import QRCode from 'react-qr-code';
 import Scanner from '@/components/Scanner';
 import type { PublicMemberProfile } from '@hau/contracts';
@@ -11,6 +11,21 @@ export default function DualEntrySearchPage() {
   const [error, setError] = useState<string | null>(null);
   const [profile, setProfile] = useState<PublicMemberProfile | null>(null);
   const [showScanner, setShowScanner] = useState(false);
+
+  const fullTitle = "GDGHAU ID PLATFORM";
+  const [displayedTitle, setDisplayedTitle] = useState("");
+
+  useEffect(() => {
+    let i = 0;
+    const interval = setInterval(() => {
+      setDisplayedTitle(fullTitle.slice(0, i + 1));
+      i++;
+      if (i >= fullTitle.length) {
+        clearInterval(interval);
+      }
+    }, 100);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleEmailSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,30 +67,36 @@ export default function DualEntrySearchPage() {
   };
 
   return (
-    <main className="min-h-screen relative flex flex-col items-center justify-center bg-[#030305] overflow-hidden font-mono px-4 py-12 pt-32">
+    <main className="min-h-screen relative flex flex-col items-center justify-center bg-[#030305] overflow-hidden px-4 py-12 pt-32 text-cyan-50">
       {/* Header */}
       <header className="absolute top-0 left-0 w-full px-8 py-4 flex items-center justify-between z-50 border-b border-cyan-900/30 bg-[#030305]/70 backdrop-blur-md">
         {/* Left Side: Logo & Text */}
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-[#050508] border border-cyan-500/30 flex items-center justify-center shadow-[0_0_15px_rgba(34,211,238,0.1)] rounded-sm">
-            <span className="text-lg font-black bg-gradient-to-br from-[#4285F4] via-[#EA4335] to-[#FBBC05] bg-clip-text text-transparent">G</span>
+          {/* Custom GDG Angle Brackets Logo */}
+          <div className="flex items-center justify-center">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 28L4 20L12 12" stroke="#4285F4" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M28 28L36 20L28 12" stroke="#EA4335" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M20 32L12 24L20 16" stroke="#FBBC05" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M20 24L28 16L20 8" stroke="#34A853" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </div>
           <div>
-            <h2 className="text-cyan-500 font-bold text-sm tracking-wide">Google Developer Group</h2>
-            <p className="text-gray-400 text-[10px] uppercase tracking-widest mt-0.5">Holy Angel University</p>
+            <h2 className="text-white font-bold text-lg tracking-wide">Google Developer Group</h2>
+            <p className="text-blue-400 text-xs mt-0.5">Holy Angel University</p>
           </div>
         </div>
 
         {/* Right Side: Navigation & Switch */}
         <nav className="hidden md:flex items-center gap-8">
-          <a href="#" className="text-gray-300 hover:text-cyan-400 text-xs font-semibold tracking-wider transition-colors">About</a>
-          <a href="#" className="text-gray-300 hover:text-cyan-400 text-xs font-semibold tracking-wider transition-colors">FAQs</a>
-          <a href="#" className="text-gray-300 hover:text-cyan-400 text-xs font-semibold tracking-wider transition-colors">Contact</a>
-          <a href="#" className="text-gray-300 hover:text-cyan-400 text-xs font-semibold tracking-wider transition-colors">Coming Soon</a>
+          <a href="#" className="text-gray-300 hover:text-blue-400 text-lg transition-colors">About</a>
+          <a href="#" className="text-gray-300 hover:text-blue-400 text-lg transition-colors">FAQs</a>
+          <a href="#" className="text-gray-300 hover:text-blue-400 text-lg transition-colors">Contact</a>
+          <a href="#" className="text-gray-300 hover:text-blue-400 text-lg transition-colors">Coming Soon</a>
 
           {/* Toggle Switch */}
-          <div className="w-10 h-5 bg-cyan-900/40 rounded-full border border-cyan-700/50 relative cursor-pointer flex items-center">
-            <div className="w-3.5 h-3.5 bg-cyan-400 rounded-full shadow-[0_0_8px_rgba(34,211,238,0.8)] absolute right-1 transition-all"></div>
+          <div className="w-12 h-6 bg-yellow-400/20 rounded-full border border-yellow-400/50 relative cursor-pointer flex items-center">
+            <div className="w-4 h-4 bg-yellow-400 rounded-full shadow-[0_0_8px_rgba(250,204,21,0.8)] absolute left-1 transition-all"></div>
           </div>
         </nav>
       </header>
@@ -96,37 +117,37 @@ export default function DualEntrySearchPage() {
         <div className="absolute -bottom-32 -right-32 w-[30rem] h-[30rem] bg-[#34A853]/10 rounded-full blur-[60px] animate-pulse duration-1000 delay-300" />
       </div>
 
-      <div className="relative w-full max-w-3xl z-10 flex flex-col items-center">
+      <div className="relative w-full max-w-4xl z-10 flex flex-col items-center">
         {/* Header Text */}
         {!profile && (
           <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 flex flex-col items-center">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-2 h-2 bg-[#ff00ff] animate-pulse"></div>
-              <span className="text-cyan-500 text-xs tracking-[0.2em] uppercase font-bold">SYSTEM_ACCESS_GRANTED</span>
-              <div className="w-2 h-2 bg-cyan-500 animate-pulse"></div>
-            </div>
 
-            <h1 className="text-5xl md:text-6xl font-black text-white tracking-widest uppercase mb-6 text-center drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">
-              GDGHAU ID PLATFORM
+            <h1 className="text-6xl md:text-8xl font-black text-white tracking-wider mb-6 text-center drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">
+              {displayedTitle}
+              <span className="text-blue-500 animate-pulse">|</span>
             </h1>
 
-            <p className="text-cyan-50/70 text-sm md:text-base text-center max-w-2xl leading-relaxed mb-12 tracking-wide font-sans">
+            <p className="text-cyan-50/70 text-xl md:text-2xl text-center max-w-2xl leading-relaxed mb-12 tracking-wide font-sans">
               GDG HAU helps student developers grow through real projects,
               events, and mentorship connecting classroom learning to
               industry practice.
             </p>
 
             {/* Search Bar Container */}
-            <div className="flex items-center w-full max-w-2xl gap-4 group">
-              {/* Left Circle Arrow */}
-              <div className="hidden sm:flex w-8 h-8 rounded-full border border-cyan-800/50 group-hover:border-cyan-500 items-center justify-center text-cyan-600 group-hover:text-cyan-400 transition-colors bg-black/20 backdrop-blur-sm shadow-[0_0_10px_rgba(0,255,255,0.1)]">
-                <span className="text-xs">&lt;</span>
+            <div className="flex items-center w-full max-w-3xl gap-6 group relative">
+              {/* Left Decoration */}
+              <div className="hidden sm:flex absolute -left-20 w-14 h-14 rounded-full border border-cyan-800/50 items-center justify-center bg-white shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+                <svg width="24" height="24" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 28L4 20L12 12" stroke="#00C4FF" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M28 28L36 20L28 12" stroke="#00C4FF" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </div>
+              <div className="hidden sm:block absolute -left-6 w-6 border-t border-dashed border-cyan-800/50"></div>
 
-              <form onSubmit={handleEmailSearch} className="flex-grow flex items-center bg-[#0a0a0f]/80 backdrop-blur-md border border-cyan-900/50 focus-within:border-cyan-400/80 focus-within:shadow-[0_0_20px_rgba(34,211,238,0.2)] rounded-sm relative h-14 transition-all duration-300">
+              <form onSubmit={handleEmailSearch} className="flex-grow flex items-center bg-white border border-cyan-900/50 focus-within:shadow-[0_0_20px_rgba(66,133,244,0.3)] rounded-lg relative h-16 transition-all duration-300 overflow-hidden">
                 {/* Search Icon */}
-                <div className="pl-4 pr-2 text-cyan-600 transition-colors">
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="pl-6 pr-3 text-gray-400 transition-colors">
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </div>
@@ -137,18 +158,18 @@ export default function DualEntrySearchPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email to find your Digital ID"
-                  className="flex-grow bg-transparent px-2 h-full text-cyan-50 placeholder-cyan-800/60 focus:outline-none text-sm font-mono"
+                  className="flex-grow bg-transparent px-2 h-full text-gray-800 placeholder-gray-400 focus:outline-none text-xl"
                 />
 
-                <div className="flex items-stretch h-full">
+                <div className="flex items-stretch h-full p-2">
                   {/* Scanner Button (Icon only) */}
                   <button
                     type="button"
                     onClick={() => setShowScanner(true)}
-                    className="px-4 text-cyan-500 hover:text-cyan-300 hover:bg-cyan-900/50 transition-all border-l border-cyan-900/50 h-full flex items-center justify-center active:bg-cyan-800"
+                    className="px-4 text-blue-500 hover:text-blue-600 hover:bg-blue-50 transition-all border-r border-gray-200 h-full flex items-center justify-center"
                     title="Scan Barcode"
                   >
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="square" strokeWidth={1.5} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                       <path strokeLinecap="square" strokeWidth={1.5} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
@@ -157,23 +178,29 @@ export default function DualEntrySearchPage() {
                   <button
                     type="submit"
                     disabled={loading || !email}
-                    className="bg-cyan-500/90 text-black font-bold uppercase text-xs tracking-wider px-8 hover:bg-cyan-400 hover:shadow-[0_0_15px_rgba(34,211,238,0.5)] disabled:bg-cyan-950 disabled:text-cyan-800 transition-all duration-300 h-full flex items-center justify-center relative overflow-hidden group/btn"
+                    className="bg-blue-500 text-white font-bold text-lg px-8 hover:bg-blue-600 disabled:bg-gray-300 disabled:text-gray-500 transition-all duration-300 h-full flex items-center justify-center rounded-md ml-2"
                   >
-                    <span className="relative z-10">{loading ? '...' : 'SEARCH ID'}</span>
-                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300 ease-in-out"></div>
+                    <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                    </svg>
+                    {loading ? '...' : 'Search ID'}
                   </button>
                 </div>
               </form>
 
-              {/* Right Circle Arrow */}
-              <div className="hidden sm:flex w-8 h-8 rounded-full border border-cyan-800/50 group-hover:border-cyan-500 items-center justify-center text-cyan-600 group-hover:text-cyan-400 transition-colors bg-black/20 backdrop-blur-sm shadow-[0_0_10px_rgba(0,255,255,0.1)]">
-                <span className="text-xs">&gt;</span>
+              {/* Right Decoration */}
+              <div className="hidden sm:block absolute -right-6 w-6 border-t border-dashed border-cyan-800/50"></div>
+              <div className="hidden sm:flex absolute -right-20 w-14 h-14 rounded-full border border-cyan-800/50 items-center justify-center bg-white shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+                <svg width="24" height="24" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 28L4 20L12 12" stroke="#00C4FF" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M28 28L36 20L28 12" stroke="#00C4FF" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </div>
             </div>
 
             {error && (
               <div className="mt-4 border border-[#ff0044]/40 bg-[#ff0044]/10 backdrop-blur-md px-4 py-2 animate-in slide-in-from-top-2">
-                <p className="text-[#ff0044] text-[10px] uppercase tracking-[0.1em] animate-pulse">ERR: {error}</p>
+                <p className="text-[#ff0044] text-lg uppercase tracking-[0.1em] animate-pulse">ERR: {error}</p>
               </div>
             )}
           </div>
@@ -189,19 +216,19 @@ export default function DualEntrySearchPage() {
 
             <div className="flex justify-between items-start mb-8 border-b border-cyan-900/50 pb-4">
               <div>
-                <p className="text-cyan-700 text-[9px] uppercase tracking-[0.3em]">Clearance</p>
-                <p className="text-cyan-400 text-xs font-bold uppercase tracking-widest mt-1 animate-pulse">Granted</p>
+                <p className="text-cyan-700 text-sm uppercase tracking-[0.3em]">Clearance</p>
+                <p className="text-cyan-400 text-lg font-bold uppercase tracking-widest mt-1 animate-pulse">Granted</p>
               </div>
               <div className="text-right">
-                <p className="text-cyan-700 text-[9px] uppercase tracking-[0.3em]">Node</p>
-                <p className="text-cyan-400 text-xs font-bold uppercase tracking-widest mt-1">GDG.HAU</p>
+                <p className="text-cyan-700 text-sm uppercase tracking-[0.3em]">Node</p>
+                <p className="text-cyan-400 text-lg font-bold uppercase tracking-widest mt-1">GDG.HAU</p>
               </div>
             </div>
 
             <div className="mb-10">
-              <h2 className="text-white text-xl font-black uppercase tracking-[0.1em] mb-2">{profile.fullName}</h2>
-              <p className="text-[#ff00ff] text-xs tracking-[0.2em] drop-shadow-[0_0_5px_rgba(255,0,255,0.4)]">{profile.hauId}</p>
-              <p className="text-cyan-600 text-[10px] mt-2 uppercase tracking-widest">{profile.program}</p>
+              <h2 className="text-white text-3xl font-black uppercase tracking-[0.1em] mb-2">{profile.fullName}</h2>
+              <p className="text-[#ff00ff] text-xl tracking-[0.2em] drop-shadow-[0_0_5px_rgba(255,0,255,0.4)]">{profile.hauId}</p>
+              <p className="text-cyan-600 text-lg mt-2 uppercase tracking-widest">{profile.program}</p>
             </div>
 
             <div className="flex items-center justify-between">
@@ -218,7 +245,7 @@ export default function DualEntrySearchPage() {
 
             <button
               onClick={() => setProfile(null)}
-              className="mt-8 w-full border border-cyan-900/80 text-cyan-500 hover:text-black hover:bg-cyan-500 text-[10px] uppercase tracking-[0.3em] py-3 transition-all duration-300 font-bold"
+              className="mt-8 w-full border border-cyan-900/80 text-cyan-500 hover:text-black hover:bg-cyan-500 text-lg uppercase tracking-[0.3em] py-3 transition-all duration-300 font-bold"
             >
               TERM.CLOSE
             </button>
