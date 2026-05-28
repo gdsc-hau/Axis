@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: 'Cynatar';
+  src: url('/fonts/Cynatar.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.font-cynatar {
+  font-family: 'Cynatar', sans-serif;
+}

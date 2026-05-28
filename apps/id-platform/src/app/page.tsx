@@ -122,7 +122,7 @@ export default function DualEntrySearchPage() {
         {!profile && (
           <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 flex flex-col items-center">
 
-            <h1 className="text-6xl md:text-8xl font-black text-white tracking-wider mb-6 text-center drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">
+            <h1 className="text-6xl md:text-8xl font-black text-white tracking-wider mb-6 text-center drop-shadow-[0_0_15px_rgba(255,255,255,0.4)] font-cynatar">
               {displayedTitle}
               <span className="text-blue-500 animate-pulse">|</span>
             </h1>
