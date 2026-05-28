@@ -2,17 +2,39 @@ import { z } from 'zod';
 
 /**
  * Single source of truth for GDG HAU Member data.
- * All changes to the database or UI data flow must start here.
  */
 export const HauMemberSchema = z.object({
   id: z.string().uuid().optional(),
+  studentId: z.string(), // Private
   hauId: z.string().describe("Formatted as GDG-HAU-26-XXXX"),
   fullName: z.string(),
   email: z.string().email(),
-  course: z.string(),
-  yearLevel: z.number().min(1).max(5),
+  program: z.string(),
+  department: z.string(),
   isAccepted: z.boolean().default(false),
   createdAt: z.date().optional(),
 });
 
 export type HauMember = z.infer<typeof HauMemberSchema>;
+
+/**
+ * Public Member Profile: safe for frontend rendering (No student_id or department).
+ */
+export const PublicMemberProfileSchema = z.object({
+  hauId: z.string(),
+  fullName: z.string(),
+  program: z.string(),
+});
+
+export type PublicMemberProfile = z.infer<typeof PublicMemberProfileSchema>;
+
+/**
+ * API Route Validation
+ */
+export const SearchRequestSchema = z.object({
+  type: z.enum(['email', 'barcode']),
+  value: z.string().min(1),
+  // Removed recaptchaToken as requested
+});
+
+export type SearchRequest = z.infer<typeof SearchRequestSchema>;
