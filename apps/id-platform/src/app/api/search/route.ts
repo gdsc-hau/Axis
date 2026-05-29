@@ -22,12 +22,10 @@ export async function POST(request: NextRequest) {
       {
         cookies: {
           getAll() {
-            // @ts-expect-error synchronous
             return cookieStore.getAll();
           },
           setAll(cookiesToSet) {
             try {
-              // @ts-expect-error synchronous
               cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
             } catch {
               // Ignore in API route

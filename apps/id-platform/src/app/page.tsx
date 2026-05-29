@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import QRCode from 'react-qr-code';
 import Scanner from '@/components/Scanner';
+import DownloadActions from '@/components/DownloadActions';
 import type { PublicMemberProfile } from '@hau/contracts';
 
 export default function DualEntrySearchPage() {
@@ -11,6 +12,7 @@ export default function DualEntrySearchPage() {
   const [error, setError] = useState<string | null>(null);
   const [profile, setProfile] = useState<PublicMemberProfile | null>(null);
   const [showScanner, setShowScanner] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const handleEmailSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -131,7 +133,7 @@ export default function DualEntrySearchPage() {
         {profile && (
           <div className="animate-in fade-in zoom-in duration-300">
             {/* ID Card */}
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-black/60 bg-gradient-to-br from-[#1a1a3e] via-[#1e2060] to-[#0d0d2e] p-7">
+            <div ref={cardRef} className="relative rounded-3xl overflow-hidden shadow-2xl shadow-black/60 bg-gradient-to-br from-[#1a1a3e] via-[#1e2060] to-[#0d0d2e] p-7">
               {/* Google color accent bar */}
               <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#4285F4] via-[#EA4335] to-[#FBBC05]" />
               
@@ -173,9 +175,11 @@ export default function DualEntrySearchPage() {
               </div>
             </div>
 
+            <DownloadActions cardRef={cardRef} hauId={profile.hauId} />
+
             <button
               onClick={() => setProfile(null)}
-              className="mt-6 w-full text-white/50 hover:text-white text-sm font-medium transition-colors"
+              className="mt-4 w-full text-white/50 hover:text-white text-sm font-medium transition-colors"
             >
               ← Back to Search
             </button>
