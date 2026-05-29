@@ -21,7 +21,7 @@ export function middleware(request: NextRequest) {
     const record = rateLimitCache.get(ip);
 
     if (record) {
-      if (record.count >= 5) {
+      if (record.count >= 10) {
         return NextResponse.json(
           { error: 'Too many requests. Please try again later.' },
           { status: 429 }
