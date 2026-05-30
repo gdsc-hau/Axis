@@ -12,6 +12,8 @@
     "turbo": "latest"
   },
   "dependencies": {
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.1",
     "pnpm": "^11.3.0"
   }
 }
