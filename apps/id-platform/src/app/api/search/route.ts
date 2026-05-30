@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
     const column = type === 'barcode' ? 'student_id' : 'email';
     const { data: member, error } = await supabase
       .from('members')
-      .select('hau_id, full_name, program, is_accepted')
+      .select('hau_id, full_name, program, email, department, is_accepted')
       .eq(column, value)
       .single();
 
@@ -94,6 +94,8 @@ export async function POST(request: NextRequest) {
       hauId: member.hau_id,
       fullName: member.full_name,
       program: member.program,
+      email: member.email,
+      department: member.department,
     });
 
     return NextResponse.json(publicProfile);
