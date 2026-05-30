@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import QRCode from 'react-qr-code';
 import Scanner from '@/components/Scanner';
+import GdgIdCard from '@/components/GdgIdCard';
 import type { PublicMemberProfile } from '@hau/contracts';
 
 export default function DualEntrySearchPage() {
@@ -368,76 +368,7 @@ export default function DualEntrySearchPage() {
 
         {/* STATE 2: Profile Card */}
         {profile && (
-          <div className="w-full max-w-sm border border-white/10 bg-[#07070a]/90 backdrop-blur-xl p-5 sm:p-6 rounded-2xl relative animate-in fade-in zoom-in-95 duration-400 shadow-[0_20px_50px_rgba(0,0,0,0.8)] font-mono mx-4">
-            
-            <div className="absolute top-1/2 -left-1 -translate-y-1/2 flex flex-col gap-1 opacity-40">
-              <div className="w-1 h-6 bg-white/30 rounded-r" />
-              <div className="w-1 h-6 bg-white/30 rounded-r" />
-            </div>
-            <div className="absolute top-1/2 -right-1 -translate-y-1/2 flex flex-col gap-1 opacity-40">
-              <div className="w-1 h-6 bg-white/30 rounded-l" />
-              <div className="w-1 h-6 bg-white/30 rounded-l" />
-            </div>
-
-            <div className="absolute top-3 left-3 w-2 h-2 border-t border-l border-gray-600" />
-            <div className="absolute top-3 right-3 w-2 h-2 border-t border-r border-gray-600" />
-            <div className="absolute bottom-3 left-3 w-2 h-2 border-b border-l border-gray-600" />
-            <div className="absolute bottom-3 right-3 w-2 h-2 border-b border-r border-gray-600" />
-
-            <div className="flex justify-between items-start mb-6 border-b border-white/5 pb-4 text-[10px] tracking-widest uppercase text-gray-500">
-              <div>
-                <p>Access Level</p>
-                <p className="text-emerald-400 font-bold tracking-widest mt-1 animate-pulse">// Clear.Granted</p>
-              </div>
-              <div className="text-right">
-                <p>Network Node</p>
-                <p className="text-white font-bold mt-1">GDG.HAU.CORE</p>
-              </div>
-            </div>
-
-            <div className="mb-8 bg-[#0c0c12] border border-white/5 p-4 rounded-xl relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-12 h-[2px] bg-blue-500" />
-              
-              <p className="text-[9px] text-gray-500 tracking-[0.2em] mb-1 uppercase">Full Name</p>
-              <h2 className="text-white text-lg sm:text-xl font-bold tracking-wide mb-4 truncate">{profile.fullName}</h2>
-              
-              <div className="grid grid-cols-2 gap-2 border-t border-white/5 pt-3">
-                <div>
-                  <p className="text-[9px] text-gray-500 tracking-[0.2em] mb-0.5 uppercase">HAU Identifier</p>
-                  <p className="text-blue-400 font-bold text-xs sm:text-sm tracking-wide">{profile.hauId}</p>
-                </div>
-                <div>
-                  <p className="text-[9px] text-gray-500 tracking-[0.2em] mb-0.5 uppercase">Program</p>
-                  <p className="text-gray-300 font-bold text-[11px] sm:text-xs truncate uppercase mt-0.5">{profile.program}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between border border-white/5 bg-[#030305] p-3 rounded-xl gap-2">
-              <div className="text-[9px] text-gray-500 space-y-1 uppercase tracking-wider min-w-0">
-                <p className="truncate">sys.status: true</p>
-                <p className="truncate">checksum: valid</p>
-                <p className="text-[8px] text-blue-500/70 font-sans mt-2">© gdghau terminal</p>
-              </div>
-              
-              <div className="bg-white p-1.5 rounded-lg transition-transform duration-300 hover:scale-105 shadow-[0_0_15px_rgba(255,255,255,0.1)] shrink-0">
-                <QRCode
-                  value={profile.hauId}
-                  size={64}
-                  bgColor="transparent"
-                  fgColor="#030305"
-                  level="L"
-                />
-              </div>
-            </div>
-
-            <button
-              onClick={() => setProfile(null)}
-              className="mt-6 w-full border border-white/10 bg-transparent text-gray-400 hover:text-white hover:bg-white/5 rounded-xl text-xs uppercase tracking-[0.2em] py-3.5 transition-all duration-200 font-bold shadow-inner"
-            >
-              [ EJECT PROFILE ]
-            </button>
-          </div>
+          <GdgIdCard profile={profile} onEject={() => setProfile(null)} />
         )}
       </div>
 

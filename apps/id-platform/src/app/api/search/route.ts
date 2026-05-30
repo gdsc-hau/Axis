@@ -56,16 +56,14 @@ export async function POST(request: NextRequest) {
     const cookieStore = cookies();
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
       {
         cookies: {
           getAll() {
-            // @ts-expect-error synchronous
             return cookieStore.getAll();
           },
           setAll(cookiesToSet) {
             try {
-              // @ts-expect-error synchronous
               cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
             } catch {
               // Ignore in API route
