@@ -3,5 +3,6 @@ packages:
   - 'packages/*'
   - 'configs/*'
 allowBuilds:
+  core-js: false
   sharp: false
   unrs-resolver: false
