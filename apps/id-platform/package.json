@@ -13,6 +13,8 @@
     "@hau/ui": "workspace:*",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.106.2",
+    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.38.0",
     "html5-qrcode": "^2.3.8",
     "lru-cache": "^11.5.0",
     "lucide-react": "^0.446.0",
