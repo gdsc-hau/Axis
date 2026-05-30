@@ -7,9 +7,12 @@ import { X, Sparkles } from "lucide-react";
 export default function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [teaserVisible, setTeaserVisible] = useState(true);
 
   useEffect(() => {
     setIsMounted(true);
+    const teaserTimer = setTimeout(() => setTeaserVisible(false), 8000);
+    return () => clearTimeout(teaserTimer);
   }, []);
 
   if (!isMounted) return null;
@@ -31,7 +34,7 @@ export default function ChatbotWidget() {
                   <Sparkles className="w-4 h-4 text-[#4285f4]" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm text-gray-800">GDG Bot Support</h3>
+                  <h3 className="font-bold text-sm text-gray-800">Gyro the Bot</h3>
                   <div className="flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
                     <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Online</span>
@@ -54,20 +57,61 @@ export default function ChatbotWidget() {
                 height="100%"
                 frameBorder="0"
                 allow="microphone"
-                title="GDG AI Chatbot"
+                title="Gyro the Bot"
               />
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
+      {/* Pulse Effect Background */}
+      {!isOpen && (
+        <motion.div
+          animate={{
+            scale: [0.95, 1.3],
+            opacity: [0.8, 0],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: [0.215, 0.61, 0.355, 1],
+          }}
+          className="absolute inset-0 rounded-full bg-[#4285f4] -z-10"
+        />
+      )}
+
+      {/* Retro Teaser */}
+      <AnimatePresence>
+        {teaserVisible && !isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.9 }}
+            animate={{ opacity: 0.95, y: [0, -5, 0], scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{
+              y: {
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut"
+              },
+              opacity: { duration: 0.2 },
+              scale: { duration: 0.2 }
+            }}
+            className="absolute right-[76px] bottom-[12px] bg-[#1f2937] text-white px-3.5 py-1.5 rounded-xl border-2 border-[#fbbc05] font-mono text-[1.1rem] whitespace-nowrap shadow-lg pointer-events-none z-50"
+            style={{ fontFamily: 'var(--font-vt323), monospace' }}
+          >
+            Ask Gyro the Bot! 🤖
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Toggle Button */}
       <motion.button
-        whileHover={{ scale: 1.05 }}
+        whileHover={{ scale: 1.1, rotate: 5 }}
         whileTap={{ scale: 0.95 }}
+        onHoverStart={() => !isOpen && setTeaserVisible(true)}
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-16 h-16 rounded-full shadow-2xl flex items-center justify-center transition-all duration-500 ${
-          isOpen ? "bg-white text-gray-800 rotate-90" : "bg-[#4285f4] text-white p-0 overflow-hidden border-2 border-[#4285f4]"
+        className={`relative w-16 h-16 rounded-full shadow-2xl flex items-center justify-center transition-colors duration-500 z-10 ${
+          isOpen ? "bg-white text-gray-800 rotate-90" : "bg-white text-white p-0 overflow-hidden border-4 border-[#4285f4] hover:border-[#34a853]"
         }`}
       >
         {isOpen ? (
@@ -75,7 +119,7 @@ export default function ChatbotWidget() {
         ) : (
           <img
             src="/assets/images/chatbot_icon.png"
-            alt="GDG Bot"
+            alt="Gyro the Bot"
             className="w-full h-full object-cover"
           />
         )}
