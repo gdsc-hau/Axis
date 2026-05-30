@@ -2,14 +2,52 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { SearchRequestSchema, PublicMemberProfileSchema } from '@hau/contracts';
+import { searchRateLimit } from '@/lib/ratelimit';
 
 export async function POST(request: NextRequest) {
+
   try {
+
     const body = await request.json();
     const parsed = SearchRequestSchema.safeParse(body);
 
     if (!parsed.success) {
       return NextResponse.json({ error: 'Invalid search request parameters.' }, { status: 400 });
+    }
+
+    const ip =
+      request.ip ??
+      request.headers.get('x-forwarded-for')?.split(',')[0].trim();
+
+    if (!ip) {
+      return NextResponse.json(
+        { error: 'Unable to determine client IP.' },
+        { status: 400 }
+      );
+    }
+    
+    const { success, limit, remaining, reset } =
+      await searchRateLimit.limit(ip);
+
+    if (!success) {
+      return NextResponse.json(
+        {
+          /**
+           * DEBUG: Temporary distinct error message
+           * Remove once only one rate limiter remains.
+           */
+          error: "Upstash rate limit triggered",
+          // error: "Too many requests. Please try again later.",
+        },
+        {
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': limit.toString(),
+            'X-RateLimit-Remaining': remaining.toString(),
+            'X-RateLimit-Reset': reset.toString(),
+          }
+        }
+      )
     }
 
     const { type, value } = parsed.data;
