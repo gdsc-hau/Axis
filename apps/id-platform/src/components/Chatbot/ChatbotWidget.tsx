@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Sparkles, MessageCircle } from "lucide-react";
 
@@ -123,10 +124,11 @@ export default function ChatbotWidget() {
         {isOpen ? (
           <X className="w-6 h-6 sm:w-8 sm:h-8" />
         ) : (
-          <img
+          <Image
             src="/assets/images/chatbot_icon.png"
             alt="Gyro the Bot"
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
           />
         )}
         

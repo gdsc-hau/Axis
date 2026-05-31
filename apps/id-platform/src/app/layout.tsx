@@ -3,7 +3,6 @@ import { VT323 } from "next/font/google";
 import "./globals.css";
 import ChatbotWidget from "../components/Chatbot/ChatbotWidget";
 
-
 const vt323 = VT323({
   weight: '400',
   subsets: ['latin'],

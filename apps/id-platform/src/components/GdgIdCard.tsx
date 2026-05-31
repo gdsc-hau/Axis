@@ -1,4 +1,5 @@
 import { useRef, useState, MouseEvent } from "react";
+import Image from "next/image";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import DownloadActions from '@/components/DownloadActions';
 import type { PublicMemberProfile } from '@hau/contracts';
@@ -99,9 +100,9 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
       >
         {/* 5.2 Header Component */}
         <div className="flex items-center space-x-3 border-2 border-white p-2">
-          <div className="w-12 h-12 flex items-center justify-center shrink-0">
+          <div className="relative w-12 h-12 flex items-center justify-center shrink-0">
             {/* GDG_LOGO_PLACEHOLDER */}
-            <img src="/gdg_icon.png" alt="GDG Logo" className="animate-[pulse_4s_infinite] w-full h-full object-contain" />
+            <Image src="/gdg_icon.png" alt="GDG Logo" fill className="animate-[pulse_4s_infinite] object-contain" />
           </div>
           <div className="flex-grow">
             <h1 className="uppercase font-bold text-xl sm:text-2xl leading-none tracking-wide text-white">Google Developers Group</h1>
@@ -150,7 +151,7 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
           <div className="w-7/12 p-2 relative bg-black flex items-center justify-center">
             {/* SKULL_GRAPHIC_PLACEHOLDER */}
             <div className="relative w-28 h-28 flex items-center justify-center -ml-4 z-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">
-              <img src="/skull.png" alt="Skull Graphic" className="w-full h-full object-contain" />
+              <Image src="/skull.png" alt="Skull Graphic" fill className="object-contain" />
             </div>
 
             {/* BINARY_CODE_PLACEHOLDER */}

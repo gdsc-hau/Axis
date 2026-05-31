@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { ShieldCheck, QrCode, Smartphone, Download } from 'lucide-react';
 
@@ -30,7 +31,7 @@ export default function FaqAbout() {
   return (
     <div className="w-full max-w-5xl mx-auto my-16 pt-8 border-t border-white/10 relative">
       <div className="absolute top-0 left-0 -translate-y-1/2 w-16 h-16 sm:w-24 sm:h-24">
-        <img src="/assets/images/gyro/gyro_pose.png" alt="Gyro Mascot Pose" className="w-full h-full object-contain" />
+        <Image src="/assets/images/gyro/gyro_pose.png" alt="Gyro Mascot Pose" width={96} height={96} className="w-full h-full object-contain" />
       </div>
 
       <h3 className="text-2xl md:text-3xl font-bold text-center text-white mb-12 font-mono">
