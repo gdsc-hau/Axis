@@ -1,4 +1,4 @@
-import { useRef, useState, MouseEvent } from 'react';
+import { useRef, MouseEvent, useCallback, useEffect } from 'react';
 import Image from 'next/image';
 import QRCode from 'react-qr-code';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
@@ -26,44 +26,63 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
   const rectRef = useRef<DOMRect | null>(null);
   const gdgCode = profile.hauId.replace(/\D/g, '') || '010101010110101';
 
-  const [isHovered, setIsHovered] = useState(false);
+  // rAF ref used to throttle mousemove to one update per frame
+  const rafRef = useRef<number | null>(null);
 
   // Use MotionValues to avoid React re-renders during mouse move
   const xRotation = useMotionValue(0);
   const yRotation = useMotionValue(0);
+  const springScale = useSpring(1, { stiffness: 300, damping: 20 });
+  const springOpacity = useSpring(0.2, { stiffness: 300, damping: 20 });
 
   // Increased stiffness to reduce the "mushy" feel that contributes to perceived lag
   const rotateX = useSpring(xRotation, { stiffness: 400, damping: 40 });
   const rotateY = useSpring(yRotation, { stiffness: 400, damping: 40 });
 
   const handleMouseEnter = () => {
-    setIsHovered(true);
+    springScale.set(1.02);
+    springOpacity.set(0.4);
     if (cardRef.current) {
       rectRef.current = cardRef.current.getBoundingClientRect();
     }
   };
 
-  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    const rect = rectRef.current;
-    if (!rect) return;
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
+  const handleMouseMove = useCallback((e: MouseEvent<HTMLDivElement>) => {
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+    }
 
-    // Reduced rotation range slightly to lower GPU repaint overhead
-    const rotateXValue = ((y - centerY) / centerY) * -10;
-    const rotateYValue = ((x - centerX) / centerX) * 10;
+    rafRef.current = requestAnimationFrame(() => {
+      const rect = rectRef.current;
+      if (!rect) return;
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
 
-    xRotation.set(rotateXValue);
-    yRotation.set(rotateYValue);
-  };
+      const rotateXValue = ((y - centerY) / centerY) * -10;
+      const rotateYValue = ((x - centerX) / centerX) * 10;
+
+      xRotation.set(rotateXValue);
+      yRotation.set(rotateYValue);
+    });
+  }, [xRotation, yRotation]);
 
   const handleMouseLeave = () => {
-    setIsHovered(false);
+    springScale.set(1);
+    springOpacity.set(0.2);
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+    }
     xRotation.set(0);
     yRotation.set(0);
   };
+
+  useEffect(() => {
+    return () => {
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
 
   // Simplified color lookup to ensure clean block scope
   const deptUpper = profile.department?.toUpperCase() || "";
@@ -77,9 +96,12 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
       style={{ perspective: "1000px" }}
     >
       {/* Ambient Glow Background */}
-      <div
-        className="absolute inset-0 z-0 opacity-20 transition-all duration-500"
-        style={{ background: `radial-gradient(circle, ${deptColor} 0%, transparent 70%)` }}
+      <motion.div
+        className="absolute inset-0 z-0"
+        style={{
+          background: `radial-gradient(circle, ${deptColor} 0%, transparent 70%)`,
+          opacity: springOpacity
+        }}
       />
 
       {/* 5.1 Card Component */}
@@ -90,14 +112,13 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
         onMouseLeave={handleMouseLeave}
         style={{
           borderColor: deptColor,
-          boxShadow: isHovered
-            ? `0 20px 40px -10px ${deptColor}80, 0 0 20px ${deptColor}40, 0 0 40px ${deptColor}20`
-            : `0 0 30px ${deptColor}33`,
-          transform: `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(${isHovered ? 1.02 : 1}, ${isHovered ? 1.02 : 1}, 1)`,
-          transition: isHovered ? 'none' : 'transform 0.5s ease, box-shadow 0.5s ease',
+          boxShadow: `0 0 30px ${deptColor}33`,
+          rotateX,
+          rotateY,
+          scale: springScale,
           transformStyle: 'preserve-3d',
         }}
-        className="relative z-10 bg-crt-noise border-2 p-4 sm:p-5 rounded-lg overflow-hidden flex flex-col gap-3 text-white transform-gpu will-change-transform cursor-pointer backface-hidden"
+        className="relative z-10 bg-crt-noise border-2 p-4 sm:p-5 rounded-lg overflow-hidden flex flex-col gap-3 text-white will-change-transform cursor-pointer transform-gpu backface-hidden"
       >
         {/* 5.2 Header Component */}
         <div className="flex items-center space-x-3 border-2 border-white p-2">
