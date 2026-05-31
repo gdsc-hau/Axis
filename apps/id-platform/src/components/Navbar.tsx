@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
@@ -20,7 +21,7 @@ export default function Navbar() {
     <header className="absolute top-0 left-0 w-full px-4 md:px-8 py-4 flex items-center justify-between z-50 border-b border-white/5 bg-[#030305]/40 backdrop-blur-md font-mono">
       <div className="flex items-center gap-3 md:gap-4">
         <Link href="/" className="flex items-center justify-center shrink-0">
-          <img src="/gdg_icon.png" alt="GDG Logo" className="animate-[pulse_4s_infinite] w-8 h-8 md:w-10 md:h-10 object-contain" />
+          <Image src="/gdg_icon.png" alt="GDG Logo" width={40} height={40} className="animate-[pulse_4s_infinite] w-8 h-8 md:w-10 md:h-10 object-contain" />
         </Link>
         <Link href="/">
           <h2 className="text-white font-bold text-xs md:text-sm uppercase tracking-wider line-clamp-1">Google Developer Group</h2>

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { BookOpen, Users, Trophy, Briefcase, Star, Medal, Award, Handshake, CreditCard } from 'lucide-react';
 
@@ -28,7 +29,7 @@ export default function FaqBenefits() {
   return (
     <div className="w-full max-w-5xl mx-auto my-16 pt-8 border-t border-white/10 relative">
       <div className="absolute top-0 right-0 -translate-y-1/2 w-16 h-16 sm:w-24 sm:h-24">
-        <img src="/assets/images/gyro/surprise_gyro_icon.png" alt="Gyro Mascot" className="w-full h-full object-contain animate-bounce" />
+        <Image src="/assets/images/gyro/surprise_gyro_icon.png" alt="Gyro Mascot" width={96} height={96} className="w-full h-full object-contain animate-bounce" />
       </div>
 
       <h3 className="text-2xl md:text-3xl font-bold text-center text-white mb-10 font-mono flex items-center justify-center gap-4">

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import FaqSearch from '@/components/Faq/FaqSearch';
@@ -182,7 +183,7 @@ export default function FAQPage() {
             transition={{ duration: 0.5 }}
             className="w-32 h-32 md:w-40 md:h-40 mx-auto mb-6 relative z-10"
           >
-            <img src="/assets/images/gyro/head_openmouth_icon.png" alt="Gyro Mascot" className="w-full h-full object-contain filter drop-shadow-[0_0_20px_rgba(66,133,244,0.4)]" />
+            <Image src="/assets/images/gyro/head_openmouth_icon.png" alt="Gyro Mascot" width={160} height={160} className="w-full h-full object-contain filter drop-shadow-[0_0_20px_rgba(66,133,244,0.4)]" />
           </motion.div>
           
           <motion.h1 
@@ -235,7 +236,7 @@ export default function FAQPage() {
             className="text-center py-20"
           >
             <div className="w-32 h-32 mx-auto mb-6 opacity-50">
-              <img src="/assets/images/gyro/dizzy_head_icon.png" alt="No results found" className="w-full h-full object-contain" />
+              <Image src="/assets/images/gyro/dizzy_head_icon.png" alt="No results found" width={128} height={128} className="w-full h-full object-contain" />
             </div>
             <h3 className="text-2xl font-bold text-white mb-2">No results found</h3>
             <p className="text-gray-400">We couldn't find any FAQs matching "{searchQuery}"</p>
