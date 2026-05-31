@@ -37,8 +37,16 @@ export default function DualEntrySearchPage() {
 
   const handleScan = (decodedText: string) => {
     setShowScanner(false);
-    if (!decodedText.trim()) return;
-    performSearch('barcode', decodedText.trim());
+    const scannedValue = decodedText.trim();
+    if (!scannedValue) return;
+
+    // Validate that the scanned barcode is an 8-digit student ID
+    if (!/^\d{8}$/.test(scannedValue)) {
+      setError(`Invalid barcode: "${scannedValue}". Expected an 8-digit student ID.`);
+      return;
+    }
+
+    performSearch('barcode', scannedValue);
   };
 
   const performSearch = async (type: 'email' | 'barcode', value: string) => {

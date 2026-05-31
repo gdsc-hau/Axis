@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Html5Qrcode } from 'html5-qrcode';
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 
 interface ScannerProps {
   onScan: (decodedText: string) => void;
@@ -22,20 +22,38 @@ export default function Scanner({ onScan, onClose }: ScannerProps) {
 
     // Config for the scanner
     const config = {
-      fps: 10,
+      fps: 20, // Increased FPS to 20 for faster/more sensitive scan frames
       qrbox: (viewfinderWidth: number, viewfinderHeight: number) => {
         const width = Math.min(320, Math.floor(viewfinderWidth * 0.85));
         const height = Math.min(100, Math.floor(viewfinderHeight * 0.35));
         return { width, height };
       },
       aspectRatio: 1.777778,
+      experimentalFeatures: {
+        useBarCodeDetectorIfSupported: true, // Use hardware-accelerated native barcode detector if available
+      },
     };
 
     // Chain the initialization of this scanner instance onto the cleanup of any previous scanner instance
     const startPromise = scannerCleanupPromise.then(async () => {
       if (!isMounted) return;
 
-      html5QrCode = new Html5Qrcode(qrCodeRegionId);
+      // Restrict scanning formats to speed up frame decoding and improve overall sensitivity
+      html5QrCode = new Html5Qrcode(qrCodeRegionId, {
+        formatsToSupport: [
+          Html5QrcodeSupportedFormats.CODE_128,
+          Html5QrcodeSupportedFormats.CODE_39,
+          Html5QrcodeSupportedFormats.CODE_93,
+          Html5QrcodeSupportedFormats.CODABAR,
+          Html5QrcodeSupportedFormats.EAN_13,
+          Html5QrcodeSupportedFormats.EAN_8,
+          Html5QrcodeSupportedFormats.UPC_A,
+          Html5QrcodeSupportedFormats.UPC_E,
+          Html5QrcodeSupportedFormats.ITF,
+          Html5QrcodeSupportedFormats.QR_CODE
+        ],
+        verbose: false
+      });
 
       try {
         await html5QrCode.start(
@@ -86,7 +104,7 @@ export default function Scanner({ onScan, onClose }: ScannerProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
       <div className="bg-[#12122a] border border-white/10 rounded-3xl w-full max-w-md overflow-hidden flex flex-col shadow-2xl">
         <div className="p-4 border-b border-white/10 flex items-center justify-between">
-          <h3 className="text-white font-semibold">Scan Barcode / QR Code</h3>
+          <h3 className="text-white font-semibold">Scan Student ID Barcode</h3>
           <button
             onClick={onClose}
             className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/20 transition-all"
@@ -105,7 +123,7 @@ export default function Scanner({ onScan, onClose }: ScannerProps) {
 
         <div className="p-4 text-center">
           <p className="text-white/40 text-xs uppercase tracking-widest font-semibold">
-            Align the code within the frame
+            Align the barcode within the frame
           </p>
         </div>
       </div>
