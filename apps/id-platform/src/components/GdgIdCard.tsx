@@ -1,4 +1,5 @@
 import { useRef, useState, MouseEvent } from 'react';
+import QRCode from 'react-qr-code';
 import DownloadActions from '@/components/DownloadActions';
 import type { PublicMemberProfile } from '@hau/contracts';
 
@@ -83,8 +84,9 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
             : `0 0 30px ${deptColor}33`,
           transform: `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(${isHovered ? 1.02 : 1}, ${isHovered ? 1.02 : 1}, 1)`,
           transition: isHovered ? 'none' : 'transform 0.5s ease, box-shadow 0.5s ease',
+          transformStyle: 'preserve-3d',
         }}
-        className="relative z-10 bg-crt-noise border-2 p-4 sm:p-5 rounded-lg overflow-hidden flex flex-col gap-3 text-white transform-gpu will-change-transform cursor-pointer"
+        className="relative z-10 bg-crt-noise border-2 p-4 sm:p-5 rounded-lg overflow-hidden flex flex-col gap-3 text-white cursor-pointer"
       >
         {/* 5.2 Header Component */}
         <div className="flex items-center space-x-3 border-2 border-white p-2">
@@ -130,10 +132,19 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
 
         {/* 5.4 ImagePanelSection Component */}
         <div className="flex border-2 border-white h-40">
-          <div className="w-5/12 p-1 border-r border-dashed border-white relative bg-[#111] overflow-hidden">
-            {/* WAVY_GLITCH_IMAGE_PLACEHOLDER */}
-            <div className="absolute inset-0 opacity-40 bg-[repeating-linear-gradient(45deg,transparent,transparent_3px,#fff_3px,#fff_6px)]" style={{ filter: 'url(#wavy-filter)' }}></div>
-            <div className="absolute inset-0 bg-black/60 flex items-center justify-center mix-blend-overlay"></div>
+          <div
+            className="w-5/12 p-2 border-r border-dashed border-white relative bg-[#111] overflow-hidden flex items-center justify-center"
+            style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden', isolation: 'isolate' }}
+          >
+            {/* QR Code - encodes cardholder email */}
+            <QRCode
+              value={profile.email}
+              size={256}
+              bgColor="#111111"
+              fgColor="#ffffff"
+              level="M"
+              style={{ width: '100%', height: 'auto', maxHeight: '100%', shapeRendering: 'crispEdges', imageRendering: 'pixelated' }}
+            />
           </div>
           
           <div className="w-7/12 p-2 relative bg-black flex items-center justify-center">
