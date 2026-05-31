@@ -117,20 +117,24 @@ export default function ChatbotWidget() {
           onHoverStart={() => !isOpen && setTeaserVisible(true)}
           onClick={() => setIsOpen(!isOpen)}
           className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full shadow-[0_10px_30px_rgba(66,133,244,0.4)] flex items-center justify-center transition-all duration-500 overflow-hidden ${
-            isOpen ? "bg-white text-gray-800 rotate-90" : "bg-[#4285f4] text-white p-0 border-2 border-white hover:border-[#34a853]"
+            isOpen ? "bg-white text-gray-800 rotate-90" : "bg-white text-white p-0 border-4 border-[#4285f4] hover:border-[#34a853]"
           }`}
         >
         {isOpen ? (
           <X className="w-6 h-6 sm:w-8 sm:h-8" />
         ) : (
-          <MessageCircle className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+          <img
+            src="/assets/images/chatbot_icon.png"
+            alt="Gyro the Bot"
+            className="w-full h-full object-cover"
+          />
         )}
         
         {!isOpen && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="absolute top-1 right-1 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white" 
+            className="absolute -top-1 -right-1 w-3.5 h-3.5 sm:w-4 sm:h-4 bg-green-500 rounded-full border-2 border-white" 
           />
         )}
         </motion.button>
