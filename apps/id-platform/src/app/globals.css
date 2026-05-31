@@ -74,6 +74,12 @@
 /* Chatbot Widget Positioning and Custom Launcher Styling */
 
 /* Hide ALL default LiveChatAI trigger buttons & bubbles — broad selectors */
+@media (pointer: fine) {
+  *, *::before, *::after {
+    cursor: none !important;
+  }
+}
+
 #live-chat-ai-button,
 [id*="live-chat-ai-button"],
 [id*="livechatai-button"],
