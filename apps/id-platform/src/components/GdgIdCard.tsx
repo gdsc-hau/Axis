@@ -1,6 +1,11 @@
 import { useRef, useState, MouseEvent } from 'react';
+<<<<<<< HEAD
+=======
+import QRCode from 'react-qr-code';
+>>>>>>> 38147cf (Your commit message)
 import DownloadActions from '@/components/DownloadActions';
 import type { PublicMemberProfile } from '@hau/contracts';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 
 interface GdgIdCardProps {
   profile: PublicMemberProfile;
@@ -20,15 +25,34 @@ const deptColors: Record<string, string> = {
 
 export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
+<<<<<<< HEAD
   const gdgCode = profile.hauId.replace(/\D/g, '') || '010101010110101';
   
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+=======
+  const [isHovered, setIsHovered] = useState(false);
+  
+  // 3D Tilt Effect Setup
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const mouseXSpring = useSpring(x, { stiffness: 300, damping: 40 });
+  const mouseYSpring = useSpring(y, { stiffness: 300, damping: 40 });
+
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["15deg", "-15deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-15deg", "15deg"]);
+  
+  // Holographic glare gradient stops based on mouse position
+  const glareX = useTransform(mouseXSpring, [-0.5, 0.5], ["0%", "100%"]);
+  const glareY = useTransform(mouseYSpring, [-0.5, 0.5], ["0%", "100%"]);
+>>>>>>> 38147cf (Your commit message)
 
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
+<<<<<<< HEAD
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     const centerX = rect.width / 2;
@@ -40,10 +64,25 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
     
     setRotateX(rotateXValue);
     setRotateY(rotateYValue);
+=======
+    
+    const width = rect.width;
+    const height = rect.height;
+    
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    
+    const xPct = mouseX / width - 0.5;
+    const yPct = mouseY / height - 0.5;
+    
+    x.set(xPct);
+    y.set(yPct);
+>>>>>>> 38147cf (Your commit message)
   };
 
   const handleMouseLeave = () => {
     setIsHovered(false);
+<<<<<<< HEAD
     setRotateX(0);
     setRotateY(0);
   };
@@ -73,10 +112,23 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
       {/* 5.1 Card Component */}
       <div 
         ref={cardRef} 
+=======
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <div className="animate-in fade-in zoom-in duration-500 flex flex-col items-center w-full relative z-20 perspective-1000">
+      
+      {/* 3D Wrapper */}
+      <motion.div
+        ref={cardRef}
+>>>>>>> 38147cf (Your commit message)
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={handleMouseLeave}
         style={{
+<<<<<<< HEAD
           borderColor: deptColor,
           boxShadow: isHovered 
             ? `0 20px 40px -10px ${deptColor}80, 0 0 20px ${deptColor}40, 0 0 40px ${deptColor}20` 
@@ -233,6 +285,95 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
       >
         [ EJECT_PROFILE ]
       </button>
+=======
+          rotateX,
+          rotateY,
+          transformStyle: "preserve-3d",
+        }}
+        className="relative w-full max-w-[340px] sm:max-w-[400px] rounded-3xl overflow-visible shadow-2xl transition-shadow duration-300 group cursor-pointer"
+        whileHover={{ scale: 1.05 }}
+      >
+        {/* Glow behind card */}
+        <div className="absolute inset-[-10px] bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-red-500/20 rounded-[40px] blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
+
+        <div className="relative rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.8)] bg-gradient-to-br from-[#1a1a3e] via-[#1e2060] to-[#0d0d2e] p-7 border border-white/10" style={{ transform: "translateZ(30px)" }}>
+          
+          {/* Holographic Glare Overlay */}
+          <motion.div
+            className="absolute inset-0 pointer-events-none z-10 opacity-0 mix-blend-overlay transition-opacity duration-300"
+            style={{
+              background: "radial-gradient(circle at var(--gx) var(--gy), rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 60%)",
+              opacity: isHovered ? 0.6 : 0,
+              "--gx": glareX,
+              "--gy": glareY,
+            } as any}
+          />
+
+          {/* Rainbow accent bar */}
+          <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#4285F4] via-[#EA4335] to-[#FBBC05]" />
+          
+          <div className="relative z-20 flex flex-col gap-6">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-[10px] text-gray-400 tracking-[0.2em] mb-1 uppercase font-semibold">GDG HAU Platform</p>
+                <p className="text-white font-bold text-lg sm:text-xl tracking-wider font-mono">DIGITAL ID</p>
+              </div>
+              <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center backdrop-blur-md">
+                <svg width="20" height="20" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 28L4 20L12 12" stroke="#4285F4" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M28 28L36 20L28 12" stroke="#EA4335" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M20 32L12 24L20 16" stroke="#FBBC05" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M20 24L28 16L20 8" stroke="#34A853" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 border-t border-white/10 pt-4">
+              <div>
+                <p className="text-[9px] text-gray-500 tracking-[0.2em] mb-0.5 uppercase">Identifier</p>
+                <p className="text-blue-400 font-bold text-xs sm:text-sm tracking-widest font-mono">{profile.hauId}</p>
+              </div>
+              <div>
+                <p className="text-[9px] text-gray-500 tracking-[0.2em] mb-0.5 uppercase">Program</p>
+                <p className="text-gray-200 font-bold text-[11px] sm:text-xs truncate uppercase mt-0.5">{profile.program}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      <div className="flex items-center justify-between border border-white/10 bg-[#07070a]/80 backdrop-blur-md p-4 rounded-2xl gap-4 mt-8 w-full max-w-[340px] sm:max-w-[400px] shadow-xl">
+        <div className="text-[10px] text-gray-400 space-y-1.5 uppercase tracking-widest font-mono min-w-0">
+          <p className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> sys.status: valid</p>
+          <p className="text-gray-500">checksum: verified</p>
+          <p className="text-[9px] text-blue-500/70 mt-3 pt-2 border-t border-white/5">© GDG HAU TERMINAL</p>
+        </div>
+        
+        <div className="bg-white p-2 rounded-xl transition-all duration-300 hover:scale-110 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] shrink-0 group">
+          <QRCode
+            value={profile.hauId}
+            size={64}
+            bgColor="transparent"
+            fgColor="#030305"
+            level="L"
+            className="group-hover:opacity-80 transition-opacity"
+          />
+        </div>
+      </div>
+
+      <div className="w-full max-w-[340px] sm:max-w-[400px]">
+        <DownloadActions cardRef={cardRef} hauId={profile.hauId} />
+      </div>
+
+      <motion.button
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        onClick={onEject}
+        className="mt-6 w-full max-w-[340px] sm:max-w-[400px] border border-red-500/30 bg-red-500/5 hover:bg-red-500/10 text-red-400 hover:text-red-300 rounded-xl text-xs uppercase tracking-[0.25em] py-4 transition-all duration-300 font-bold shadow-[0_0_15px_rgba(239,68,68,0.05)] hover:shadow-[0_0_20px_rgba(239,68,68,0.15)] font-mono"
+      >
+        [ EJECT PROFILE ]
+      </motion.button>
+>>>>>>> 38147cf (Your commit message)
     </div>
   );
 }
