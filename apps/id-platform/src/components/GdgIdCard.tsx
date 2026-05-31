@@ -84,8 +84,9 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
             : `0 0 30px ${deptColor}33`,
           transform: `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(${isHovered ? 1.02 : 1}, ${isHovered ? 1.02 : 1}, 1)`,
           transition: isHovered ? 'none' : 'transform 0.5s ease, box-shadow 0.5s ease',
+          transformStyle: 'preserve-3d',
         }}
-        className="relative z-10 bg-crt-noise border-2 p-4 sm:p-5 rounded-lg overflow-hidden flex flex-col gap-3 text-white transform-gpu will-change-transform cursor-pointer"
+        className="relative z-10 bg-crt-noise border-2 p-4 sm:p-5 rounded-lg overflow-hidden flex flex-col gap-3 text-white cursor-pointer"
       >
         {/* 5.2 Header Component */}
         <div className="flex items-center space-x-3 border-2 border-white p-2">
@@ -131,15 +132,18 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
 
         {/* 5.4 ImagePanelSection Component */}
         <div className="flex border-2 border-white h-40">
-          <div className="w-5/12 p-2 border-r border-dashed border-white relative bg-[#111] overflow-hidden flex items-center justify-center">
+          <div
+            className="w-5/12 p-2 border-r border-dashed border-white relative bg-[#111] overflow-hidden flex items-center justify-center"
+            style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden', isolation: 'isolate' }}
+          >
             {/* QR Code - encodes cardholder email */}
             <QRCode
               value={profile.email}
-              size={128}
+              size={256}
               bgColor="#111111"
               fgColor="#ffffff"
               level="M"
-              className="w-full h-auto max-h-full object-contain"
+              style={{ width: '100%', height: 'auto', maxHeight: '100%', shapeRendering: 'crispEdges', imageRendering: 'pixelated' }}
             />
           </div>
           
