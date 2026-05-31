@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Sparkles } from "lucide-react";
+import { X, Sparkles, MessageCircle } from "lucide-react";
 
 export default function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,10 +22,11 @@ export default function ChatbotWidget() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: 20, transformOrigin: "bottom right" }}
+            initial={{ opacity: 0, scale: 0.9, y: 30, transformOrigin: "bottom right" }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 20 }}
-            className="absolute bottom-20 right-0 w-[90vw] sm:w-[400px] h-[600px] max-h-[70vh] bg-white border border-gray-200 shadow-2xl rounded-3xl overflow-hidden flex flex-col"
+            exit={{ opacity: 0, scale: 0.9, y: 30 }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            className="absolute bottom-20 right-0 w-[90vw] sm:w-[400px] h-[600px] max-h-[70vh] bg-white border border-gray-200 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] rounded-3xl overflow-hidden flex flex-col"
           >
             {/* Header */}
             <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-[#4285f4]/5 backdrop-blur-md">
@@ -96,7 +97,7 @@ export default function ChatbotWidget() {
               opacity: { duration: 0.2 },
               scale: { duration: 0.2 }
             }}
-            className="absolute right-[76px] bottom-[12px] bg-[#1f2937] text-white px-3.5 py-1.5 rounded-xl border-2 border-[#fbbc05] font-mono text-[1.1rem] whitespace-nowrap shadow-lg pointer-events-none z-50"
+            className="absolute right-[68px] sm:right-[76px] bottom-[12px] bg-[#1f2937] text-white px-3.5 py-1.5 rounded-xl border-2 border-[#fbbc05] font-mono text-[0.9rem] sm:text-[1.1rem] whitespace-nowrap shadow-lg pointer-events-none z-50"
             style={{ fontFamily: 'var(--font-vt323), monospace' }}
           >
             Ask Gyro the Bot! 🤖
@@ -105,33 +106,35 @@ export default function ChatbotWidget() {
       </AnimatePresence>
 
       {/* Toggle Button */}
-      <motion.button
-        whileHover={{ scale: 1.1, rotate: 5 }}
-        whileTap={{ scale: 0.95 }}
-        onHoverStart={() => !isOpen && setTeaserVisible(true)}
-        onClick={() => setIsOpen(!isOpen)}
-        className={`relative w-16 h-16 rounded-full shadow-2xl flex items-center justify-center transition-colors duration-500 z-10 ${
-          isOpen ? "bg-white text-gray-800 rotate-90" : "bg-white text-white p-0 overflow-hidden border-4 border-[#4285f4] hover:border-[#34a853]"
-        }`}
+      <motion.div
+        animate={{ y: [0, -8, 0] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        className="relative z-10"
       >
+        <motion.button
+          whileHover={{ scale: 1.1, rotate: 5 }}
+          whileTap={{ scale: 0.95 }}
+          onHoverStart={() => !isOpen && setTeaserVisible(true)}
+          onClick={() => setIsOpen(!isOpen)}
+          className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full shadow-[0_10px_30px_rgba(66,133,244,0.4)] flex items-center justify-center transition-all duration-500 overflow-hidden ${
+            isOpen ? "bg-white text-gray-800 rotate-90" : "bg-[#4285f4] text-white p-0 border-2 border-white hover:border-[#34a853]"
+          }`}
+        >
         {isOpen ? (
-          <X className="w-8 h-8" />
+          <X className="w-6 h-6 sm:w-8 sm:h-8" />
         ) : (
-          <img
-            src="/assets/images/chatbot_icon.png"
-            alt="Gyro the Bot"
-            className="w-full h-full object-cover"
-          />
+          <MessageCircle className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
         )}
         
         {!isOpen && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white" 
+            className="absolute top-1 right-1 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white" 
           />
         )}
-      </motion.button>
+        </motion.button>
+      </motion.div>
     </div>
   );
 }
