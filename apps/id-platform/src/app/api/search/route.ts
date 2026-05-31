@@ -7,7 +7,6 @@ import { searchRateLimit } from '@/lib/ratelimit';
 export async function POST(request: NextRequest) {
 
   try {
-
     const body = await request.json();
     const parsed = SearchRequestSchema.safeParse(body);
 
@@ -30,14 +29,19 @@ export async function POST(request: NextRequest) {
       await searchRateLimit.limit(ip);
 
     if (!success) {
+      const retryAfter = Math.max(
+        0,
+        Math.ceil((reset - Date.now()) / 1000)
+      );
+
       return NextResponse.json(
         {
           /**
            * DEBUG: Temporary distinct error message
            * Remove once only one rate limiter remains.
            */
-          error: "Upstash rate limit triggered",
-          // error: "Too many requests. Please try again later.",
+          error: "Too many requests.",
+          retryAfter,
         },
         {
           status: 429,
