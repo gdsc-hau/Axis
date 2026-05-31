@@ -37,8 +37,16 @@ export default function DualEntrySearchPage() {
 
   const handleScan = (decodedText: string) => {
     setShowScanner(false);
-    if (!decodedText.trim()) return;
-    performSearch('barcode', decodedText.trim());
+    const scannedValue = decodedText.trim();
+    if (!scannedValue) return;
+
+    // Validate that the scanned barcode is an 8-digit student ID
+    if (!/^\d{8}$/.test(scannedValue)) {
+      setError(`Invalid barcode: "${scannedValue}". Expected an 8-digit student ID.`);
+      return;
+    }
+
+    performSearch('barcode', scannedValue);
   };
 
   const performSearch = async (type: 'email' | 'barcode', value: string) => {
@@ -60,7 +68,7 @@ export default function DualEntrySearchPage() {
 
       const data = await res.json();
       setProfile(data as PublicMemberProfile);
-      setEmail(''); 
+      setEmail('');
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -70,9 +78,10 @@ export default function DualEntrySearchPage() {
 
   return (
     <main className="min-h-screen relative flex flex-col items-center justify-center bg-[#030305] overflow-hidden px-4 py-8 md:py-12 pt-28 md:pt-32 text-cyan-50 font-sans selection:bg-cyan-500 selection:text-black">
-      
+
       {/* Custom Keyframe Styles injected directly for portability */}
-      <style dangerouslySetInnerHTML={{__html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
         @keyframes geminiPulse {
@@ -170,13 +179,13 @@ export default function DualEntrySearchPage() {
 
       {/* LAVA LAMP CANVAS: Anchored via column viewports to simulate fluid bubbles moving up and down */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden grid grid-cols-2 opacity-80">
-        
+
         {/* LEFT COLUMN BUOYANCIES (Blue and Red) */}
         <div className="relative h-full w-full">
           <div className="absolute left-[-10rem] top-[-10rem] w-[35rem] sm:w-[50rem] h-[35rem] sm:h-[50rem] rounded-full blur-[70px] sm:blur-[100px] glow-blue lava-blue" />
           <div className="absolute left-[5rem] top-[-5rem] w-[30rem] sm:w-[45rem] h-[30rem] sm:h-[45rem] rounded-full blur-[70px] sm:blur-[100px] glow-red lava-red" />
         </div>
-        
+
         {/* RIGHT COLUMN BUOYANCIES (Yellow and Green) */}
         <div className="relative h-full w-full">
           <div className="absolute right-[-10rem] top-[-5rem] w-[35rem] sm:w-[48rem] h-[35rem] sm:h-[48rem] rounded-full blur-[70px] sm:blur-[100px] glow-yellow lava-yellow" />
@@ -187,11 +196,11 @@ export default function DualEntrySearchPage() {
 
       {/* MAIN CONTAINER */}
       <div className="relative w-full max-w-4xl z-10 flex flex-col items-center">
-        
+
         {/* STATE 1: Search Landing */}
         {!profile && (
           <div className="w-full flex flex-col items-center animate-in fade-in slide-in-from-bottom-4 duration-700">
-            
+
             {/* RESPONSE FIX: Tweaked size, tracking, and forced singular line layout on mobile */}
             <div className="flex items-center justify-center gap-2 mb-4 font-mono text-[8px] sm:text-[10px] tracking-[0.15em] sm:tracking-[0.3em] text-gray-500 uppercase whitespace-nowrap select-none">
               <span>[ system.ready ]</span>
@@ -226,7 +235,7 @@ export default function DualEntrySearchPage() {
 
             {/* CHANGED: Opened max-width from 3xl to 4xl to allow layout expansion on desktop monitors */}
             <div className="flex items-center w-full max-w-4xl gap-4 md:gap-6 relative px-1 sm:px-16 justify-center mx-auto">
-              
+
               {/* Left Mechanical Dial Indicator */}
               <div className="hidden sm:flex shrink-0 w-12 h-12 rounded-full border border-white/10 items-center justify-center bg-[#07070a] shadow-[0_0_15px_rgba(0,0,0,0.5)] group hover:border-blue-500/50 transition-colors duration-300">
                 <span className="text-[11px] font-mono font-bold text-gray-500 group-hover:text-blue-400 transition-colors">&lt;&gt;</span>
@@ -235,21 +244,21 @@ export default function DualEntrySearchPage() {
               {/* Central Search Wrapper Area with Background Glow and Border Engine */}
               {/* CHANGED: Boosted custom limit threshold from 550px to 680px and applied flex centering styles */}
               <div className="flex-grow relative group w-full max-w-[680px] mx-auto">
-                
+
                 {/* 1. Ambient Background Glow Behind Input */}
                 <div className="gemini-glow absolute left-1/2 top-1/2 w-[140%] sm:w-[160%] h-[200px] sm:h-[300px] pointer-events-none z-0 rounded-full" />
 
                 {/* 2. Rainbow Border Container */}
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 30, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{ delay: 0.2, type: "spring", stiffness: 300, damping: 25 }}
                   className="gemini-animated-wrapper w-full rounded-2xl relative z-10 shadow-[0_10px_40px_rgba(0,0,0,0.7)]"
                 >
-                  
+
                   {/* 3. Sleek Dark Search Form Box */}
-                  <form 
-                    onSubmit={handleEmailSearch} 
+                  <form
+                    onSubmit={handleEmailSearch}
                     className="flex items-center bg-[#131314] rounded-[15px] h-14 overflow-hidden w-full"
                   >
                     {/* Glass Icon */}
