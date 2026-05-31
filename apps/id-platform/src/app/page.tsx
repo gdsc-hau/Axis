@@ -13,9 +13,20 @@ export default function DualEntrySearchPage() {
   const [error, setError] = useState<string | null>(null);
   const [profile, setProfile] = useState<PublicMemberProfile | null>(null);
   const [showScanner, setShowScanner] = useState(false);
+  const [timeleft, setTimeLeft] = useState(0);
 
   const fullTitle = "GDGHAU ID PLATFORM";
   const [displayedTitle, setDisplayedTitle] = useState("");
+
+  useEffect(() => {
+    if (timeleft <= 0) return;
+
+    const interval = setInterval(() => {
+      setTimeLeft(prev => prev - 1)
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timeleft]);
 
   useEffect(() => {
     let i = 0;
@@ -52,6 +63,12 @@ export default function DualEntrySearchPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type, value }),
       });
+
+      if (res.status === 429) {
+        const data = await res.json();
+        setTimeLeft(data.retryAfter)
+        throw new Error(data.error || `Too many requests`)
+      }
 
       if (!res.ok) {
         const data = await res.json();
@@ -285,7 +302,7 @@ export default function DualEntrySearchPage() {
                       {/* Submit Action Button */}
                       <button
                         type="submit"
-                        disabled={loading || !email}
+                        disabled={loading || !email || timeleft > 0}
                         className="bg-[#1e1e1f] hover:bg-[#282829] text-white border border-white/10 font-mono text-xs uppercase tracking-widest px-3 sm:px-5 disabled:bg-gray-800 disabled:text-gray-600 disabled:border-transparent transition-all duration-200 h-full flex items-center justify-center rounded-xl font-bold gap-2 shrink-0 active:scale-95"
                       >
                         {loading ? (
@@ -313,6 +330,12 @@ export default function DualEntrySearchPage() {
             {error && (
               <div className="mt-6 border border-red-500/30 bg-red-950/20 backdrop-blur-md px-5 py-2.5 rounded-lg max-w-sm font-mono text-xs tracking-wider text-center mx-4">
                 <p className="text-red-400 uppercase">⚠️ System Error: {error}</p>
+
+                {timeleft > 0 && (
+                  <p className='text-red-400 uppercase'>
+                    Retry in {timeleft}s
+                  </p>
+                )}
               </div>
             )}
           </div>

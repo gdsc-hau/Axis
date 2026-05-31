@@ -8,6 +8,9 @@ export async function POST(request: NextRequest) {
 
   try {
 
+    console.log(process.env.NEXT_PUBLIC_SUPABASE_URL)
+    console.log(process.env.SUPABASE_SERVICE_ROLE_KEY)
+
     const body = await request.json();
     const parsed = SearchRequestSchema.safeParse(body);
 
@@ -30,13 +33,19 @@ export async function POST(request: NextRequest) {
       await searchRateLimit.limit(ip);
 
     if (!success) {
+      const retryAfter = Math.max(
+        0,
+        Math.ceil((reset - Date.now()) / 1000)
+      );
+
       return NextResponse.json(
         {
           /**
            * DEBUG: Temporary distinct error message
            * Remove once only one rate limiter remains.
            */
-          error: "Upstash rate limit triggered",
+          error: `Upstash rate limit triggered`,
+          retryAfter,
           // error: "Too many requests. Please try again later.",
         },
         {
