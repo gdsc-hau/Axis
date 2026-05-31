@@ -2,6 +2,85 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ───── LAVA LAMP ANIMATIONS ───── */
+@keyframes geminiPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(0.85); opacity: 0.35; }
+  50% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.65; }
+}
+@keyframes rotateRainbow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+@keyframes lavaLeftSlow {
+  0% { transform: translateY(80vh) scale(1, 1.2); opacity: 0.2; }
+  30% { transform: translateY(40vh) scale(1.1, 0.9); opacity: 0.35; }
+  50% { transform: translateY(-10vh) scale(1.3, 0.8); opacity: 0.25; }
+  75% { transform: translateY(35vh) scale(0.9, 1.1); opacity: 0.35; }
+  100% { transform: translateY(80vh) scale(1, 1.2); opacity: 0.2; }
+}
+@keyframes lavaLeftFast {
+  0% { transform: translateY(-20vh) scale(1.2, 0.8); opacity: 0.25; }
+  40% { transform: translateY(30vh) scale(0.9, 1.15); opacity: 0.3; }
+  70% { transform: translateY(75vh) scale(1.1, 0.9); opacity: 0.15; }
+  90% { transform: translateY(20vh) scale(1, 1.2); opacity: 0.35; }
+  100% { transform: translateY(-20vh) scale(1.2, 0.8); opacity: 0.25; }
+}
+@keyframes lavaRightSlow {
+  0% { transform: translateY(75vh) scale(1.1, 0.9); opacity: 0.15; }
+  35% { transform: translateY(15vh) scale(0.95, 1.2); opacity: 0.25; }
+  60% { transform: translateY(-15vh) scale(1.25, 0.85); opacity: 0.2; }
+  80% { transform: translateY(45vh) scale(1, 1.1); opacity: 0.3; }
+  100% { transform: translateY(75vh) scale(1.1, 0.9); opacity: 0.15; }
+}
+@keyframes lavaRightFast {
+  0% { transform: translateY(-15vh) scale(1.3, 0.8); opacity: 0.2; }
+  25% { transform: translateY(25vh) scale(0.9, 1.1); opacity: 0.3; }
+  55% { transform: translateY(80vh) scale(1.15, 0.95); opacity: 0.15; }
+  85% { transform: translateY(30vh) scale(1, 1.2); opacity: 0.25; }
+  100% { transform: translateY(-15vh) scale(1.3, 0.8); opacity: 0.2; }
+}
+.gemini-glow {
+  background: radial-gradient(circle, rgba(66, 133, 244, 0.45) 0%, rgba(155, 81, 224, 0.2) 45%, rgba(0, 0, 0, 0) 70%);
+  filter: blur(40px);
+  animation: geminiPulse 6s ease-in-out infinite;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+.gemini-animated-wrapper {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 1px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.gemini-animated-wrapper:focus-within {
+  padding: 1.5px;
+  background: linear-gradient(90deg, #4285F4, #9B51E0, #EA4335, #FBBC05, #34A853, #4285F4);
+  background-size: 200% auto;
+  animation: rotateRainbow 3s linear infinite;
+  box-shadow: 0 0 30px rgba(66, 133, 244, 0.25);
+}
+.lava-blue { animation: lavaLeftSlow 28s ease-in-out infinite; will-change: transform, filter; backface-visibility: hidden; }
+.lava-red { animation: lavaLeftFast 22s ease-in-out infinite; will-change: transform, filter; backface-visibility: hidden; }
+.lava-yellow { animation: lavaRightSlow 32s ease-in-out infinite; will-change: transform, filter; backface-visibility: hidden; }
+.lava-green { animation: lavaRightFast 25s ease-in-out infinite; will-change: transform, filter; backface-visibility: hidden; }
+.glow-blue { background: radial-gradient(circle, rgba(66, 133, 244, 0.4) 0%, rgba(66, 133, 244, 0.1) 40%, rgba(0,0,0,0) 70%); will-change: filter; }
+.glow-red { background: radial-gradient(circle, rgba(234, 67, 53, 0.35) 0%, rgba(234, 67, 53, 0.08) 40%, rgba(0,0,0,0) 70%); will-change: filter; }
+.glow-yellow { background: radial-gradient(circle, rgba(251, 188, 5, 0.28) 0%, rgba(251, 188, 5, 0.06) 40%, rgba(0,0,0,0) 70%); will-change: filter; }
+.glow-green { background: radial-gradient(circle, rgba(52, 168, 83, 0.32) 0%, rgba(52, 168, 83, 0.08) 40%, rgba(0,0,0,0) 70%); will-change: filter; }
+.minecraft-font {
+  font-family: 'VT323', monospace;
+  letter-spacing: 0.02em;
+  font-weight: bold;
+}
+
+/* Reduce animation on systems that prefer reduced motion (respects OS setting) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 @font-face {
   font-family: 'Cynatar';
   src: url('/fonts/Cynatar.otf') format('opentype');
@@ -46,12 +125,14 @@
   left: 2px;
   text-shadow: -1px 0 red;
   animation: glitch-anim-1 2s infinite linear alternate-reverse;
+  will-change: clip-path;
 }
 
 .glitch-effect::after {
   left: -2px;
   text-shadow: -1px 0 blue;
   animation: glitch-anim-2 3s infinite linear alternate-reverse;
+  will-change: clip-path;
 }
 
 @keyframes glitch-anim-1 {
@@ -74,11 +155,6 @@
 /* Chatbot Widget Positioning and Custom Launcher Styling */
 
 /* Hide ALL default LiveChatAI trigger buttons & bubbles — broad selectors */
-@media (pointer: fine) {
-  *, *::before, *::after {
-    cursor: none !important;
-  }
-}
 
 #live-chat-ai-button,
 [id*="live-chat-ai-button"],

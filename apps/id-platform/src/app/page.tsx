@@ -78,10 +78,9 @@ export default function DualEntrySearchPage() {
 
   return (
     <main className="min-h-screen relative flex flex-col items-center justify-center bg-[#030305] overflow-hidden px-4 py-8 md:py-12 pt-28 md:pt-32 text-cyan-50 font-sans selection:bg-cyan-500 selection:text-black">
-
+      
       {/* Custom Keyframe Styles injected directly for portability */}
-      <style dangerouslySetInnerHTML={{
-        __html: `
+      <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
         @keyframes geminiPulse {
