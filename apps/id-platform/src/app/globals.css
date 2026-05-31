@@ -12,3 +12,123 @@
 .font-cynatar {
   font-family: 'Cynatar', sans-serif;
 }
+
+.bg-crt-noise {
+  background-color: #1a1a1a;
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(255, 255, 255, 0.05) 2px,
+    rgba(255, 255, 255, 0.05) 4px
+  );
+}
+
+.font-pixelated {
+  font-family: 'VT323', monospace;
+}
+
+.glitch-effect {
+  position: relative;
+}
+
+.glitch-effect::before,
+.glitch-effect::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch-effect::before {
+  left: 2px;
+  text-shadow: -1px 0 red;
+  animation: glitch-anim-1 2s infinite linear alternate-reverse;
+}
+
+.glitch-effect::after {
+  left: -2px;
+  text-shadow: -1px 0 blue;
+  animation: glitch-anim-2 3s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim-1 {
+  0% { clip-path: inset(20% 0 80% 0); }
+  20% { clip-path: inset(60% 0 10% 0); }
+  40% { clip-path: inset(40% 0 50% 0); }
+  60% { clip-path: inset(80% 0 5% 0); }
+  80% { clip-path: inset(10% 0 70% 0); }
+  100% { clip-path: inset(30% 0 50% 0); }
+}
+
+@keyframes glitch-anim-2 {
+  0% { clip-path: inset(10% 0 60% 0); }
+  20% { clip-path: inset(30% 0 20% 0); }
+  40% { clip-path: inset(70% 0 10% 0); }
+  60% { clip-path: inset(20% 0 50% 0); }
+  80% { clip-path: inset(50% 0 30% 0); }
+  100% { clip-path: inset(5% 0 80% 0); }
+}
+/* Chatbot Widget Positioning and Custom Launcher Styling */
+
+/* Hide ALL default LiveChatAI trigger buttons & bubbles — broad selectors */
+#live-chat-ai-button,
+[id*="live-chat-ai-button"],
+[id*="livechatai-button"],
+[class*="live-chat-ai-button"],
+[class*="livechatai-button"],
+.live-chat-ai-bubble-message-item,
+[class*="live-chat-ai-bubble"],
+[class*="livechatai-bubble"],
+/* Hide everything inside the wrapper EXCEPT the chat iframe itself */
+#live-chat-ai-wrapper > *:not(#live-chat-ai-iframe-wrapper) {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  visibility: hidden !important;
+  overflow: hidden !important;
+}
+
+/* Override LiveChatAI wrapper alignment and position to Bottom-Left */
+#live-chat-ai-wrapper,
+.live-chat-ai-wrapper-right-align,
+.live-chat-ai-wrapper-left-align {
+  right: 24px !important;
+  left: auto !important;
+  bottom: 24px !important;
+  z-index: 999999 !important;
+}
+
+/* Shift the Chatbot popup container to Bottom-Left */
+#live-chat-ai-iframe-wrapper,
+.live-chat-ai-iframe-wrapper {
+  right: 0px !important;
+  left: auto !important;
+  bottom: 80px !important; /* Positioned directly above our custom button */
+  transform-origin: bottom right !important;
+  border-radius: 16px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3) !important;
+  border: 2px solid #ea4335 !important; /* GDG Red Accent */
+  overflow: hidden !important;
+}
+
+/* Responsive adjustment for small/mobile viewports */
+@media (max-width: 640px) {
+  #live-chat-ai-iframe-wrapper,
+  .live-chat-ai-iframe-wrapper {
+    bottom: 76px !important;
+    right: -8px !important;
+    left: auto !important;
+    width: calc(100vw - 32px) !important;
+    max-width: 360px !important;
+    height: 70vh !important;
+    max-height: 520px !important;
+  }
+}
+
+
+

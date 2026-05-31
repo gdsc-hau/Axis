@@ -158,12 +158,7 @@ export default function DualEntrySearchPage() {
       <header className="absolute top-0 left-0 w-full px-4 md:px-8 py-4 flex items-center justify-between z-50 border-b border-white/5 bg-[#030305]/40 backdrop-blur-md font-mono">
         <div className="flex items-center gap-3 md:gap-4">
           <div className="flex items-center justify-center shrink-0">
-            <svg width="34" height="34" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="animate-[pulse_4s_infinite] w-8 h-8 md:w-10 md:h-10">
-              <path d="M12 28L4 20L12 12" stroke="#4285F4" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M28 28L36 20L28 12" stroke="#EA4335" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M20 32L12 24L20 16" stroke="#FBBC05" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M20 24L28 16L20 8" stroke="#34A853" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+            <img src="/gdg_icon.png" alt="GDG Logo" className="animate-[pulse_4s_infinite] w-8 h-8 md:w-10 md:h-10 object-contain" />
           </div>
           <div>
             <h2 className="text-white font-bold text-xs md:text-sm uppercase tracking-wider line-clamp-1">Google Developer Group</h2>
