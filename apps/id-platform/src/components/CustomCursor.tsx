@@ -1,94 +1,93 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, useMotionValue } from "framer-motion";
+
+const INTERACTIVE_SELECTOR =
+  'a, button, input, select, textarea, [role="button"], [tabindex="0"]';
 
 export default function CustomCursor() {
   const [isHovering, setIsHovering] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const visibleRef = useRef(false);
 
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
 
-  const springConfig = { damping: 25, stiffness: 400 };
-  const cursorXSpring = useSpring(cursorX, springConfig);
-  const cursorYSpring = useSpring(cursorY, springConfig);
-
   useEffect(() => {
-    // Only apply custom cursor on non-touch devices
     const mediaQuery = window.matchMedia("(pointer: fine)");
     setIsDesktop(mediaQuery.matches);
-    
-    const handleMediaChange = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+
+    const handleMediaChange = (e: MediaQueryListEvent) =>
+      setIsDesktop(e.matches);
     mediaQuery.addEventListener("change", handleMediaChange);
-    
+
     if (!mediaQuery.matches) return;
 
     const moveCursor = (e: MouseEvent) => {
       cursorX.set(e.clientX);
       cursorY.set(e.clientY);
-      if (!isVisible) setIsVisible(true);
+      if (!visibleRef.current) {
+        visibleRef.current = true;
+        setIsVisible(true);
+      }
     };
 
-    const handleMouseLeave = () => setIsVisible(false);
-    const handleMouseEnter = () => setIsVisible(true);
-
-    const handleHoverStart = () => setIsHovering(true);
-    const handleHoverEnd = () => setIsHovering(false);
-
-    window.addEventListener("mousemove", moveCursor);
-    document.addEventListener("mouseleave", handleMouseLeave);
-    document.addEventListener("mouseenter", handleMouseEnter);
-
-    const attachHoverListeners = () => {
-      const interactables = document.querySelectorAll('a, button, input, select, textarea, [role="button"], [tabindex="0"]');
-      interactables.forEach((el) => {
-        if (!(el as HTMLElement).dataset.cursorBound) {
-          el.addEventListener("mouseenter", handleHoverStart);
-          el.addEventListener("mouseleave", handleHoverEnd);
-          (el as HTMLElement).dataset.cursorBound = "true";
-        }
-      });
+    const handleMouseLeaveDoc = () => {
+      visibleRef.current = false;
+      setIsVisible(false);
+      setIsHovering(false);
     };
 
-    attachHoverListeners();
+    const handleMouseEnterDoc = () => {
+      visibleRef.current = true;
+      setIsVisible(true);
+    };
 
-    const observer = new MutationObserver(attachHoverListeners);
-    observer.observe(document.body, { childList: true, subtree: true });
+    const handleMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      setIsHovering(
+        target.matches(INTERACTIVE_SELECTOR) ||
+          !!target.closest(INTERACTIVE_SELECTOR)
+      );
+    };
+
+    window.addEventListener("mousemove", moveCursor, { passive: true });
+    document.addEventListener("mouseleave", handleMouseLeaveDoc);
+    document.addEventListener("mouseenter", handleMouseEnterDoc);
+    document.body.addEventListener("mouseover", handleMouseOver);
 
     return () => {
       mediaQuery.removeEventListener("change", handleMediaChange);
       window.removeEventListener("mousemove", moveCursor);
-      document.removeEventListener("mouseleave", handleMouseLeave);
-      document.removeEventListener("mouseenter", handleMouseEnter);
-      observer.disconnect();
+      document.removeEventListener("mouseleave", handleMouseLeaveDoc);
+      document.removeEventListener("mouseenter", handleMouseEnterDoc);
+      document.body.removeEventListener("mouseover", handleMouseOver);
     };
-  }, [cursorX, cursorY, isVisible]);
+  }, []);
 
   if (!isDesktop) return null;
 
   return (
     <motion.div
-      className="fixed top-0 left-0 pointer-events-none z-[999999]"
+      className="fixed top-0 left-0 pointer-events-none z-[999999] will-change-transform"
       style={{
-        x: cursorXSpring,
-        y: cursorYSpring,
+        x: cursorX,
+        y: cursorY,
         opacity: isVisible ? 1 : 0,
       }}
     >
       <motion.img
         src="/assets/images/gyro/head_openmouth_icon.png"
         alt="Cursor"
-        className="w-10 h-10 object-contain drop-shadow-xl"
+        className="w-6 h-6 object-contain drop-shadow-xl -translate-x-1/2 -translate-y-1/2"
         initial={{ scale: 1, rotate: 0 }}
         animate={{
           scale: isHovering ? 1.5 : 1,
           rotate: isHovering ? 15 : 0,
-          x: "-50%",
-          y: "-50%",
         }}
-        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        transition={{ type: "spring", stiffness: 300, damping: 12, mass: 0.3 }}
       />
     </motion.div>
   );
