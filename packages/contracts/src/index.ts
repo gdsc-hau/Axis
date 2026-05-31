@@ -24,6 +24,8 @@ export const PublicMemberProfileSchema = z.object({
   hauId: z.string(),
   fullName: z.string(),
   program: z.string(),
+  email: z.string().email(),
+  department: z.string().optional(),
 });
 
 export type PublicMemberProfile = z.infer<typeof PublicMemberProfileSchema>;
