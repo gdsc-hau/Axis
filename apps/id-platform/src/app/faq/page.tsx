@@ -209,7 +209,7 @@ export default function FAQPage() {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <a href="#" className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl transition-all shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:shadow-[0_0_30px_rgba(37,99,235,0.6)]">
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSdTlb-2I6oSTFUtcPsJVy5xF4AoWH0bf16BWHtwXP0RYnxCTA/viewform" target="_blank" rel="noopener noreferrer" className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl transition-all shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:shadow-[0_0_30px_rgba(37,99,235,0.6)]">
               Become a Member
             </a>
             <a href="#" className="px-8 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl transition-all border border-white/10">
