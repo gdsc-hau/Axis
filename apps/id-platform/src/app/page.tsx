@@ -5,6 +5,7 @@ import Scanner from '@/components/Scanner';
 import GdgIdCard from '@/components/GdgIdCard';
 import Navbar from '@/components/Navbar';
 import type { PublicMemberProfile } from '@hau/contracts';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function DualEntrySearchPage() {
   const [email, setEmail] = useState('');
@@ -239,7 +240,12 @@ export default function DualEntrySearchPage() {
                 <div className="gemini-glow absolute left-1/2 top-1/2 w-[140%] sm:w-[160%] h-[200px] sm:h-[300px] pointer-events-none z-0 rounded-full" />
 
                 {/* 2. Rainbow Border Container */}
-                <div className="gemini-animated-wrapper w-full rounded-2xl relative z-10 shadow-[0_10px_40px_rgba(0,0,0,0.7)]">
+                <motion.div 
+                  initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ delay: 0.2, type: "spring", stiffness: 300, damping: 25 }}
+                  className="gemini-animated-wrapper w-full rounded-2xl relative z-10 shadow-[0_10px_40px_rgba(0,0,0,0.7)]"
+                >
                   
                   {/* 3. Sleek Dark Search Form Box */}
                   <form 
@@ -282,15 +288,19 @@ export default function DualEntrySearchPage() {
                         disabled={loading || !email}
                         className="bg-[#1e1e1f] hover:bg-[#282829] text-white border border-white/10 font-mono text-xs uppercase tracking-widest px-3 sm:px-5 disabled:bg-gray-800 disabled:text-gray-600 disabled:border-transparent transition-all duration-200 h-full flex items-center justify-center rounded-xl font-bold gap-2 shrink-0 active:scale-95"
                       >
-                        <svg className="w-4 h-4 text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                        </svg>
-                        <span className="hidden sm:inline">{loading ? '...' : 'Search ID'}</span>
+                        {loading ? (
+                          <div className="w-4 h-4 border-2 border-white/20 border-t-blue-500 rounded-full animate-spin shrink-0" />
+                        ) : (
+                          <svg className="w-4 h-4 text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                          </svg>
+                        )}
+                        <span className="hidden sm:inline">{loading ? 'SEARCHING' : 'Search ID'}</span>
                       </button>
                     </div>
                   </form>
 
-                </div>
+                </motion.div>
               </div>
 
               {/* Right Mechanical Dial Indicator */}
