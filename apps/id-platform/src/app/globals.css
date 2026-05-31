@@ -43,6 +43,8 @@
   background: radial-gradient(circle, rgba(66, 133, 244, 0.45) 0%, rgba(155, 81, 224, 0.2) 45%, rgba(0, 0, 0, 0) 70%);
   filter: blur(40px);
   animation: geminiPulse 6s ease-in-out infinite;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
 }
 .gemini-animated-wrapper {
   background: rgba(255, 255, 255, 0.08);
@@ -56,18 +58,27 @@
   animation: rotateRainbow 3s linear infinite;
   box-shadow: 0 0 30px rgba(66, 133, 244, 0.25);
 }
-.lava-blue { animation: lavaLeftSlow 28s ease-in-out infinite; will-change: transform; }
-.lava-red { animation: lavaLeftFast 22s ease-in-out infinite; will-change: transform; }
-.lava-yellow { animation: lavaRightSlow 32s ease-in-out infinite; will-change: transform; }
-.lava-green { animation: lavaRightFast 25s ease-in-out infinite; will-change: transform; }
-.glow-blue { background: radial-gradient(circle, rgba(66, 133, 244, 0.4) 0%, rgba(66, 133, 244, 0.1) 40%, rgba(0,0,0,0) 70%); }
-.glow-red { background: radial-gradient(circle, rgba(234, 67, 53, 0.35) 0%, rgba(234, 67, 53, 0.08) 40%, rgba(0,0,0,0) 70%); }
-.glow-yellow { background: radial-gradient(circle, rgba(251, 188, 5, 0.28) 0%, rgba(251, 188, 5, 0.06) 40%, rgba(0,0,0,0) 70%); }
-.glow-green { background: radial-gradient(circle, rgba(52, 168, 83, 0.32) 0%, rgba(52, 168, 83, 0.08) 40%, rgba(0,0,0,0) 70%); }
+.lava-blue { animation: lavaLeftSlow 28s ease-in-out infinite; will-change: transform, filter; backface-visibility: hidden; }
+.lava-red { animation: lavaLeftFast 22s ease-in-out infinite; will-change: transform, filter; backface-visibility: hidden; }
+.lava-yellow { animation: lavaRightSlow 32s ease-in-out infinite; will-change: transform, filter; backface-visibility: hidden; }
+.lava-green { animation: lavaRightFast 25s ease-in-out infinite; will-change: transform, filter; backface-visibility: hidden; }
+.glow-blue { background: radial-gradient(circle, rgba(66, 133, 244, 0.4) 0%, rgba(66, 133, 244, 0.1) 40%, rgba(0,0,0,0) 70%); will-change: filter; }
+.glow-red { background: radial-gradient(circle, rgba(234, 67, 53, 0.35) 0%, rgba(234, 67, 53, 0.08) 40%, rgba(0,0,0,0) 70%); will-change: filter; }
+.glow-yellow { background: radial-gradient(circle, rgba(251, 188, 5, 0.28) 0%, rgba(251, 188, 5, 0.06) 40%, rgba(0,0,0,0) 70%); will-change: filter; }
+.glow-green { background: radial-gradient(circle, rgba(52, 168, 83, 0.32) 0%, rgba(52, 168, 83, 0.08) 40%, rgba(0,0,0,0) 70%); will-change: filter; }
 .minecraft-font {
   font-family: 'VT323', monospace;
   letter-spacing: 0.02em;
   font-weight: bold;
+}
+
+/* Reduce animation on systems that prefer reduced motion (respects OS setting) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 @font-face {
@@ -114,12 +125,14 @@
   left: 2px;
   text-shadow: -1px 0 red;
   animation: glitch-anim-1 2s infinite linear alternate-reverse;
+  will-change: clip-path;
 }
 
 .glitch-effect::after {
   left: -2px;
   text-shadow: -1px 0 blue;
   animation: glitch-anim-2 3s infinite linear alternate-reverse;
+  will-change: clip-path;
 }
 
 @keyframes glitch-anim-1 {
