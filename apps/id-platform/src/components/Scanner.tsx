@@ -23,8 +23,12 @@ export default function Scanner({ onScan, onClose }: ScannerProps) {
     // Config for the scanner
     const config = {
       fps: 10,
-      qrbox: { width: 250, height: 250 },
-      aspectRatio: 1.0,
+      qrbox: (viewfinderWidth: number, viewfinderHeight: number) => {
+        const width = Math.min(320, Math.floor(viewfinderWidth * 0.85));
+        const height = Math.min(100, Math.floor(viewfinderHeight * 0.35));
+        return { width, height };
+      },
+      aspectRatio: 1.777778,
     };
 
     // Chain the initialization of this scanner instance onto the cleanup of any previous scanner instance
@@ -91,11 +95,11 @@ export default function Scanner({ onScan, onClose }: ScannerProps) {
           </button>
         </div>
 
-        <div className="relative bg-black w-full aspect-square flex items-center justify-center">
+        <div className="relative bg-black w-full aspect-[16/9] flex items-center justify-center overflow-hidden">
           {error ? (
             <div className="text-red-400 p-6 text-center text-sm">{error}</div>
           ) : (
-            <div id="html5qr-code-full-region" className="w-full h-full [&_video]:object-cover" />
+            <div id="html5qr-code-full-region" className="!w-full !h-full overflow-hidden [&_video]:!w-full [&_video]:!h-full [&_video]:!object-cover [&_video]:!object-center" />
           )}
         </div>
 
