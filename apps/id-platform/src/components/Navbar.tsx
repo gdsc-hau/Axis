@@ -12,8 +12,8 @@ export default function Navbar() {
     { name: 'Home', href: '/' },
     { name: 'About', href: '/about' },
     { name: 'FAQs', href: '/faq' },
-    { name: 'Contact', href: '#' },
-    { name: 'Coming Soon', href: '#' },
+    { name: 'Contact', href: '/contact' },
+    { name: 'Coming Soon', href: '/coming-soon' },
   ];
 
   return (
