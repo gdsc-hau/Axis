@@ -257,7 +257,7 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
               rotateY,
               scale: springScale,
               transformStyle: 'preserve-3d',
-              touchAction: 'none',
+              touchAction: 'pan-y',
             }}
             className="relative z-10 bg-crt-noise border-2 p-3 sm:p-5 rounded-lg sm:rounded-xl overflow-visible flex flex-col gap-3 text-white will-change-transform cursor-pointer transform-gpu"
           >
