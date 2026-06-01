@@ -143,6 +143,18 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
     touchLastTime.current = null;
   };
 
+  const requestOrientationPermission = () => {
+    if (typeof (window.DeviceOrientationEvent as any)?.requestPermission === 'function') {
+      (window.DeviceOrientationEvent as any).requestPermission()
+        .then((permissionState: string) => {
+          if (permissionState === 'granted') {
+            // Permission granted, sensor data will now flow to the listener
+          }
+        })
+        .catch(console.error);
+    }
+  };
+
   useEffect(() => {
     const handleOrientation = (event: DeviceOrientationEvent) => {
       const gamma = event.gamma; 
@@ -200,6 +212,7 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onClick={requestOrientationPermission}
         style={{
           borderColor: deptColor,
           boxShadow: `0 0 30px ${deptColor}33, inset 0 0 20px ${deptColor}1A`,
@@ -207,6 +220,7 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
           rotateY,
           scale: springScale,
           transformStyle: 'preserve-3d',
+          touchAction: 'none',
         }}
         className="relative z-10 bg-crt-noise border-2 p-3 sm:p-5 rounded-lg sm:rounded-xl overflow-visible flex flex-col gap-3 text-white will-change-transform cursor-pointer transform-gpu"
       >
