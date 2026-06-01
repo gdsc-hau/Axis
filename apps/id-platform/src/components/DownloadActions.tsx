@@ -25,10 +25,22 @@ export default function DownloadActions({ cardRef, hauId }: DownloadActionsProps
     try {
       setDownloading('jpg');
       const canvas = await captureCard();
-      const link = document.createElement('a');
-      link.download = `${hauId}.jpg`;
-      link.href = canvas.toDataURL('image/jpeg', 0.95);
-      link.click();
+      const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.95));
+      if (!blob) throw new Error('Canvas to Blob failed');
+      
+      const file = new File([blob], `${hauId}.jpg`, { type: 'image/jpeg' });
+      
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'GDG ID Card',
+        });
+      } else {
+        const link = document.createElement('a');
+        link.download = `${hauId}.jpg`;
+        link.href = URL.createObjectURL(blob);
+        link.click();
+      }
     } catch (err) {
       console.error('JPG download failed:', err);
     } finally {
@@ -54,7 +66,21 @@ export default function DownloadActions({ cardRef, hauId }: DownloadActionsProps
       });
 
       pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
-      pdf.save(`${hauId}.pdf`);
+      
+      const pdfBlob = pdf.output('blob');
+      const file = new File([pdfBlob], `${hauId}.pdf`, { type: 'application/pdf' });
+      
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'GDG ID Card',
+        });
+      } else {
+        const link = document.createElement('a');
+        link.download = `${hauId}.pdf`;
+        link.href = URL.createObjectURL(pdfBlob);
+        link.click();
+      }
     } catch (err) {
       console.error('PDF download failed:', err);
     } finally {
