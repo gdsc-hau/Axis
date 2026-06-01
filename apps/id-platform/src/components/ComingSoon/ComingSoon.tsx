@@ -9,45 +9,7 @@ export default function ComingSoon() {
   return (
     <main className="min-h-screen relative flex flex-col items-center bg-[#030305] overflow-x-hidden text-cyan-50 font-sans selection:bg-cyan-500 selection:text-black">
       
-      {/* Background keyframes matching About/Home */}
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes lavaLeftSlow {
-          0% { transform: translateY(80vh) scale(1, 1.2); opacity: 0.15; }
-          30% { transform: translateY(40vh) scale(1.1, 0.9); opacity: 0.25; }
-          50% { transform: translateY(-10vh) scale(1.3, 0.8); opacity: 0.15; }
-          75% { transform: translateY(35vh) scale(0.9, 1.1); opacity: 0.25; }
-          100% { transform: translateY(80vh) scale(1, 1.2); opacity: 0.15; }
-        }
-        @keyframes lavaLeftFast {
-          0% { transform: translateY(-20vh) scale(1.2, 0.8); opacity: 0.15; }
-          40% { transform: translateY(30vh) scale(0.9, 1.15); opacity: 0.2; }
-          70% { transform: translateY(75vh) scale(1.1, 0.9); opacity: 0.1; }
-          90% { transform: translateY(20vh) scale(1, 1.2); opacity: 0.25; }
-          100% { transform: translateY(-20vh) scale(1.2, 0.8); opacity: 0.15; }
-        }
-        @keyframes lavaRightSlow {
-          0% { transform: translateY(75vh) scale(1.1, 0.9); opacity: 0.1; }
-          35% { transform: translateY(15vh) scale(0.95, 1.2); opacity: 0.2; }
-          60% { transform: translateY(-15vh) scale(1.25, 0.85); opacity: 0.15; }
-          80% { transform: translateY(45vh) scale(1, 1.1); opacity: 0.2; }
-          100% { transform: translateY(75vh) scale(1.1, 0.9); opacity: 0.1; }
-        }
-        @keyframes lavaRightFast {
-          0% { transform: translateY(-15vh) scale(1.3, 0.8); opacity: 0.15; }
-          25% { transform: translateY(25vh) scale(0.9, 1.1); opacity: 0.2; }
-          55% { transform: translateY(80vh) scale(1.15, 0.95); opacity: 0.1; }
-          85% { transform: translateY(30vh) scale(1, 1.2); opacity: 0.2; }
-          100% { transform: translateY(-15vh) scale(1.3, 0.8); opacity: 0.15; }
-        }
-        .lava-blue { animation: lavaLeftSlow 28s ease-in-out infinite; }
-        .lava-red { animation: lavaLeftFast 22s ease-in-out infinite; }
-        .lava-yellow { animation: lavaRightSlow 32s ease-in-out infinite; }
-        .lava-green { animation: lavaRightFast 25s ease-in-out infinite; }
-        .glow-blue { background: radial-gradient(circle, rgba(66, 133, 244, 0.3) 0%, rgba(66, 133, 244, 0.05) 40%, rgba(0,0,0,0) 70%); }
-        .glow-red { background: radial-gradient(circle, rgba(234, 67, 53, 0.25) 0%, rgba(234, 67, 53, 0.05) 40%, rgba(0,0,0,0) 70%); }
-        .glow-yellow { background: radial-gradient(circle, rgba(251, 188, 5, 0.2) 0%, rgba(251, 188, 5, 0.03) 40%, rgba(0,0,0,0) 70%); }
-        .glow-green { background: radial-gradient(circle, rgba(52, 168, 83, 0.25) 0%, rgba(52, 168, 83, 0.05) 40%, rgba(0,0,0,0) 70%); }
-      `}} />
+
 
       <Navbar />
 

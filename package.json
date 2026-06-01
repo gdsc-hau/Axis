@@ -1,7 +1,7 @@
 {
   "name": "gdg-hau-id-platform",
   "private": true,
-  "packageManager": "pnpm@11.3.0",
+  "packageManager": "pnpm@9.0.0",
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "html2canvas": "^1.4.1",
-    "jspdf": "^4.2.1",
-    "pnpm": "^11.3.0"
+    "jspdf": "^2.5.1"
   }
 }
