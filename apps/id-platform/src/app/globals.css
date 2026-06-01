@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
 /* ───── LAVA LAMP ANIMATIONS ───── */
 @keyframes geminiPulse {
   0%, 100% { transform: translate(-50%, -50%) scale(0.85); opacity: 0.35; }
