@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import FaqSearch from '@/components/Faq/FaqSearch';
@@ -213,9 +214,9 @@ export default function FAQPage() {
             <a href="https://docs.google.com/forms/d/e/1FAIpQLSdTlb-2I6oSTFUtcPsJVy5xF4AoWH0bf16BWHtwXP0RYnxCTA/viewform" target="_blank" rel="noopener noreferrer" className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl transition-all shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:shadow-[0_0_30px_rgba(37,99,235,0.6)]">
               Become a Member
             </a>
-            <a href="#" className="px-8 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl transition-all border border-white/10">
+            <Link href="/contact" className="px-8 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl transition-all border border-white/10">
               Contact Support
-            </a>
+            </Link>
           </motion.div>
         </div>
 
