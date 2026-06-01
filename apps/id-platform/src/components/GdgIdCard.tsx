@@ -191,7 +191,7 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
 
   return (
     <div
-      className="relative animate-in fade-in zoom-in duration-300 w-[92vw] sm:w-full max-w-sm mx-auto font-pixelated z-10"
+      className="relative animate-in fade-in zoom-in duration-300 w-full max-w-[360px] sm:max-w-sm mx-auto font-pixelated z-10"
       style={{ perspective: "1000px" }}
     >
       {/* Ambient Glow Background */}
@@ -239,14 +239,14 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
         <div style={{ transform: 'translateZ(15px)', transformStyle: 'preserve-3d' }} className="flex flex-col gap-3 w-full h-full relative">
 
         {/* 5.2 Header Component */}
-        <div className="flex items-center space-x-3 border-2 border-white p-2">
-          <div className="relative w-12 h-12 flex items-center justify-center shrink-0">
+        <div className="flex items-center space-x-2 sm:space-x-3 border-2 border-white p-1.5 sm:p-2">
+          <div className="relative w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center shrink-0">
             {/* GDG_LOGO_PLACEHOLDER */}
             <Image src="/gdg_icon.png" alt="GDG Logo" fill className="animate-[pulse_4s_infinite] object-contain" />
           </div>
           <div className="flex-grow">
-            <h1 className="uppercase font-bold text-xl sm:text-2xl leading-none tracking-wide text-white">Google Developers Group</h1>
-            <p className="text-xs sm:text-sm mt-1 text-gray-200">On Campus - Holy Angel University</p>
+            <h1 className="uppercase font-bold text-[17px] sm:text-2xl leading-[1.1] sm:leading-none tracking-wide text-white">Google Developers Group</h1>
+            <p className="text-[10px] sm:text-sm mt-0.5 sm:mt-1 text-gray-200">On Campus - Holy Angel University</p>
           </div>
         </div>
 
@@ -262,14 +262,14 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
               ))}
             </div>
             {/* GLITCH_GRAPHIC_2_PLACEHOLDER */}
-            <div className="grid grid-cols-10 gap-0.5 opacity-80 flex-grow max-w-[80px]">
+            <div className="grid grid-cols-10 gap-0.5 opacity-80 flex-grow max-w-[60px] sm:max-w-[80px]">
               {[...Array(30)].map((_, i) => (
-                <div key={i} className={`w-1.5 h-1.5 ${i % 3 === 0 ? 'bg-white' : 'bg-gray-400'}`}></div>
+                <div key={i} className={`w-1 h-1 sm:w-1.5 sm:h-1.5 ${i % 3 === 0 ? 'bg-white' : 'bg-gray-400'}`}></div>
               ))}
             </div>
           </div>
 
-          <div className="text-4xl sm:text-5xl font-bold flex tracking-wider">
+          <div className="text-3xl sm:text-5xl font-bold flex tracking-wider">
             <span className="text-red-500 glitch-effect" data-text="2">2</span>
             <span className="text-blue-500 glitch-effect" data-text="6">6</span>
             <span className="text-white mx-0.5">'</span>
@@ -281,7 +281,7 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
         <div className="w-full border-b-2 border-dashed border-white opacity-50 my-1"></div>
 
         {/* 5.4 ImagePanelSection Component */}
-        <div className="flex border-2 border-white h-40">
+        <div className="flex border-2 border-white h-32 sm:h-40">
           <div
             className="w-5/12 p-2 border-r border-dashed border-white relative bg-[#111] overflow-hidden flex items-center justify-center"
             style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden', isolation: 'isolate' }}
@@ -299,7 +299,7 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
 
           <div className="w-7/12 p-2 relative bg-black flex items-center justify-center">
             {/* SKULL_GRAPHIC_PLACEHOLDER */}
-            <div className="relative w-28 h-28 flex items-center justify-center -ml-4 z-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">
+            <div className="relative w-20 h-20 sm:w-28 sm:h-28 flex items-center justify-center -ml-4 z-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">
               <Image src="/skull.png" alt="Skull Graphic" fill className="object-contain" />
             </div>
 
@@ -319,8 +319,8 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
         </div>
 
         {/* 5.5 MottoSection Component */}
-        <div className="flex flex-col mt-2">
-          <h2 className="uppercase font-bold text-2xl sm:text-[28px] leading-none tracking-wide flex justify-between w-full">
+        <div className="flex flex-col mt-1 sm:mt-2">
+          <h2 className="uppercase font-bold text-[19px] sm:text-[28px] leading-none tracking-wide flex justify-between w-full">
             <span className="text-red-500 glitch-effect" data-text="BUILD.">BUILD.</span>
             <span className="text-blue-500 glitch-effect" data-text="LEAD.">LEAD.</span>
             <span className="text-green-500 glitch-effect" data-text="TRANSFORM.">TRANSFORM.</span>
@@ -347,28 +347,28 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
 
         {/* 5.6 InfoSection Component */}
         <div className="border-2 border-white">
-          <div className="border-b-2 border-white py-1 px-4 flex space-x-2 text-xl text-white">
+          <div className="border-b-2 border-white py-1 px-3 sm:px-4 flex space-x-2 text-xl text-white">
             <span>*</span><span>*</span><span>*</span><span>*</span>
           </div>
 
-          <div className="flex justify-between items-center py-2 sm:py-2.5 px-4 border-b-2 border-white bg-white/5">
-            <span className="font-bold text-gray-300 text-sm sm:text-base">GDG_CODE:</span>
-            <span className="font-mono tracking-widest text-white">{gdgCode}</span>
+          <div className="flex justify-between items-center py-1.5 sm:py-2.5 px-3 sm:px-4 border-b-2 border-white bg-white/5">
+            <span className="font-bold text-gray-300 text-xs sm:text-base">GDG_CODE:</span>
+            <span className="font-mono tracking-widest text-white text-sm sm:text-base">{gdgCode}</span>
           </div>
 
-          <div className="flex justify-between items-center py-2 sm:py-2.5 px-4 border-b-2 border-white">
-            <span className="font-bold text-gray-300 text-sm sm:text-base">IDENTITY_NAME:</span>
-            <span className="uppercase text-white tracking-wide">{profile.fullName}</span>
+          <div className="flex justify-between items-center py-1.5 sm:py-2.5 px-3 sm:px-4 border-b-2 border-white">
+            <span className="font-bold text-gray-300 text-xs sm:text-base">IDENTITY_NAME:</span>
+            <span className="uppercase text-white tracking-wide text-xs sm:text-base max-w-[160px] sm:max-w-none text-right truncate">{profile.fullName}</span>
           </div>
 
-          <div className="flex justify-between items-center py-2 sm:py-2.5 px-4 border-b-2 border-white bg-white/5">
-            <span className="font-bold text-gray-300 text-sm sm:text-base">EMAIL:</span>
-            <span className="lowercase text-white font-sans text-xs sm:text-sm tracking-wide">{profile.email}</span>
+          <div className="flex justify-between items-center py-1.5 sm:py-2.5 px-3 sm:px-4 border-b-2 border-white bg-white/5">
+            <span className="font-bold text-gray-300 text-xs sm:text-base">EMAIL:</span>
+            <span className="lowercase text-white font-sans text-[10px] sm:text-sm tracking-wide max-w-[160px] sm:max-w-none text-right truncate">{profile.email}</span>
           </div>
 
-          <div className="flex justify-between items-center py-2 sm:py-2.5 px-4">
-            <span className="font-bold text-gray-300 text-sm sm:text-base">PROGRAM:</span>
-            <span className="uppercase text-white tracking-wide">{profile.program.replace(/ /g, '_')}</span>
+          <div className="flex justify-between items-center py-1.5 sm:py-2.5 px-3 sm:px-4">
+            <span className="font-bold text-gray-300 text-xs sm:text-base">PROGRAM:</span>
+            <span className="uppercase text-white tracking-wide text-[10px] sm:text-base max-w-[150px] sm:max-w-none text-right truncate">{profile.program.replace(/ /g, '_')}</span>
           </div>
         </div>
         </div>
