@@ -40,6 +40,20 @@ export default function DualEntrySearchPage() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const event = new CustomEvent("chatbot-visibility", {
+      detail: { visible: !profile }
+    });
+    window.dispatchEvent(event);
+
+    return () => {
+      const restoreEvent = new CustomEvent("chatbot-visibility", {
+        detail: { visible: true }
+      });
+      window.dispatchEvent(restoreEvent);
+    };
+  }, [profile]);
+
   const handleEmailSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
