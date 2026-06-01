@@ -11,6 +11,9 @@ const vt323 = VT323({
 export const metadata: Metadata = {
   title: "GDG HAU ID Platform",
   description: "The digital identity and membership verification hub for GDG HAU.",
+  icons: {
+    icon: "/gdg_icon.png",
+  },
   robots: {
     index: false,
     follow: false,
