@@ -1,4 +1,4 @@
-import { useRef, MouseEvent, TouchEvent, useCallback, useEffect } from 'react';
+import { useRef, MouseEvent, TouchEvent, useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 import QRCode from 'react-qr-code';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
@@ -25,6 +25,33 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const rectRef = useRef<DOMRect | null>(null);
   const gdgCode = profile.hauId.replace(/\D/g, '') || '010101010110101';
+
+  const [scale, setScale] = useState(1);
+  const [cardHeight, setCardHeight] = useState(620);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (!containerRef.current) return;
+      const containerWidth = containerRef.current.clientWidth;
+      const maxCardWidth = 360;
+      if (containerWidth < maxCardWidth) {
+        setScale(containerWidth / maxCardWidth);
+      } else {
+        setScale(1);
+      }
+      if (cardRef.current) {
+        setCardHeight(cardRef.current.offsetHeight);
+      }
+    };
+
+    const timer = setTimeout(handleResize, 100);
+    window.addEventListener('resize', handleResize);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [profile]);
 
   // rAF ref used to throttle mousemove to one update per frame
   const rafRef = useRef<number | null>(null);
@@ -190,191 +217,203 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
   )?.[1] || "#ffffff";
 
   return (
-    <div
-      className="relative animate-in fade-in zoom-in duration-300 w-full max-w-[360px] sm:max-w-sm mx-auto font-pixelated z-10"
-      style={{ perspective: "1000px" }}
-    >
-      {/* Ambient Glow Background */}
-      <motion.div
-        className="absolute inset-0 z-0"
+    <div ref={containerRef} className="w-full max-w-[360px] sm:max-w-sm mx-auto flex flex-col z-10 relative">
+      <div
+        className="w-full relative overflow-visible"
         style={{
-          background: `radial-gradient(circle, ${deptColor} 0%, transparent 70%)`,
-          opacity: springOpacity
+          transform: `scale(${scale})`,
+          transformOrigin: 'center top',
+          height: `${cardHeight * scale}px`,
+          transition: 'height 0.15s ease-out'
         }}
-      />
-
-      {/* 5.1 Card Component */}
-      <motion.div
-        ref={cardRef}
-        onMouseMove={handleMouseMove}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onClick={requestOrientationPermission}
-        style={{
-          borderColor: deptColor,
-          boxShadow: `0 0 30px ${deptColor}33, inset 0 0 20px ${deptColor}1A`,
-          rotateX,
-          rotateY,
-          scale: springScale,
-          transformStyle: 'preserve-3d',
-          touchAction: 'none',
-        }}
-        className="relative z-10 bg-crt-noise border-2 p-3 sm:p-5 rounded-lg sm:rounded-xl overflow-visible flex flex-col gap-3 text-white will-change-transform cursor-pointer transform-gpu"
       >
-        {/* Thickness / Perspective Layer */}
-        <div 
-          className="absolute inset-0 rounded-lg sm:rounded-xl border-2 pointer-events-none z-[-1]"
-          style={{
-            transform: 'translateZ(-6px)',
-            borderColor: deptColor,
-            backgroundColor: `${deptColor}10`,
-            boxShadow: `0 10px 30px rgba(0,0,0,0.4)`,
-          }}
-        />
+        <div
+          className="relative animate-in fade-in zoom-in duration-300 w-full font-pixelated z-10"
+          style={{ perspective: "1000px" }}
+        >
+          {/* Ambient Glow Background */}
+          <motion.div
+            className="absolute inset-0 z-0"
+            style={{
+              background: `radial-gradient(circle, ${deptColor} 0%, transparent 70%)`,
+              opacity: springOpacity
+            }}
+          />
 
-        {/* Sub-content wrapper for 3D pop */}
-        <div style={{ transform: 'translateZ(15px)', transformStyle: 'preserve-3d' }} className="flex flex-col gap-3 w-full h-full relative">
-
-        {/* 5.2 Header Component */}
-        <div className="flex items-center space-x-2 sm:space-x-3 border-2 border-white p-1.5 sm:p-2">
-          <div className="relative w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center shrink-0">
-            {/* GDG_LOGO_PLACEHOLDER */}
-            <Image src="/gdg_icon.png" alt="GDG Logo" fill className="animate-[pulse_4s_infinite] object-contain" />
-          </div>
-          <div className="flex-grow">
-            <h1 className="uppercase font-bold text-[17px] sm:text-2xl leading-[1.1] sm:leading-none tracking-wide text-white">Google Developers Group</h1>
-            <p className="text-[10px] sm:text-sm mt-0.5 sm:mt-1 text-gray-200">On Campus - Holy Angel University</p>
-          </div>
-        </div>
-
-        <div className="w-full border-b-2 border-dashed border-white opacity-50 my-1"></div>
-
-        {/* 5.3 YearSection Component */}
-        <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-4 flex-grow">
-            {/* GLITCH_GRAPHIC_1_PLACEHOLDER */}
-            <div className="flex">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className={`w-4 h-4 bg-white ${i % 2 === 0 ? 'mt-4' : ''}`}></div>
-              ))}
-            </div>
-            {/* GLITCH_GRAPHIC_2_PLACEHOLDER */}
-            <div className="grid grid-cols-10 gap-0.5 opacity-80 flex-grow max-w-[60px] sm:max-w-[80px]">
-              {[...Array(30)].map((_, i) => (
-                <div key={i} className={`w-1 h-1 sm:w-1.5 sm:h-1.5 ${i % 3 === 0 ? 'bg-white' : 'bg-gray-400'}`}></div>
-              ))}
-            </div>
-          </div>
-
-          <div className="text-3xl sm:text-5xl font-bold flex tracking-wider">
-            <span className="text-red-500 glitch-effect" data-text="2">2</span>
-            <span className="text-blue-500 glitch-effect" data-text="6">6</span>
-            <span className="text-white mx-0.5">'</span>
-            <span className="text-green-500 glitch-effect" data-text="2">2</span>
-            <span className="text-yellow-500 glitch-effect" data-text="7">7</span>
-          </div>
-        </div>
-
-        <div className="w-full border-b-2 border-dashed border-white opacity-50 my-1"></div>
-
-        {/* 5.4 ImagePanelSection Component */}
-        <div className="flex border-2 border-white h-32 sm:h-40">
-          <div
-            className="w-5/12 p-2 border-r border-dashed border-white relative bg-[#111] overflow-hidden flex items-center justify-center"
-            style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden', isolation: 'isolate' }}
+          {/* 5.1 Card Component */}
+          <motion.div
+            ref={cardRef}
+            onMouseMove={handleMouseMove}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onClick={requestOrientationPermission}
+            style={{
+              borderColor: deptColor,
+              boxShadow: `0 0 30px ${deptColor}33, inset 0 0 20px ${deptColor}1A`,
+              rotateX,
+              rotateY,
+              scale: springScale,
+              transformStyle: 'preserve-3d',
+              touchAction: 'none',
+            }}
+            className="relative z-10 bg-crt-noise border-2 p-3 sm:p-5 rounded-lg sm:rounded-xl overflow-visible flex flex-col gap-3 text-white will-change-transform cursor-pointer transform-gpu"
           >
-            {/* QR Code - encodes cardholder email */}
-            <QRCode
-              value={profile.email}
-              size={256}
-              bgColor="#111111"
-              fgColor="#ffffff"
-              level="M"
-              style={{ width: '100%', height: 'auto', maxHeight: '100%', shapeRendering: 'crispEdges', imageRendering: 'pixelated' }}
+            {/* Thickness / Perspective Layer */}
+            <div 
+              className="absolute inset-0 rounded-lg sm:rounded-xl border-2 pointer-events-none z-[-1]"
+              style={{
+                transform: 'translateZ(-6px)',
+                borderColor: deptColor,
+                backgroundColor: `${deptColor}10`,
+                boxShadow: `0 10px 30px rgba(0,0,0,0.4)`,
+              }}
             />
-          </div>
 
-          <div className="w-7/12 p-2 relative bg-black flex items-center justify-center">
-            {/* SKULL_GRAPHIC_PLACEHOLDER */}
-            <div className="relative w-20 h-20 sm:w-28 sm:h-28 flex items-center justify-center -ml-4 z-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">
-              <Image src="/skull.png" alt="Skull Graphic" fill className="object-contain" />
+            {/* Sub-content wrapper for 3D pop */}
+            <div style={{ transform: 'translateZ(15px)', transformStyle: 'preserve-3d' }} className="flex flex-col gap-3 w-full h-full relative">
+
+            {/* 5.2 Header Component */}
+            <div className="flex items-center space-x-2 sm:space-x-3 border-2 border-white p-1.5 sm:p-2">
+              <div className="relative w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center shrink-0">
+                {/* GDG_LOGO_PLACEHOLDER */}
+                <Image src="/gdg_icon.png" alt="GDG Logo" fill className="animate-[pulse_4s_infinite] object-contain" />
+              </div>
+              <div className="flex-grow">
+                <h1 className="uppercase font-bold text-[17px] sm:text-2xl leading-[1.1] sm:leading-none tracking-wide text-white">Google Developers Group</h1>
+                <p className="text-[10px] sm:text-sm mt-0.5 sm:mt-1 text-gray-200">On Campus - Holy Angel University</p>
+              </div>
             </div>
 
-            {/* BINARY_CODE_PLACEHOLDER */}
-            <div className="absolute bottom-2 left-2 text-[8px] text-blue-400 font-mono leading-[1.1]">
-              <p>0101011010</p>
-              <p>1101010101</p>
-              <p>0101010101</p>
-              <p>1100101011</p>
+            <div className="w-full border-b-2 border-dashed border-white opacity-50 my-1"></div>
+
+            {/* 5.3 YearSection Component */}
+            <div className="flex justify-between items-center">
+              <div className="flex items-center space-x-4 flex-grow">
+                {/* GLITCH_GRAPHIC_1_PLACEHOLDER */}
+                <div className="flex">
+                  {[...Array(4)].map((_, i) => (
+                    <div key={i} className={`w-4 h-4 bg-white ${i % 2 === 0 ? 'mt-4' : ''}`}></div>
+                  ))}
+                </div>
+                {/* GLITCH_GRAPHIC_2_PLACEHOLDER */}
+                <div className="grid grid-cols-10 gap-0.5 opacity-80 flex-grow max-w-[60px] sm:max-w-[80px]">
+                  {[...Array(30)].map((_, i) => (
+                    <div key={i} className={`w-1 h-1 sm:w-1.5 sm:h-1.5 ${i % 3 === 0 ? 'bg-white' : 'bg-gray-400'}`}></div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="text-3xl sm:text-5xl font-bold flex tracking-wider">
+                <span className="text-red-500 glitch-effect" data-text="2">2</span>
+                <span className="text-blue-500 glitch-effect" data-text="6">6</span>
+                <span className="text-white mx-0.5">'</span>
+                <span className="text-green-500 glitch-effect" data-text="2">2</span>
+                <span className="text-yellow-500 glitch-effect" data-text="7">7</span>
+              </div>
             </div>
 
-            {/* Abstract asterisks */}
-            <div className="absolute top-2 left-2 flex space-x-1 text-white text-xs">
-              <span>*</span><span>*</span><span>*</span>
+            <div className="w-full border-b-2 border-dashed border-white opacity-50 my-1"></div>
+
+            {/* 5.4 ImagePanelSection Component */}
+            <div className="flex border-2 border-white h-32 sm:h-40">
+              <div
+                className="w-5/12 p-2 border-r border-dashed border-white relative bg-[#111] overflow-hidden flex items-center justify-center"
+                style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden', isolation: 'isolate' }}
+              >
+                {/* QR Code - encodes cardholder email */}
+                <QRCode
+                  value={profile.email}
+                  size={256}
+                  bgColor="#111111"
+                  fgColor="#ffffff"
+                  level="M"
+                  style={{ width: '100%', height: 'auto', maxHeight: '100%', shapeRendering: 'crispEdges', imageRendering: 'pixelated' }}
+                />
+              </div>
+
+              <div className="w-7/12 p-2 relative bg-black flex items-center justify-center">
+                {/* SKULL_GRAPHIC_PLACEHOLDER */}
+                <div className="relative w-20 h-20 sm:w-28 sm:h-28 flex items-center justify-center -ml-4 z-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">
+                  <Image src="/skull.png" alt="Skull Graphic" fill className="object-contain" />
+                </div>
+
+                {/* BINARY_CODE_PLACEHOLDER */}
+                <div className="absolute bottom-2 left-2 text-[8px] text-blue-400 font-mono leading-[1.1]">
+                  <p>0101011010</p>
+                  <p>1101010101</p>
+                  <p>0101010101</p>
+                  <p>1100101011</p>
+                </div>
+
+                {/* Abstract asterisks */}
+                <div className="absolute top-2 left-2 flex space-x-1 text-white text-xs">
+                  <span>*</span><span>*</span><span>*</span>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        {/* 5.5 MottoSection Component */}
-        <div className="flex flex-col mt-1 sm:mt-2">
-          <h2 className="uppercase font-bold text-[19px] sm:text-[28px] leading-none tracking-wide flex justify-between w-full">
-            <span className="text-red-500 glitch-effect" data-text="BUILD.">BUILD.</span>
-            <span className="text-blue-500 glitch-effect" data-text="LEAD.">LEAD.</span>
-            <span className="text-green-500 glitch-effect" data-text="TRANSFORM.">TRANSFORM.</span>
-          </h2>
-        </div>
-
-        <div className="flex justify-between items-center h-10 gap-2 mb-1">
-          {/* ABSTRACT_GRAPHIC_1_PLACEHOLDER */}
-          <div className="flex h-full w-1/2 items-center space-x-2">
-            <div className="w-8 h-full flex flex-col justify-between">
-              {[...Array(6)].map((_, i) => <div key={i} className="w-full h-[2px] bg-white"></div>)}
+            {/* 5.5 MottoSection Component */}
+            <div className="flex flex-col mt-1 sm:mt-2">
+              <h2 className="uppercase font-bold text-[19px] sm:text-[28px] leading-none tracking-wide flex justify-between w-full">
+                <span className="text-red-500 glitch-effect" data-text="BUILD.">BUILD.</span>
+                <span className="text-blue-500 glitch-effect" data-text="LEAD.">LEAD.</span>
+                <span className="text-green-500 glitch-effect" data-text="TRANSFORM.">TRANSFORM.</span>
+              </h2>
             </div>
-            <div className="h-full flex-grow bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSJ0cmFuc3BhcmVudCI+PC9yZWN0Pgo8cGF0aCBkPSJNMCAwTDggOFpNOCAwTDAgOFoiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIxIiBvcGFjaXR5PSIwLjUiPjwvcGF0aD4KPC9zdmc+')] opacity-70"></div>
-          </div>
-          {/* ABSTRACT_GRAPHIC_2_PLACEHOLDER */}
-          <div className="w-1/2 flex justify-center items-center h-full border-2 border-white bg-transparent">
-            <div className="w-full h-full rounded-full border border-white mx-2 flex items-center justify-center">
-              <div className="w-4 h-4 bg-white transform rotate-45"></div>
+
+            <div className="flex justify-between items-center h-10 gap-2 mb-1">
+              {/* ABSTRACT_GRAPHIC_1_PLACEHOLDER */}
+              <div className="flex h-full w-1/2 items-center space-x-2">
+                <div className="w-8 h-full flex flex-col justify-between">
+                  {[...Array(6)].map((_, i) => <div key={i} className="w-full h-[2px] bg-white"></div>)}
+                </div>
+                <div className="h-full flex-grow bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSJ0cmFuc3BhcmVudCI+PC9yZWN0Pgo8cGF0aCBkPSJNMCAwTDggOFpNOCAwTDAgOFoiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIxIiBvcGFjaXR5PSIwLjUiPjwvcGF0aD4KPC9zdmc+')] opacity-70"></div>
+              </div>
+              {/* ABSTRACT_GRAPHIC_2_PLACEHOLDER */}
+              <div className="w-1/2 flex justify-center items-center h-full border-2 border-white bg-transparent">
+                <div className="w-full h-full rounded-full border border-white mx-2 flex items-center justify-center">
+                  <div className="w-4 h-4 bg-white transform rotate-45"></div>
+                </div>
+              </div>
             </div>
-          </div>
+
+            <div className="w-full border-b-2 border-dashed border-white opacity-50 my-1"></div>
+
+            {/* 5.6 InfoSection Component */}
+            <div className="border-2 border-white">
+              <div className="border-b-2 border-white py-1 px-3 sm:px-4 flex space-x-2 text-xl text-white">
+                <span>*</span><span>*</span><span>*</span><span>*</span>
+              </div>
+
+              <div className="flex justify-between items-center py-1.5 sm:py-2.5 px-3 sm:px-4 border-b-2 border-white bg-white/5">
+                <span className="font-bold text-gray-300 text-xs sm:text-base">GDG_CODE:</span>
+                <span className="font-mono tracking-widest text-white text-sm sm:text-base">{gdgCode}</span>
+              </div>
+
+              <div className="flex justify-between items-center py-1.5 sm:py-2.5 px-3 sm:px-4 border-b-2 border-white">
+                <span className="font-bold text-gray-300 text-xs sm:text-base">IDENTITY_NAME:</span>
+                <span className="uppercase text-white tracking-wide text-xs sm:text-base max-w-[160px] sm:max-w-none text-right truncate">{profile.fullName}</span>
+              </div>
+
+              <div className="flex justify-between items-center py-1.5 sm:py-2.5 px-3 sm:px-4 border-b-2 border-white bg-white/5">
+                <span className="font-bold text-gray-300 text-xs sm:text-base">EMAIL:</span>
+                <span className="lowercase text-white font-sans text-[10px] sm:text-sm tracking-wide max-w-[160px] sm:max-w-none text-right truncate">{profile.email}</span>
+              </div>
+
+              <div className="flex justify-between items-center py-1.5 sm:py-2.5 px-3 sm:px-4">
+                <span className="font-bold text-gray-300 text-xs sm:text-base">PROGRAM:</span>
+                <span className="uppercase text-white tracking-wide text-[10px] sm:text-base max-w-[150px] sm:max-w-none text-right truncate">{profile.program.replace(/ /g, '_')}</span>
+              </div>
+            </div>
+            </div>
+          </motion.div>
         </div>
+      </div>
 
-        <div className="w-full border-b-2 border-dashed border-white opacity-50 my-1"></div>
-
-        {/* 5.6 InfoSection Component */}
-        <div className="border-2 border-white">
-          <div className="border-b-2 border-white py-1 px-3 sm:px-4 flex space-x-2 text-xl text-white">
-            <span>*</span><span>*</span><span>*</span><span>*</span>
-          </div>
-
-          <div className="flex justify-between items-center py-1.5 sm:py-2.5 px-3 sm:px-4 border-b-2 border-white bg-white/5">
-            <span className="font-bold text-gray-300 text-xs sm:text-base">GDG_CODE:</span>
-            <span className="font-mono tracking-widest text-white text-sm sm:text-base">{gdgCode}</span>
-          </div>
-
-          <div className="flex justify-between items-center py-1.5 sm:py-2.5 px-3 sm:px-4 border-b-2 border-white">
-            <span className="font-bold text-gray-300 text-xs sm:text-base">IDENTITY_NAME:</span>
-            <span className="uppercase text-white tracking-wide text-xs sm:text-base max-w-[160px] sm:max-w-none text-right truncate">{profile.fullName}</span>
-          </div>
-
-          <div className="flex justify-between items-center py-1.5 sm:py-2.5 px-3 sm:px-4 border-b-2 border-white bg-white/5">
-            <span className="font-bold text-gray-300 text-xs sm:text-base">EMAIL:</span>
-            <span className="lowercase text-white font-sans text-[10px] sm:text-sm tracking-wide max-w-[160px] sm:max-w-none text-right truncate">{profile.email}</span>
-          </div>
-
-          <div className="flex justify-between items-center py-1.5 sm:py-2.5 px-3 sm:px-4">
-            <span className="font-bold text-gray-300 text-xs sm:text-base">PROGRAM:</span>
-            <span className="uppercase text-white tracking-wide text-[10px] sm:text-base max-w-[150px] sm:max-w-none text-right truncate">{profile.program.replace(/ /g, '_')}</span>
-          </div>
-        </div>
-        </div>
-      </motion.div>
-
-      <div className="mt-6 font-sans relative z-10">
+      <div className="mt-6 font-sans relative z-10 w-full">
         <DownloadActions cardRef={cardRef} hauId={profile.hauId} />
       </div>
 

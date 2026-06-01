@@ -9,6 +9,12 @@ interface DownloadActionsProps {
   hauId: string;
 }
 
+const isIOS = () => {
+  if (typeof window === 'undefined') return false;
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+};
+
 export default function DownloadActions({ cardRef, hauId }: DownloadActionsProps) {
   const [downloading, setDownloading] = useState<'jpg' | 'pdf' | null>(null);
 
@@ -22,6 +28,12 @@ export default function DownloadActions({ cardRef, hauId }: DownloadActionsProps
   };
 
   const handleDownloadJPG = async () => {
+    let newTab: Window | null = null;
+    const canUseShare = typeof navigator !== 'undefined' && !!navigator.share;
+    if (isIOS() && !canUseShare) {
+      newTab = window.open('', '_blank');
+    }
+
     try {
       setDownloading('jpg');
       const canvas = await captureCard();
@@ -31,7 +43,7 @@ export default function DownloadActions({ cardRef, hauId }: DownloadActionsProps
       const file = new File([blob], `${hauId}.jpg`, { type: 'image/jpeg' });
       
       let shared = false;
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      if (canUseShare && navigator.canShare && navigator.canShare({ files: [file] })) {
         try {
           await navigator.share({
             files: [file],
@@ -44,22 +56,40 @@ export default function DownloadActions({ cardRef, hauId }: DownloadActionsProps
       } 
       
       if (!shared) {
-        const link = document.createElement('a');
-        link.download = `${hauId}.jpg`;
-        link.href = URL.createObjectURL(blob);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(link.href);
+        const fileUrl = URL.createObjectURL(blob);
+        if (isIOS()) {
+          if (newTab) {
+            newTab.location.href = fileUrl;
+          } else {
+            window.open(fileUrl, '_blank');
+          }
+        } else {
+          const link = document.createElement('a');
+          link.download = `${hauId}.jpg`;
+          link.href = fileUrl;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+        setTimeout(() => URL.revokeObjectURL(fileUrl), 10000);
+      } else {
+        if (newTab) newTab.close();
       }
     } catch (err) {
       console.error('JPG download failed:', err);
+      if (newTab) newTab.close();
     } finally {
       setDownloading(null);
     }
   };
 
   const handleDownloadPDF = async () => {
+    let newTab: Window | null = null;
+    const canUseShare = typeof navigator !== 'undefined' && !!navigator.share;
+    if (isIOS() && !canUseShare) {
+      newTab = window.open('', '_blank');
+    }
+
     try {
       setDownloading('pdf');
       const canvas = await captureCard();
@@ -82,7 +112,7 @@ export default function DownloadActions({ cardRef, hauId }: DownloadActionsProps
       const file = new File([pdfBlob], `${hauId}.pdf`, { type: 'application/pdf' });
       
       let shared = false;
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      if (canUseShare && navigator.canShare && navigator.canShare({ files: [file] })) {
         try {
           await navigator.share({
             files: [file],
@@ -95,16 +125,28 @@ export default function DownloadActions({ cardRef, hauId }: DownloadActionsProps
       } 
       
       if (!shared) {
-        const link = document.createElement('a');
-        link.download = `${hauId}.pdf`;
-        link.href = URL.createObjectURL(pdfBlob);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(link.href);
+        const fileUrl = URL.createObjectURL(pdfBlob);
+        if (isIOS()) {
+          if (newTab) {
+            newTab.location.href = fileUrl;
+          } else {
+            window.open(fileUrl, '_blank');
+          }
+        } else {
+          const link = document.createElement('a');
+          link.download = `${hauId}.pdf`;
+          link.href = fileUrl;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+        setTimeout(() => URL.revokeObjectURL(fileUrl), 10000);
+      } else {
+        if (newTab) newTab.close();
       }
     } catch (err) {
       console.error('PDF download failed:', err);
+      if (newTab) newTab.close();
     } finally {
       setDownloading(null);
     }

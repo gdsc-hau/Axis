@@ -100,7 +100,7 @@ export default function DualEntrySearchPage() {
   };
 
   return (
-    <main className="min-h-screen relative flex flex-col items-center justify-center bg-[#030305] overflow-hidden px-4 py-8 md:py-12 pt-28 md:pt-32 text-cyan-50 font-sans selection:bg-cyan-500 selection:text-black">
+    <main className="min-h-screen relative flex flex-col items-center justify-center bg-[#030305] overflow-x-hidden overflow-y-auto px-4 py-8 md:py-12 pt-28 md:pt-32 text-cyan-50 font-sans selection:bg-cyan-500 selection:text-black">
       {/* HEADER */}
       <Navbar />
 
