@@ -30,16 +30,27 @@ export default function DownloadActions({ cardRef, hauId }: DownloadActionsProps
       
       const file = new File([blob], `${hauId}.jpg`, { type: 'image/jpeg' });
       
+      let shared = false;
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          title: 'GDG ID Card',
-        });
-      } else {
+        try {
+          await navigator.share({
+            files: [file],
+            title: 'GDG ID Card',
+          });
+          shared = true;
+        } catch (shareErr) {
+          console.error('Share failed, falling back to direct download:', shareErr);
+        }
+      } 
+      
+      if (!shared) {
         const link = document.createElement('a');
         link.download = `${hauId}.jpg`;
         link.href = URL.createObjectURL(blob);
+        document.body.appendChild(link);
         link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
       }
     } catch (err) {
       console.error('JPG download failed:', err);
@@ -70,16 +81,27 @@ export default function DownloadActions({ cardRef, hauId }: DownloadActionsProps
       const pdfBlob = pdf.output('blob');
       const file = new File([pdfBlob], `${hauId}.pdf`, { type: 'application/pdf' });
       
+      let shared = false;
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          title: 'GDG ID Card',
-        });
-      } else {
+        try {
+          await navigator.share({
+            files: [file],
+            title: 'GDG ID Card',
+          });
+          shared = true;
+        } catch (shareErr) {
+          console.error('Share failed, falling back to direct download:', shareErr);
+        }
+      } 
+      
+      if (!shared) {
         const link = document.createElement('a');
         link.download = `${hauId}.pdf`;
         link.href = URL.createObjectURL(pdfBlob);
+        document.body.appendChild(link);
         link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
       }
     } catch (err) {
       console.error('PDF download failed:', err);
