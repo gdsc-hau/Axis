@@ -1,4 +1,4 @@
-import { useRef, MouseEvent, useCallback, useEffect } from 'react';
+import { useRef, MouseEvent, TouchEvent, useCallback, useEffect } from 'react';
 import Image from 'next/image';
 import QRCode from 'react-qr-code';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
@@ -28,6 +28,11 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
 
   // rAF ref used to throttle mousemove to one update per frame
   const rafRef = useRef<number | null>(null);
+  
+  // Touch & Spin Tracking
+  const touchStartX = useRef<number | null>(null);
+  const touchLastTime = useRef<number | null>(null);
+  const currentSpin = useRef(0);
 
   // Use MotionValues to avoid React re-renders during mouse move
   const xRotation = useMotionValue(0);
@@ -64,7 +69,7 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
       const rotateYValue = ((x - centerX) / centerX) * 10;
 
       xRotation.set(rotateXValue);
-      yRotation.set(rotateYValue);
+      yRotation.set(rotateYValue + currentSpin.current);
     });
   }, [xRotation, yRotation]);
 
@@ -75,14 +80,96 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
       cancelAnimationFrame(rafRef.current);
     }
     xRotation.set(0);
-    yRotation.set(0);
+    yRotation.set(currentSpin.current);
+  };
+  
+  const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
+    springScale.set(1.02);
+    springOpacity.set(0.4);
+    if (cardRef.current) {
+      rectRef.current = cardRef.current.getBoundingClientRect();
+    }
+    touchStartX.current = e.touches[0].clientX;
+    touchLastTime.current = Date.now();
+  };
+
+  const handleTouchMove = useCallback((e: TouchEvent<HTMLDivElement>) => {
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+    }
+
+    rafRef.current = requestAnimationFrame(() => {
+      const rect = rectRef.current;
+      if (!rect) return;
+      const touch = e.touches[0];
+      const x = touch.clientX - rect.left;
+      const y = touch.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const rotateXValue = ((y - centerY) / centerY) * -15; // slightly stronger tilt on mobile
+      const rotateYValue = ((x - centerX) / centerX) * 15;
+
+      xRotation.set(rotateXValue);
+      yRotation.set(rotateYValue + currentSpin.current);
+    });
+  }, [xRotation, yRotation]);
+
+  const handleTouchEnd = (e: TouchEvent<HTMLDivElement>) => {
+    springScale.set(1);
+    springOpacity.set(0.2);
+    
+    if (touchStartX.current !== null && touchLastTime.current !== null) {
+      const touchEndX = e.changedTouches[0].clientX;
+      const deltaX = touchEndX - touchStartX.current;
+      const deltaTime = Date.now() - touchLastTime.current;
+      
+      const velocity = deltaX / deltaTime;
+      
+      if (Math.abs(velocity) > 1.2) {
+        // Flick detected
+        const spinDirection = velocity > 0 ? 1 : -1;
+        currentSpin.current += 360 * spinDirection;
+      }
+    }
+
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+    }
+    xRotation.set(0);
+    yRotation.set(currentSpin.current);
+    
+    touchStartX.current = null;
+    touchLastTime.current = null;
   };
 
   useEffect(() => {
+    const handleOrientation = (event: DeviceOrientationEvent) => {
+      const gamma = event.gamma; 
+      const beta = event.beta;
+      
+      if (gamma !== null && beta !== null) {
+        // Assume phone held near 45deg tilt. Shift beta so 45deg is 'flat'
+        const normalizedBeta = beta - 45;
+        const rotateXValue = Math.max(-20, Math.min(20, -normalizedBeta));
+        const rotateYValue = Math.max(-20, Math.min(20, gamma));
+        
+        xRotation.set(rotateXValue);
+        yRotation.set(rotateYValue + currentSpin.current);
+      }
+    };
+    
+    if (typeof window !== 'undefined' && window.DeviceOrientationEvent) {
+      window.addEventListener('deviceorientation', handleOrientation);
+    }
+
     return () => {
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+      if (typeof window !== 'undefined' && window.DeviceOrientationEvent) {
+        window.removeEventListener('deviceorientation', handleOrientation);
+      }
     };
-  }, []);
+  }, [xRotation, yRotation]);
 
   // Simplified color lookup to ensure clean block scope
   const deptUpper = profile.department?.toUpperCase() || "";
@@ -92,7 +179,7 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
 
   return (
     <div
-      className="relative animate-in fade-in zoom-in duration-300 w-full max-w-sm mx-auto font-pixelated z-10"
+      className="relative animate-in fade-in zoom-in duration-300 w-[92vw] sm:w-full max-w-sm mx-auto font-pixelated z-10"
       style={{ perspective: "1000px" }}
     >
       {/* Ambient Glow Background */}
@@ -110,16 +197,33 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
         onMouseMove={handleMouseMove}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         style={{
           borderColor: deptColor,
-          boxShadow: `0 0 30px ${deptColor}33`,
+          boxShadow: `0 0 30px ${deptColor}33, inset 0 0 20px ${deptColor}1A`,
           rotateX,
           rotateY,
           scale: springScale,
           transformStyle: 'preserve-3d',
         }}
-        className="relative z-10 bg-crt-noise border-2 p-4 sm:p-5 rounded-lg overflow-hidden flex flex-col gap-3 text-white will-change-transform cursor-pointer transform-gpu backface-hidden"
+        className="relative z-10 bg-crt-noise border-2 p-3 sm:p-5 rounded-lg sm:rounded-xl overflow-visible flex flex-col gap-3 text-white will-change-transform cursor-pointer transform-gpu"
       >
+        {/* Thickness / Perspective Layer */}
+        <div 
+          className="absolute inset-0 rounded-lg sm:rounded-xl border-2 pointer-events-none z-[-1]"
+          style={{
+            transform: 'translateZ(-6px)',
+            borderColor: deptColor,
+            backgroundColor: `${deptColor}10`,
+            boxShadow: `0 10px 30px rgba(0,0,0,0.4)`,
+          }}
+        />
+
+        {/* Sub-content wrapper for 3D pop */}
+        <div style={{ transform: 'translateZ(15px)', transformStyle: 'preserve-3d' }} className="flex flex-col gap-3 w-full h-full relative">
+
         {/* 5.2 Header Component */}
         <div className="flex items-center space-x-3 border-2 border-white p-2">
           <div className="relative w-12 h-12 flex items-center justify-center shrink-0">
@@ -252,6 +356,7 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
             <span className="font-bold text-gray-300 text-sm sm:text-base">PROGRAM:</span>
             <span className="uppercase text-white tracking-wide">{profile.program.replace(/ /g, '_')}</span>
           </div>
+        </div>
         </div>
       </motion.div>
 
