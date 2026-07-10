@@ -2,10 +2,13 @@
   "$schema": "https://turbo.build/schema.json",
   "globalEnv": [
     "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "UPSTASH_REDIS_REST_URL",
     "UPSTASH_REDIS_REST_TOKEN",
-    "DATABASE_URL"
+    "DATABASE_URL",
+    "NEXT_PUBLIC_HUB_URL",
+    "NEXT_PUBLIC_ID_URL"
   ],
   "tasks": {
     "build": {
@@ -16,6 +19,7 @@
       "cache": false,
       "persistent": true
     },
-    "lint": {}
+    "lint": {},
+    "typecheck": {}
   }
 }
