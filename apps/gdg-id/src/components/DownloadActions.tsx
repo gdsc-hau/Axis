@@ -6,7 +6,7 @@ import { jsPDF } from 'jspdf';
 
 interface DownloadActionsProps {
   cardRef: RefObject<HTMLDivElement | null>;
-  hauId: string;
+  gdgId: string;
 }
 
 const isIOS = () => {
@@ -15,7 +15,7 @@ const isIOS = () => {
     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 };
 
-export default function DownloadActions({ cardRef, hauId }: DownloadActionsProps) {
+export default function DownloadActions({ cardRef, gdgId }: DownloadActionsProps) {
   const [downloading, setDownloading] = useState<'jpg' | 'pdf' | null>(null);
 
   const captureCard = async () => {
@@ -40,7 +40,7 @@ export default function DownloadActions({ cardRef, hauId }: DownloadActionsProps
       const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.95));
       if (!blob) throw new Error('Canvas to Blob failed');
       
-      const file = new File([blob], `${hauId}.jpg`, { type: 'image/jpeg' });
+      const file = new File([blob], `${gdgId}.jpg`, { type: 'image/jpeg' });
       
       let shared = false;
       if (canUseShare && navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -65,7 +65,7 @@ export default function DownloadActions({ cardRef, hauId }: DownloadActionsProps
           }
         } else {
           const link = document.createElement('a');
-          link.download = `${hauId}.jpg`;
+          link.download = `${gdgId}.jpg`;
           link.href = fileUrl;
           document.body.appendChild(link);
           link.click();
@@ -109,7 +109,7 @@ export default function DownloadActions({ cardRef, hauId }: DownloadActionsProps
       pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
       
       const pdfBlob = pdf.output('blob');
-      const file = new File([pdfBlob], `${hauId}.pdf`, { type: 'application/pdf' });
+      const file = new File([pdfBlob], `${gdgId}.pdf`, { type: 'application/pdf' });
       
       let shared = false;
       if (canUseShare && navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -134,7 +134,7 @@ export default function DownloadActions({ cardRef, hauId }: DownloadActionsProps
           }
         } else {
           const link = document.createElement('a');
-          link.download = `${hauId}.pdf`;
+          link.download = `${gdgId}.pdf`;
           link.href = fileUrl;
           document.body.appendChild(link);
           link.click();

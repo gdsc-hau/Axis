@@ -6,7 +6,7 @@ import { z } from 'zod';
 export const HauMemberSchema = z.object({
   id: z.string().uuid().optional(),
   studentId: z.string(), // Private
-  hauId: z.string().describe("Formatted as GDG-HAU-26-XXXX"),
+  gdgId: z.string().describe("Formatted as GDG-HAU-26-XXXX"),
   fullName: z.string(),
   email: z.string().email(),
   program: z.string(),
@@ -21,7 +21,7 @@ export type HauMember = z.infer<typeof HauMemberSchema>;
  * Public Member Profile: safe for frontend rendering (No student_id or department).
  */
 export const PublicMemberProfileSchema = z.object({
-  hauId: z.string(),
+  gdgId: z.string(),
   fullName: z.string(),
   program: z.string(),
   email: z.string().email(),

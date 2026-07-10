@@ -24,7 +24,8 @@ const deptColors: Record<string, string> = {
 export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const rectRef = useRef<DOMRect | null>(null);
-  const gdgCode = profile.hauId.replace(/\D/g, '') || '010101010110101';
+  // We need to parse a simple numerical code for the barcode fallback
+  const gdgCode = profile.gdgId.replace(/\D/g, '') || '010101010110101';
 
   const [scale, setScale] = useState(1);
   const [cardHeight, setCardHeight] = useState(620);
@@ -414,7 +415,7 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
       </div>
 
       <div className="mt-6 font-sans relative z-10 w-full">
-        <DownloadActions cardRef={cardRef} hauId={profile.hauId} />
+        <DownloadActions cardRef={cardRef} gdgId={profile.gdgId} />
       </div>
 
       <button

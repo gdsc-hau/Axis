@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
     const column = type === 'barcode' ? 'student_id' : 'email';
     const { data: member, error } = await supabase
       .from('members')
-      .select('hau_id, full_name, program, email, department, is_accepted')
+      .select('gdg_id, full_name, program, email, department, is_accepted')
       .eq(column, value)
       .single();
 
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
 
     // Apply strict server-side data masking (PublicMemberProfileSchema)
     const publicProfile = PublicMemberProfileSchema.parse({
-      hauId: member.hau_id,
+      gdgId: member.gdg_id,
       fullName: member.full_name,
       program: member.program,
       email: member.email,

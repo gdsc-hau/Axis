@@ -164,7 +164,14 @@ importers:
         specifier: latest
         version: 4.4.3
 
-  packages/db: {}
+  packages/db:
+    dependencies:
+      '@supabase/ssr':
+        specifier: ^0.10.3
+        version: 0.10.3(@supabase/supabase-js@2.106.2)
+      '@supabase/supabase-js':
+        specifier: ^2.106.2
+        version: 2.106.2
 
   packages/events: {}
 
