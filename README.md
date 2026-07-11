@@ -1,15 +1,19 @@
-# GDG HAU ID Platform
+# GDG HAU Axis - ID & Hub Platform
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?logo=supabase)](https://supabase.com/)
+[![Turborepo](https://img.shields.io/badge/Turborepo-Monorepo-EF4444?logo=turborepo)](https://turbo.build/repo)
 
-The official digital identity and membership verification hub for **Google Developer Groups on Campus – Holy Angel University (GDG HAU)**. This platform allows members to search for, verify, and showcase their unique GDG IDs and digital membership cards.
+The official ecosystem and digital identity hub for **Google Developer Groups on Campus – Holy Angel University (GDG HAU)**. This platform contains multiple applications and shared packages designed to handle member identities, event management, ticketing, points, badges, and internal community operations.
+
+For complete developer documentation, please refer to our [Documentation Portal](docs/index.md) (or run `mkdocs serve`).
+
+---
 
 ## 🚀 Quick Start
 
 Follow these steps to get your development environment running locally.
-
 
 ### Prerequisites
 
@@ -32,15 +36,21 @@ Ensure you have the following installed before proceeding:
    ```
 
 3. **Set up environment variables**
-   Copy `.env.example` to `.env.local` and fill in your Supabase credentials.
+   Copy `.env.example` to `.env.local` or `.env` inside the respective applications (`apps/gdg-hub` and `apps/gdg-id`) and fill in your Supabase credentials.
+
+4. **Start local Supabase (Database & Auth)**
+   Make sure Docker is running on your machine, then run:
    ```bash
-   cp .env.example .env.local
+   supabase start
    ```
 
-4. **Start the development server**
+5. **Start the development server**
+   Using Turborepo, you can start all apps simultaneously:
    ```bash
    pnpm dev
    ```
+
+---
 
 ## 🛠 Tech Stack
 
@@ -48,26 +58,43 @@ Ensure you have the following installed before proceeding:
 - **Backend & Database:** Supabase (PostgreSQL, Auth, Storage)
 - **Type Safety:** Zod & TypeScript (End-to-End Type Safety)
 - **Monorepo Management:** Turborepo & pnpm Workspaces
+- **Documentation:** MkDocs (Material theme)
+
+---
 
 ## 📂 Project Structure
 
 This project uses a monorepo setup powered by Turborepo and pnpm workspaces:
 
 ```text
-gdghau-id-platform/
+gdg-axis/
 ├── apps/
-│   └── id-platform/          # The core Next.js web application
+│   ├── gdg-hub/              # Internal event, membership, and points management system
+│   └── gdg-id/               # Public-facing digital ID, profile, and portfolio viewer
 ├── packages/
+│   ├── auth/                 # Shared authentication logic & Supabase wrappers
+│   ├── badges/               # Badge awarding and verification logic
+│   ├── certificates/         # PDF certificate generation for events
+│   ├── config/               # ESLint, Prettier, and global configs
 │   ├── contracts/            # Shared DB schemas and Zod contracts
-│   ├── typescript-config/    # Shared TypeScript configurations
-│   └── ui/                   # Shared UI components (e.g., GdgIdCard)
-└── supabase/
-    └── migrations/           # Supabase SQL migration files
+│   ├── db/                   # Database clients, models, and queries
+│   ├── events/               # Event registration and attendance logic
+│   ├── marketplace/          # Point redemption and swag marketplace logic
+│   ├── points/               # Points ledger and calculation logic
+│   ├── pwa/                  # Progressive Web App configuration logic
+│   ├── types/                # Global TypeScript type definitions
+│   ├── typescript-config/    # Shared `tsconfig.json` configurations
+│   └── ui/                   # Shared UI components (Tailwind + shadcn/ui)
+├── supabase/
+│   └── migrations/           # Supabase SQL migration files
+└── docs/                     # MkDocs documentation source files
 ```
+
+---
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for more details on our workflow, branching strategy, and coding standards.
+We welcome contributions! Please see our [Contributing Guidelines](docs/contributing/standards.md) for more details on our workflow, branching strategy, coding standards, and documentation rules.
 
 ---
 Built with ❤️ by the **GDG HAU Core Team**.

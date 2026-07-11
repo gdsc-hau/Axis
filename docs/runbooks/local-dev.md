@@ -1,21 +1,58 @@
-# Local Development
+# Local Development Runbook
 
-1. Install workspace dependencies with `pnpm install`.
-2. Copy `env.example` to a local environment file and fill in Supabase credentials.
-3. Start the app with `pnpm dev` from the root or the app package.
-4. Run the database locally if your feature needs migrations or auth state.
-5. Verify the member and admin routes with a logged-in session.
+This runbook describes the standard workflow for running the platform on your own machine.
 
-## Helpful commands
+## Setup Supabase
 
-- `pnpm dev`: start the monorepo dev workflow
-- `pnpm build`: build all workspaces through Turbo
-- `pnpm lint`: run linting across the repo
-- `pnpm typecheck`: run TypeScript checks across the repo
-- `pnpm docs:serve`: preview the MkDocs site once MkDocs is installed
+Make sure Docker is running.
+```bash
+supabase start
+```
+This boots up the local database, auth service, and storage on your machine.
+- Studio URL: `http://127.0.0.1:54323`
+- API URL: `http://127.0.0.1:54321`
 
-## Important local details
+To populate the local database with mock members and events for testing:
+```bash
+supabase db reset
+```
+*(This applies the migrations and runs the `supabase/seed.sql` file if it exists).*
 
-- `apps/gdg-hub` runs on port 3001
-- Middleware protects `/member` and `/admin` routes and sends unauthenticated users to `/login`
-- Auth pages are accessible under the app route group structure in `apps/gdg-hub/app`
+## Starting the Apps
+
+From the root directory, leverage Turborepo to start all frontend applications simultaneously:
+
+```bash
+pnpm dev
+```
+By default:
+- `gdg-hub` runs on `http://localhost:3000`
+- `gdg-id` runs on `http://localhost:3001`
+
+If you only want to run one specific app (for example, to save memory):
+```bash
+pnpm --filter gdg-hub dev
+```
+
+## Adding a New Dependency
+
+Because this is a monorepo, adding dependencies requires specifying which workspace package you want to add it to.
+
+To add an external package (like `lodash`) to `gdg-id`:
+```bash
+pnpm --filter gdg-id add lodash
+```
+
+To add an internal package (like `@hau/ui`) to `gdg-hub`:
+```bash
+pnpm --filter gdg-hub add @hau/ui@workspace:*
+```
+
+## Clean Environment
+
+If Turborepo cache or Next.js cache is causing weird bugs:
+```bash
+pnpm clean
+pnpm install
+pnpm dev
+```

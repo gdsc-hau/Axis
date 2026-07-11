@@ -1,5 +1,30 @@
 # Documentation Rules
 
-Keep documentation Markdown-first, concise, and close to the code it describes.
+Documentation is just as important as the code itself. Outdated or inaccurate documentation leads to confusion and bugs. 
 
-When docs change, update the relevant page in MkDocs rather than leaving notes only in source files.
+## General Guidelines
+
+- **Keep it Living:** Whenever you add a new feature, change the architecture, or update a database table, you MUST update the corresponding markdown file in the `docs/` directory in the same Pull Request.
+- **No Secrets:** **Never** hardcode API keys, Supabase URLs, or production passwords into the documentation. If you need to demonstrate how to use an environment variable, use dummy values (e.g., `SUPABASE_KEY=your-anon-key-here`).
+- **Clear Formatting:** Use standard Markdown features: headers for hierarchy, bullet points for lists, and code blocks with syntax highlighting for code snippets.
+
+## Adding New Pages
+
+If you are adding a completely new section or page to the documentation:
+1. Create the `.md` file in the appropriate directory inside `docs/`.
+2. Open `mkdocs.yml` in the root directory.
+3. Add the file path to the `nav` tree so it appears in the sidebar navigation.
+
+## Testing Docs Locally
+
+We use MkDocs with the Material theme to generate this documentation site.
+
+To preview your changes locally before committing:
+```bash
+# If you don't have mkdocs installed, install it via pip
+pip install mkdocs-material
+
+# Run the local server
+mkdocs serve
+```
+The documentation site will be available at `http://127.0.0.1:8000/`. Verify that your formatting looks correct and that all internal links are working.

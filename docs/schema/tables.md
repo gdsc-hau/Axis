@@ -1,48 +1,65 @@
-# Tables
+# Data Dictionary & Tables
 
-The current migrations define these core tables and relationships:
+This document outlines the core tables in the `public` schema. All tables use `snake_case` naming conventions.
 
-## Identity
+## `members`
+The core identity table.
+- `id` (UUID): Primary key, matches `auth.users.id`.
+- `gdg_id` (TEXT): The human-readable GDG Holy Angel University ID.
+- `role` (TEXT): `MEMBER` or `ADMIN`.
+- `updated_at` (TIMESTAMPTZ)
 
-- `members`: identity record with `student_id`, `email`, `hau_id`, `full_name`, `program`, `department`, and acceptance state
-- `member_profiles`: one-to-one profile data for a member
-- `member_credentials`: identity or document credentials tied to a member
-- `member_verifications`: verification events and reviewer notes
-- `id_qr_codes`: per-member QR values for identity checks
-- `verification_logs`: audit trail for verification actions
+## `member_profiles`
+Publicly viewable profile data for members.
+- `id` (UUID)
+- `member_id` (UUID): FK to `members`.
+- `bio` (TEXT)
+- `phone_number` (TEXT)
+- `links` (JSONB): Links to GitHub, LinkedIn, etc.
 
-## Community and events
+## `id_qr_codes`
+Stores the active QR code for a member's digital ID.
+- `member_id` (UUID): FK to `members`.
+- `qr_value` (TEXT): The securely hashed or random string encoded in the QR.
+- `expires_at` (TIMESTAMPTZ): When the QR code must be rotated.
 
-- `events`: event metadata including Luma URL, dates, status, and type
-- `event_attendance`: member registration, check-in, and confirmation state per event
-- `notifications`: user-facing notifications for members
+## `events`
+A scheduled workshop, hackathon, or meeting.
+- `id` (UUID)
+- `title` (TEXT)
+- `description` (TEXT)
+- `location` (TEXT)
+- `luma_url` (TEXT): Link to external RSVP system if used.
+- `status` (TEXT): `DRAFT`, `PUBLISHED`, `COMPLETED`.
 
-## Rewards and recognition
+## `event_attendance`
+Tracks who RSVP'd and who actually attended.
+- `event_id` (UUID): FK to `events`.
+- `member_id` (UUID): FK to `members`.
+- `status` (TEXT): `REGISTERED` or `CHECKED_IN`.
+- `confirmed_by` (UUID): FK to the admin who scanned the QR code.
 
-- `points_ledger`: points transactions and running balances
-- `badges`: badge catalog
-- `member_badges`: badge ownership per member
-- `certificates`: issued certificates linked to members and optionally events
-- `redemptions`: reward redemption requests and approvals
+## `points_ledger`
+An append-only immutable ledger tracking the points economy.
+- `id` (UUID)
+- `member_id` (UUID): FK to `members`.
+- `source_type` (TEXT): Reason for points (e.g., `EVENT_ATTENDANCE`, `MARKETPLACE_REDEMPTION`).
+- `points` (INTEGER): Can be positive (earned) or negative (spent).
+- `balance_after` (INTEGER): The running total of the member's points *after* this transaction.
 
-## Shared and operational
+## `badges` & `member_badges`
+- `badges`: Dictionary of available badges (e.g., "Hackathon Winner").
+- `member_badges`: Mapping table tracking which member earned which badge and when.
 
-- `app_settings`: key/value application settings
-- `audit_logs`: generic activity log for sensitive actions
+## `certificates`
+Tracks generated PDFs for event attendees.
+- `event_id` (UUID)
+- `member_id` (UUID)
+- `certificate_number` (TEXT): Unique verifier ID.
+- `pdf_url` (TEXT): Pointer to Supabase Storage.
 
-## Key relationships
-
-- `member_profiles.member_id` references `members.id`
-- `member_credentials.member_id` references `members.id`
-- `member_verifications.member_id` references `members.id`
-- `member_verifications.verified_by` references `members.id`
-- `event_attendance.event_id` references `events.id`
-- `event_attendance.member_id` references `members.id`
-- `points_ledger.member_id` references `members.id`
-- `member_badges.member_id` references `members.id`
-- `member_badges.badge_id` references `badges.id`
-- `certificates.member_id` references `members.id`
-- `certificates.event_id` references `events.id`
-- `redemptions.member_id` references `members.id`
-- `redemptions.approved_by` references `members.id`
-
+## `redemptions`
+Marketplace requests made by members.
+- `member_id` (UUID)
+- `total_cost` (INTEGER): Points deducted.
+- `status` (TEXT): `PENDING`, `FULFILLED`, `REJECTED`.

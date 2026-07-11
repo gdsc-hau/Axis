@@ -1,14 +1,45 @@
-# API Overview
+# API & Data Flow Overview
 
-The platform exposes route handlers for auth callbacks, leaderboard rebuilds, certificate issuance, attendance confirmation, Luma sync, and redemption creation.
+Because we use Next.js App Router and Supabase, our "API" looks quite different from a traditional Express/Node backend.
 
-## Route families
+We do not write many traditional REST API routes (e.g., `/api/users`). Instead, we leverage **React Server Components (RSC)** and **Server Actions**.
 
-- `auth/callback`: handles authentication return flows
-- `api/leaderboard/rebuild`: refreshes leaderboard data
-- `api/certificates/issue` and `api/certificates/resend`: certificate workflows
-- `api/attendance/confirm`: attendance confirmation workflow
-- `api/luma/sync`: imports or refreshes event data from Luma
-- `api/redemptions/create`: creates redemption requests
+## How Data is Read (Server Components)
 
-This section should document the purpose, inputs, outputs, and permissions for each endpoint.
+To fetch data to display on the screen, we query the database *directly* from the server component.
+
+```tsx
+import { createClient } from '@hau/db/server';
+
+export default async function MembersPage() {
+  const supabase = await createClient();
+  const { data: members } = await supabase.from('members').select('*');
+  
+  return <MembersTable data={members} />;
+}
+```
+*Why this is good:* It removes the need for a separate `fetch('/api/members')` call from the client, eliminating network waterfalls and ensuring the UI loads with data instantly.
+
+## How Data is Mutated (Server Actions)
+
+To handle form submissions, clicks, or data updates, we use Server Actions. These are asynchronous functions executed on the server but called from client components.
+
+```tsx
+'use server'
+import { createClient } from '@hau/db/server';
+import { revalidatePath } from 'next/cache';
+
+export async function awardPointsAction(memberId: string, points: number) {
+  const supabase = await createClient();
+  
+  // 1. Validate Admin Role (handled automatically if RLS is strong, or explicitly here)
+  
+  // 2. Perform DB Mutation
+  await supabase.from('points_ledger').insert({ member_id: memberId, points });
+  
+  // 3. Clear cache so the UI updates
+  revalidatePath('/admin/members');
+}
+```
+
+These patterns ensure strong type safety (because the server action and the UI share the same TypeScript scope) and faster development velocity.
