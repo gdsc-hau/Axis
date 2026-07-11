@@ -21,6 +21,12 @@ importers:
 
   apps/gdg-hub:
     dependencies:
+      '@hau/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@hau/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       '@supabase/ssr':
         specifier: ^0.10.3
         version: 0.10.3(@supabase/supabase-js@2.106.2)
@@ -150,7 +156,20 @@ importers:
         specifier: ^5
         version: 5.9.3
 
-  packages/auth: {}
+  packages/auth:
+    dependencies:
+      '@hau/db':
+        specifier: workspace:*
+        version: link:../db
+      '@hau/types':
+        specifier: workspace:*
+        version: link:../types
+      '@supabase/ssr':
+        specifier: ^0.1.0
+        version: 0.1.0(@supabase/supabase-js@2.106.2)
+      '@supabase/supabase-js':
+        specifier: ^2.39.0
+        version: 2.106.2
 
   packages/badges: {}
 
@@ -172,6 +191,9 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.106.2
         version: 2.106.2
+      next:
+        specifier: ^15.1.7
+        version: 15.5.18(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
 
   packages/events: {}
 
@@ -494,6 +516,11 @@ packages:
   '@supabase/realtime-js@2.106.2':
     resolution: {integrity: sha512-LdRGT7DNhyZkPjubUv5bSdAZ0jSEX8wTHvx7htj7+K59TOZRvz4TuQK7tL2RWxyIZVeFMRluL04SzWS61rKnUA==}
     engines: {node: '>=20.0.0'}
+
+  '@supabase/ssr@0.1.0':
+    resolution: {integrity: sha512-bIVrkqjAK5G3KjkIMKYKtAOlCgRRplEWjrlyRyXSOYtgDieiOhk2ZyNAPsEOa1By9OZVxuX5eAW1fitdnuxayw==}
+    peerDependencies:
+      '@supabase/supabase-js': ^2.33.1
 
   '@supabase/ssr@0.10.3':
     resolution: {integrity: sha512-ux2CJgX89h0Fz2lY7ZNafNG2SkXpyRc5dz77K9eKeBLPdtywQixKwIuetDeIViAJBp/buOUVmgj8PVesOklNpw==}
@@ -936,6 +963,10 @@ packages:
 
   concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
+
+  cookie@0.5.0:
+    resolution: {integrity: sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==}
+    engines: {node: '>= 0.6'}
 
   cookie@1.1.1:
     resolution: {integrity: sha512-ei8Aos7ja0weRpFzJnEA9UHJ/7XQmqglbRwnf2ATjcB9Wq874VKH9kfjjirM6UhU2/E5fFYadylyhFldcqSidQ==}
@@ -1840,6 +1871,9 @@ packages:
   raf@3.4.1:
     resolution: {integrity: sha512-Sq4CW4QhwOHE8ucn6J34MqtZCeWFP2aQSmrlroYgqAV1PjStIhJXxYuTgUIfkEk7zTLjmIjLmU5q+fbD1NnOJA==}
 
+  ramda@0.29.1:
+    resolution: {integrity: sha512-OfxIeWzd4xdUNxlWhgFazxsA/nl3mS4/jGZI5n00uWOoSSFRhC1b6gl6xvmzUamgmqELraWp0J/qqVlXYPDPyA==}
+
   react-dom@19.2.6:
     resolution: {integrity: sha512-0prMI+hvBbPjsWnxDLxlCGyM8PN6UuWjEUCYmZhO67xIV9Xasa/r/vDnq+Xyq4Lo27g8QSbO5YzARu0D1Sps3g==}
     peerDependencies:
@@ -2444,6 +2478,12 @@ snapshots:
       '@supabase/phoenix': 0.4.2
       tslib: 2.8.1
 
+  '@supabase/ssr@0.1.0(@supabase/supabase-js@2.106.2)':
+    dependencies:
+      '@supabase/supabase-js': 2.106.2
+      cookie: 0.5.0
+      ramda: 0.29.1
+
   '@supabase/ssr@0.10.3(@supabase/supabase-js@2.106.2)':
     dependencies:
       '@supabase/supabase-js': 2.106.2
@@ -2890,6 +2930,8 @@ snapshots:
   commander@4.1.1: {}
 
   concat-map@0.0.1: {}
+
+  cookie@0.5.0: {}
 
   cookie@1.1.1: {}
 
@@ -3935,6 +3977,8 @@ snapshots:
     dependencies:
       performance-now: 2.1.0
     optional: true
+
+  ramda@0.29.1: {}
 
   react-dom@19.2.6(react@19.2.6):
     dependencies:
