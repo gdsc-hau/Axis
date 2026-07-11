@@ -1,15 +1,12 @@
-site_name: GDG HAU Docs
+site_name: Axis Documentation
 site_description: Documentation for the GDG HAU ecosystem
 
 theme:
-  name: material
-  features:
-    - navigation.tabs
-    - navigation.sections
-    - navigation.expand
-    - search.suggest
-    - search.highlight
-    - content.code.copy
+  name: readthedocs
+
+extra_css:
+  - stylesheets/extra.css
+
 
 nav:
   - Home: index.md
