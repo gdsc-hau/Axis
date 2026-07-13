@@ -1,7 +1,7 @@
 'use server';
 
 import { redirect } from 'next/navigation';
-import { createServerClientInstance } from '@hau/db';
+import { createAdminClient, createServerClientInstance } from '@hau/db';
 
 export async function completeProfile(formData: FormData) {
 
@@ -17,35 +17,55 @@ export async function completeProfile(formData: FormData) {
   const linkedin = formData.get('linkedin') as string;
   const github = formData.get('github') as string;
 
-  if (!fullName || !bio || !linkedin || !github) {
-    return { error: 'All fields are required.' };
+  if (!fullName || !bio) {
+    return { error: 'Full Name and Bio are required.' };
   }
 
-  // 1. Update Full Name in members table (if needed)
-  const { error: memberError } = await (supabase.from('members') as any)
-    .update({ full_name: fullName })
-    .eq('id', user.id);
+  const adminClient = createAdminClient();
 
-  if (memberError) {
-    console.error('Error updating member:', memberError);
-    return { error: 'Failed to update member information.' };
+  // 1. Get the member record corresponding to this auth user
+  let { data: member, error: fetchError } = await adminClient
+    .from('members')
+    .select('id, auth_id')
+    .eq('auth_id', user.id)
+    .single();
+
+  if (!member && user.email) {
+    const { data: memberByEmail } = await adminClient
+      .from('members')
+      .select('id, auth_id')
+      .eq('email', user.email)
+      .single();
+
+    if (memberByEmail) {
+      member = memberByEmail;
+      // Auto-link legacy accounts
+      await adminClient.from('members').update({ auth_id: user.id }).eq('id', member.id);
+    }
   }
 
-  // 2. Insert or update member_profiles table
+  if (!member) {
+    console.error('Error fetching member:', fetchError);
+    return { error: 'Could not find your member record in the system.' };
+  }
+
   const links = {
-    linkedin,
-    github,
+    ...(linkedin ? { linkedin } : {}),
+    ...(github ? { github } : {}),
   };
 
-  const { error: profileError } = await (supabase.from('member_profiles') as any)
-    .upsert({
-      member_id: user.id,
+  // 2. Update member details directly in the flattened members table
+  const { error: updateError } = await adminClient
+    .from('members')
+    .update({ 
+      full_name: fullName,
       bio,
-      links,
-    }, { onConflict: 'member_id' });
+      links 
+    })
+    .eq('id', member.id);
 
-  if (profileError) {
-    console.error('Error updating profile:', profileError);
+  if (updateError) {
+    console.error('Error updating member profile:', updateError);
     return { error: 'Failed to save profile details.' };
   }
 

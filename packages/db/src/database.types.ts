@@ -12,6 +12,7 @@ export interface Database {
       members: {
         Row: {
           id: string
+          auth_id: string | null
           student_id: string
           gdg_id: string
           full_name: string
@@ -20,11 +21,16 @@ export interface Database {
           department: string
           role: string
           is_accepted: boolean
+          bio: string | null
+          phone_number: string | null
+          links: Json | null
+          status_message: string | null
           created_at: string
           updated_at: string
         }
         Insert: {
           id?: string
+          auth_id?: string | null
           student_id: string
           gdg_id: string
           full_name: string
@@ -33,11 +39,16 @@ export interface Database {
           department: string
           role?: string
           is_accepted?: boolean
+          bio?: string | null
+          phone_number?: string | null
+          links?: Json | null
+          status_message?: string | null
           created_at?: string
           updated_at?: string
         }
         Update: {
           id?: string
+          auth_id?: string | null
           student_id?: string
           gdg_id?: string
           full_name?: string
@@ -46,6 +57,10 @@ export interface Database {
           department?: string
           role?: string
           is_accepted?: boolean
+          bio?: string | null
+          phone_number?: string | null
+          links?: Json | null
+          status_message?: string | null
           created_at?: string
           updated_at?: string
         }
