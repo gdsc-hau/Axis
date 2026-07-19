@@ -3,23 +3,12 @@ import Image from 'next/image';
 import QRCode from 'react-qr-code';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 import DownloadActions from '@/components/DownloadActions';
-import type { PublicMemberProfile } from '@hau/contracts';
+import type { MemberSearchResult } from '@hau/contracts';
 
 interface GdgIdCardProps {
-  profile: PublicMemberProfile;
+  profile: MemberSearchResult;
   onEject: () => void;
 }
-
-const deptColors: Record<string, string> = {
-  SAS: '#9ca3af', // gray-400
-  SBA: '#facc15', // yellow-400
-  SHTM: '#f472b6', // pink-400
-  SED: '#3b82f6', // blue-500
-  SEA: '#ef4444', // red-500
-  SOC: '#f97316', // orange-500
-  SNAMS: '#22c55e', // green-500
-  CCJEF: '#8b5cf6', // violet-500
-};
 
 export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -212,10 +201,7 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
   }, [xRotation, yRotation]);
 
   // Simplified color lookup to ensure clean block scope
-  const deptUpper = profile.department?.toUpperCase() || "";
-  const deptColor = Object.entries(deptColors).find(([key]) =>
-    deptUpper.includes(key)
-  )?.[1] || "#ffffff";
+  const deptColor = '#4285f4';
 
   return (
     <div ref={containerRef} className="w-full max-w-[360px] sm:max-w-sm mx-auto flex flex-col z-10 relative">
@@ -324,9 +310,9 @@ export default function GdgIdCard({ profile, onEject }: GdgIdCardProps) {
                 className="w-5/12 p-2 border-r border-dashed border-white relative bg-[#111] overflow-hidden flex items-center justify-center"
                 style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden', isolation: 'isolate' }}
               >
-                {/* QR Code - encodes cardholder email */}
+                {/* Signed verification URL contains the member email in a tamper-evident payload. */}
                 <QRCode
-                  value={profile.email}
+                  value={profile.verificationUrl}
                   size={256}
                   bgColor="#111111"
                   fgColor="#ffffff"

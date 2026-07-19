@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, type RefObject } from 'react';
-import html2canvas from 'html2canvas';
-import { jsPDF } from 'jspdf';
 
 interface DownloadActionsProps {
   cardRef: RefObject<HTMLDivElement | null>;
@@ -20,6 +18,7 @@ export default function DownloadActions({ cardRef, gdgId }: DownloadActionsProps
 
   const captureCard = async () => {
     if (!cardRef.current) throw new Error('Card element not found');
+    const { default: html2canvas } = await import('html2canvas');
     return html2canvas(cardRef.current, {
       scale: 2,
       useCORS: true,
@@ -100,6 +99,7 @@ export default function DownloadActions({ cardRef, gdgId }: DownloadActionsProps
       const pageWidth = canvas.width * pxToMm;
       const pageHeight = canvas.height * pxToMm;
 
+      const { jsPDF } = await import('jspdf');
       const pdf = new jsPDF({
         orientation: pageWidth > pageHeight ? 'landscape' : 'portrait',
         unit: 'mm',

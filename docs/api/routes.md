@@ -32,4 +32,10 @@ export async function POST(request: Request) {
 
 ## Existing Routes
 
-- `/api/auth/callback`: Handles the OAuth redirect flow for Google Login, exchanging the auth code for a session cookie.
+- `gdg-id POST /api/search`: Rate-limited approved-member lookup.
+- `gdg-id POST /api/verify`: Validates a signed, unexpired QR credential and returns the approved public profile.
+- `gdg-hub GET /auth/callback`: Exchanges a Supabase invite, confirmation, or password-recovery code for a session.
+- `gdg-hub /forgot-password`: Requests a non-enumerating Supabase password recovery email.
+- `gdg-hub /reset-password`: Validates the temporary recovery session and updates the password for an approved member.
+
+The feature handlers under `gdg-hub/app/api` are placeholders and must not be treated as implemented APIs.

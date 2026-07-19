@@ -63,26 +63,24 @@ export default function VerifyPage() {
           </div>
           <div>
             <label className="block text-sm font-medium mb-1" htmlFor="linkedin">
-              LinkedIn Profile URL
+              LinkedIn Profile URL (Optional)
             </label>
             <input
               id="linkedin"
               name="linkedin"
               type="url"
-              required
               className="w-full px-3 py-2 border rounded-md dark:border-zinc-700 dark:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="https://linkedin.com/in/johndoe"
             />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1" htmlFor="github">
-              GitHub Profile URL
+              GitHub Profile URL (Optional)
             </label>
             <input
               id="github"
               name="github"
               type="url"
-              required
               className="w-full px-3 py-2 border rounded-md dark:border-zinc-700 dark:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="https://github.com/johndoe"
             />

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Sparkles, MessageCircle } from "lucide-react";
+import { X, Sparkles } from "lucide-react";
 
 export default function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false);

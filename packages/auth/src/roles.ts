@@ -1,11 +1,12 @@
-import { createServerClientInstance } from '@hau/db';
+import 'server-only';
+import { createAdminClient } from '@hau/db';
 
 export async function getUserRole(userId: string): Promise<string | null> {
-  const supabase = await createServerClientInstance();
+  const adminClient = createAdminClient();
   
-  const { data, error } = await (supabase.from('members') as any)
+  const { data, error } = await adminClient.from('members')
     .select('role')
-    .eq('id', userId)
+    .eq('auth_id', userId)
     .single();
     
   if (error || !data) {
@@ -16,21 +17,20 @@ export async function getUserRole(userId: string): Promise<string | null> {
 }
 
 export async function isProfileComplete(userId: string): Promise<boolean> {
-  const supabase = await createServerClientInstance();
+  const adminClient = createAdminClient();
   
-  const { data, error } = await (supabase.from('member_profiles') as any)
-    .select('id, bio, links')
-    .eq('member_id', userId)
+  // Get the member using auth_id and check if they have a bio
+  const { data: member, error: memberError } = await adminClient.from('members')
+    .select('id, bio')
+    .eq('auth_id', userId)
     .single();
     
-  if (error || !data) {
+  if (memberError || !member) {
     return false;
   }
   
-  // A profile is complete if it has a bio and links (LinkedIn, GitHub)
-  // Full Name is currently in the 'members' table, so we assume if member_profiles exists
-  // and has bio/links, it's complete.
-  if (!data.bio || !data.links) {
+  // A profile is complete if it has a bio since we merged profiles into members
+  if (!member.bio) {
     return false;
   }
   

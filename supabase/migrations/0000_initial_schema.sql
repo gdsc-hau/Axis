@@ -1,5 +1,30 @@
 -- Standardized Database Schema for GDG Hub & GDG ID (snake_case)
 
+-- Members must be created first because every domain table references it.
+-- This migration is intentionally self-contained so a fresh `supabase db reset`
+-- does not depend on a table having been created manually in production.
+CREATE TABLE IF NOT EXISTS public.members (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  auth_id UUID UNIQUE REFERENCES auth.users(id) ON DELETE SET NULL,
+  student_id TEXT NOT NULL UNIQUE,
+  email TEXT NOT NULL UNIQUE,
+  gdg_id TEXT NOT NULL UNIQUE,
+  full_name TEXT NOT NULL,
+  program TEXT NOT NULL,
+  department TEXT NOT NULL,
+  role TEXT NOT NULL DEFAULT 'MEMBER' CHECK (role IN ('MEMBER', 'ADMIN')),
+  is_accepted BOOLEAN NOT NULL DEFAULT FALSE,
+  bio TEXT,
+  phone_number TEXT,
+  links JSONB,
+  status_message TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_members_student_id ON public.members(student_id);
+CREATE INDEX IF NOT EXISTS idx_members_email ON public.members(email);
+
 -- Function to automatically update 'updated_at' column
 CREATE OR REPLACE FUNCTION set_updated_at()
 RETURNS TRIGGER AS $$
@@ -10,12 +35,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- 1. Members (Identity Core)
--- Note: the 'members' table already exists in the live database. 
--- We alter it to match the new schema structure smoothly.
-
-ALTER TABLE IF EXISTS members 
-  RENAME COLUMN hau_id TO gdg_id;
-
 -- Add new columns safely
 ALTER TABLE IF EXISTS members 
   ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'MEMBER',

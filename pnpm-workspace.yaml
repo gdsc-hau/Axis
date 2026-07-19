@@ -4,4 +4,9 @@ packages:
   - 'configs/*'
 allowBuilds:
   core-js: false
+  sharp: true
   unrs-resolver: false
+confirmModulesPurge: false
+overrides:
+  js-yaml: ^4.2.0
+  postcss: ^8.5.10

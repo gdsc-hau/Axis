@@ -67,8 +67,8 @@ pnpm dev
 ```
 
 This command simultaneously starts both `gdg-hub` and `gdg-id`, and watches for changes across all `packages/`.
-- `gdg-hub` typically runs on [http://localhost:3000](http://localhost:3000)
-- `gdg-id` typically runs on [http://localhost:3001](http://localhost:3001)
+- `gdg-hub` runs on [http://localhost:3001](http://localhost:3001)
+- `gdg-id` runs on [http://localhost:3000](http://localhost:3000)
 
 ## 7. Useful Commands
 

@@ -72,7 +72,7 @@ export default function Scanner({ onScan, onClose }: ScannerProps) {
               onScan(decodedText); // Proceed anyway
             });
           },
-          (errorMessage) => {
+          () => {
             // Parse errors happen constantly as it scans empty frames, ignore them
           }
         );
