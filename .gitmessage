@@ -1,0 +1,8 @@
+# <type>(optional-scope): short description
+#
+# Why is this change needed?
+#
+# Related: #issue-number
+#
+# Types: feat, fix, docs, refactor, test, chore
+# Example: fix(auth): handle expired password reset links

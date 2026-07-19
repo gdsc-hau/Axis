@@ -1,0 +1,53 @@
+site_name: Axis Documentation
+site_description: Documentation for the GDG HAU ecosystem
+
+theme:
+  name: readthedocs
+
+extra_css:
+  - stylesheets/extra.css
+
+
+nav:
+  - Home: index.md
+  - Project Overview:
+      - Mission and Context: project-overview/mission.md
+      - Repository Layout: project-overview/repository-layout.md
+      - Getting Started: project-overview/getting-started.md
+  - Product:
+      - Platform: product/platform.md
+      - Roles: product/roles.md
+      - User Flows: product/flows.md
+  - Architecture:
+      - System Overview: architecture/overview.md
+      - Apps: architecture/apps.md
+      - Shared Packages: architecture/packages.md
+      - Auth and RBAC: architecture/auth-rbac.md
+  - API:
+      - API Overview: api/overview.md
+      - Routes: api/routes.md
+      - Functions: api/functions.md
+  - Data:
+      - Schema Overview: schema/overview.md
+      - Migrations: schema/migrations.md
+      - Tables: schema/tables.md
+  - Runbooks:
+      - Local Development: runbooks/local-dev.md
+      - Deployment: runbooks/deployment.md
+      - Security Deployment: runbooks/security-deployment.md
+      - Troubleshooting: runbooks/troubleshooting.md
+  - Contributing:
+      - Standards: contributing/standards.md
+      - Documentation Rules: contributing/docs-rules.md
+
+markdown_extensions:
+  - admonition
+  - footnotes
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+
+plugins:
+  - search

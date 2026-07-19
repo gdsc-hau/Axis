@@ -1,0 +1,4 @@
+/* Make the Read the Docs theme fully responsive and wide */
+.wy-nav-content {
+    max-width: none !important;
+}

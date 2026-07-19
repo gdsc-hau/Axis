@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Tables - Axis Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Tables";
+        var mkdocs_page_input_path = "schema\\tables.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> Axis Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Project Overview</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../project-overview/mission/">Mission and Context</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../project-overview/repository-layout/">Repository Layout</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../project-overview/getting-started/">Getting Started</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Product</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../product/platform/">Platform</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../product/roles/">Roles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../product/flows/">User Flows</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Architecture</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../architecture/overview/">System Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../architecture/apps/">Apps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../architecture/packages/">Shared Packages</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../architecture/auth-rbac/">Auth and RBAC</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/overview/">API Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/routes/">Routes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/functions/">Functions</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Data</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Schema Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../migrations/">Migrations</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Tables</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#identity">Identity</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#community-and-events">Community and events</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#rewards-and-recognition">Rewards and recognition</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#shared-and-operational">Shared and operational</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#key-relationships">Key relationships</a>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Runbooks</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../runbooks/local-dev/">Local Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../runbooks/deployment/">Deployment</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../runbooks/troubleshooting/">Troubleshooting</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contributing/standards/">Standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contributing/docs-rules/">Documentation Rules</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Axis Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Data</li>
+      <li class="breadcrumb-item active">Tables</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="tables">Tables<a class="headerlink" href="#tables" title="Permanent link">&para;</a></h1>
+<p>The current migrations define these core tables and relationships:</p>
+<h2 id="identity">Identity<a class="headerlink" href="#identity" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>members</code>: identity record with <code>student_id</code>, <code>email</code>, <code>hau_id</code>, <code>full_name</code>, <code>program</code>, <code>department</code>, and acceptance state</li>
+<li><code>member_profiles</code>: one-to-one profile data for a member</li>
+<li><code>member_credentials</code>: identity or document credentials tied to a member</li>
+<li><code>member_verifications</code>: verification events and reviewer notes</li>
+<li><code>id_qr_codes</code>: per-member QR values for identity checks</li>
+<li><code>verification_logs</code>: audit trail for verification actions</li>
+</ul>
+<h2 id="community-and-events">Community and events<a class="headerlink" href="#community-and-events" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>events</code>: event metadata including Luma URL, dates, status, and type</li>
+<li><code>event_attendance</code>: member registration, check-in, and confirmation state per event</li>
+<li><code>notifications</code>: user-facing notifications for members</li>
+</ul>
+<h2 id="rewards-and-recognition">Rewards and recognition<a class="headerlink" href="#rewards-and-recognition" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>points_ledger</code>: points transactions and running balances</li>
+<li><code>badges</code>: badge catalog</li>
+<li><code>member_badges</code>: badge ownership per member</li>
+<li><code>certificates</code>: issued certificates linked to members and optionally events</li>
+<li><code>redemptions</code>: reward redemption requests and approvals</li>
+</ul>
+<h2 id="shared-and-operational">Shared and operational<a class="headerlink" href="#shared-and-operational" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>app_settings</code>: key/value application settings</li>
+<li><code>audit_logs</code>: generic activity log for sensitive actions</li>
+</ul>
+<h2 id="key-relationships">Key relationships<a class="headerlink" href="#key-relationships" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>member_profiles.member_id</code> references <code>members.id</code></li>
+<li><code>member_credentials.member_id</code> references <code>members.id</code></li>
+<li><code>member_verifications.member_id</code> references <code>members.id</code></li>
+<li><code>member_verifications.verified_by</code> references <code>members.id</code></li>
+<li><code>event_attendance.event_id</code> references <code>events.id</code></li>
+<li><code>event_attendance.member_id</code> references <code>members.id</code></li>
+<li><code>points_ledger.member_id</code> references <code>members.id</code></li>
+<li><code>member_badges.member_id</code> references <code>members.id</code></li>
+<li><code>member_badges.badge_id</code> references <code>badges.id</code></li>
+<li><code>certificates.member_id</code> references <code>members.id</code></li>
+<li><code>certificates.event_id</code> references <code>events.id</code></li>
+<li><code>redemptions.member_id</code> references <code>members.id</code></li>
+<li><code>redemptions.approved_by</code> references <code>members.id</code></li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../migrations/" class="btn btn-neutral float-left" title="Migrations"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../runbooks/local-dev/" class="btn btn-neutral float-right" title="Local Development">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../migrations/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../../runbooks/local-dev/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
