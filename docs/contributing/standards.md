@@ -13,10 +13,11 @@ To ensure a high-quality, maintainable codebase, all contributions to the GDG HA
 - **Server Components First:** Default to building Server Components. Only add `'use client'` to components that require interactivity (hooks, event listeners) or browser APIs.
 - **Server Actions:** Use Server Actions for data mutations instead of creating traditional API route handlers, keeping logic closely tied to the UI components that trigger them.
 - **Component Colocation:** Keep styles, tests, and closely related sub-components in the same folder as the main component to maintain a clean structure.
+- **Shared UI:** Put reusable, presentational components and design tokens in `@hau/axis-ui`. Keep route-aware, data-bound, and product-specific compositions in the owning application. Consume packages through their public entry points; never deep-import `src/` files.
 
 ## Database & SQL
 
-- **Snake Case:** All tables and columns in Supabase must use `snake_case` (e.g., `member_id`, not `memberId`).
+- **Schema Names:** Use the exact table and column names defined by the current migrations and generated database types. Existing quoted camelCase names must remain quoted in SQL. Prefer `snake_case` for new database objects, but never rename an existing object without an explicit compatibility migration.
 - **Row Level Security (RLS):** Every new table must have RLS enabled. Write clear policies defining who can select, insert, update, or delete rows.
 - **Migrations:** Never alter production tables manually. Use the Supabase CLI to generate migration files.
 
@@ -24,4 +25,6 @@ To ensure a high-quality, maintainable codebase, all contributions to the GDG HA
 
 1. **Branch Naming:** Use conventional prefixes like `feat/`, `fix/`, `docs/`, `chore/` followed by a descriptive name (e.g., `feat/add-event-rsvp`).
 2. **Commit Messages:** Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
-3. **CI Checks:** Before pushing, run `pnpm typecheck` and `pnpm lint` locally. Pull requests will fail if the Vercel or GitHub Actions CI pipelines fail.
+3. **Local Checks:** Before pushing, run the checks relevant to the change. For application work, run `pnpm lint`, `pnpm typecheck`, and `pnpm test`. Add `pnpm build` for routing, configuration, or production-sensitive changes.
+
+The repository-root `CONTRIBUTING.md` defines the simple issue, branch, commit, and pull-request workflow. UI/UX and shared component work must also follow the [UI/UX contribution guide](ui-ux.md).

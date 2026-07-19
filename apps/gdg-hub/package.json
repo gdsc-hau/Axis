@@ -10,15 +10,17 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@hau/auth": "workspace:*",
+    "@hau/db": "workspace:*",
+    "@hau/axis-ui": "workspace:*",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.106.2",
     "next": "^15.1.7",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "@hau/db": "workspace:*",
-    "@hau/auth": "workspace:*"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@hau/typescript-config": "workspace:*",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

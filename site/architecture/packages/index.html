@@ -70,7 +70,15 @@
                   </li>
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">Shared Packages</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#observed-packages">Observed packages</a>
+    <li class="toctree-l2"><a class="reference internal" href="#core-infrastructure-packages">Core Infrastructure Packages</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#backend-data-packages">Backend &amp; Data Packages</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#feature-domain-packages">Feature / Domain Packages</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#package-boundaries">Package boundaries</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#consuming-hauaxis-ui">Consuming @hau/axis-ui</a>
     </li>
     </ul>
                   </li>
@@ -101,12 +109,16 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/deployment/">Deployment</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../runbooks/security-deployment/">Security Deployment</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/troubleshooting/">Troubleshooting</a>
                   </li>
               </ul>
               <p class="caption"><span class="caption-text">Contributing</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/standards/">Standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contributing/ui-ux/">UI/UX Guide</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/docs-rules/">Documentation Rules</a>
                   </li>
@@ -136,20 +148,54 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="shared-packages">Shared Packages<a class="headerlink" href="#shared-packages" title="Permanent link">&para;</a></h1>
-<p>The repository includes shared modules for authentication, database access, events, certificates, badges, points, marketplace logic, PWA helpers, UI, and shared types.</p>
-<h2 id="observed-packages">Observed packages<a class="headerlink" href="#observed-packages" title="Permanent link">&para;</a></h2>
+<p>Our monorepo isolates specific domains of logic into internal packages inside the <code>packages/</code> directory. This ensures strict boundaries, easy testing, and maximum reusability between <code>gdg-hub</code> and <code>gdg-id</code>.</p>
+<h2 id="core-infrastructure-packages">Core Infrastructure Packages<a class="headerlink" href="#core-infrastructure-packages" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>auth</code>: session, roles, and guard helpers</li>
-<li><code>db</code>: client, server, and admin Supabase access</li>
-<li><code>events</code>: Luma sync, RSVP, attendance, and sync helpers</li>
-<li><code>certificates</code>: certificate templates, PDFs, email, and storage</li>
-<li><code>marketplace</code>: items, redemption, and fulfillment logic</li>
-<li><code>points</code>: scoring and award logic</li>
-<li><code>pwa</code>: install and service worker related helpers</li>
-<li><code>ui</code>: reusable presentation components</li>
-<li><code>contracts</code> and <code>types</code>: shared contract and type definitions</li>
+<li><strong><code>@hau/config</code></strong>: Contains global ESLint and Prettier configurations. Both apps extend these to ensure code style consistency.</li>
+<li><strong><code>@hau/typescript-config</code></strong>: Provides base <code>tsconfig.json</code> files tailored for Next.js, Node scripts, and React libraries.</li>
+<li><strong><code>@hau/types</code></strong>: Global TypeScript interface definitions used across the frontend and backend.</li>
+<li><strong><code>@hau/contracts</code></strong>: Zod schemas representing the boundaries between our API/Database and the frontend. We parse all form inputs and database responses through these Zod schemas to guarantee runtime type safety.</li>
+<li><strong><code>@hau/axis-ui</code></strong>: The shared Axis design-system package. It contains design tokens, layout primitives, buttons, form controls, alerts, and cards available to both applications. Application-specific components such as the current <code>GdgIdCard</code> remain in their owning app until their API is stable and reusable.</li>
 </ul>
-<p>These packages are the right place to document reusable domain logic and cross-app contracts.</p>
+<h2 id="backend-data-packages">Backend &amp; Data Packages<a class="headerlink" href="#backend-data-packages" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong><code>@hau/db</code></strong>: The central nervous system of the platform. Contains the Supabase client initializers (server, browser, admin bypass) and reusable query functions (e.g., <code>getMemberById</code>, <code>updateLedger</code>).</li>
+<li><strong><code>@hau/auth</code></strong>: Wrappers around <code>@supabase/ssr</code> to handle session management, cookie parsing, and role verification consistently across both Next.js apps.</li>
+</ul>
+<h2 id="feature-domain-packages">Feature / Domain Packages<a class="headerlink" href="#feature-domain-packages" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong><code>@hau/events</code></strong>: Logic for RSVPing, checking capacity, and validating event check-ins.</li>
+<li><strong><code>@hau/points</code></strong>: Handles the complex logic of the points ledger—calculating current balances by summing up past transactions and ensuring members cannot spend more points than they have.</li>
+<li><strong><code>@hau/badges</code></strong>: Logic for determining if a member qualifies for a new badge and inserting the record.</li>
+<li><strong><code>@hau/certificates</code></strong>: Utilities utilizing server-side PDF generation libraries to dynamically stamp member names and event titles onto certificate templates.</li>
+<li><strong><code>@hau/marketplace</code></strong>: Handles the logic for deducting points and requesting swag.</li>
+<li><strong><code>@hau/pwa</code></strong>: Configuration generators for next-pwa to enable offline caching and home-screen installation for the <code>gdg-id</code> app.</li>
+</ul>
+<h2 id="package-boundaries">Package boundaries<a class="headerlink" href="#package-boundaries" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>apps/*</code> owns routing, page composition, deployment configuration, and application-specific UI.</li>
+<li><code>@hau/axis-ui</code> owns reusable presentational components and must not access Next.js routing, Supabase, or domain data.</li>
+<li><code>@hau/contracts</code> owns runtime validation for data crossing form, API, and integration boundaries.</li>
+<li><code>@hau/db</code> owns database client creation and reusable data-access functions.</li>
+<li><code>@hau/auth</code> owns session and authorization guards shared by applications.</li>
+<li>Domain packages such as <code>@hau/events</code> and <code>@hau/points</code> own business rules, not pages.</li>
+<li>Packages must never import files from <code>apps/</code>, and applications must consume packages only through their public exports.</li>
+<li>Every internal dependency must be declared with <code>workspace:*</code> in the consuming package.</li>
+</ul>
+<p>The applications inherit the shared <code>@hau/typescript-config/nextjs.json</code> preset. Package-specific settings should extend a shared preset instead of copying compiler configuration.</p>
+<h2 id="consuming-hauaxis-ui">Consuming <code>@hau/axis-ui</code><a class="headerlink" href="#consuming-hauaxis-ui" title="Permanent link">&para;</a></h2>
+<p><code>@hau/axis-ui</code> is a private, source-based workspace package; it is not published to npm and does not need a separate build before local use. Its supported public entry points are the package root and <code>@hau/axis-ui/styles.css</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Button</span><span class="p">,</span><span class="w"> </span><span class="nx">Card</span><span class="p">,</span><span class="w"> </span><span class="nx">FormField</span><span class="p">,</span><span class="w"> </span><span class="nx">Input</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;@hau/axis-ui&quot;</span><span class="p">;</span>
+</code></pre></div>
+<p>To consume it safely:</p>
+<ol>
+<li>Declare <code>"@hau/axis-ui": "workspace:*"</code> in the application's <code>package.json</code>.</li>
+<li>Add <code>@hau/axis-ui</code> to <code>transpilePackages</code> in the application's Next.js configuration.</li>
+<li>Include <code>../../packages/axis-ui/src/**/*.{js,ts,jsx,tsx,mdx}</code> in the application's Tailwind content paths.</li>
+<li>Import <code>@hau/axis-ui/styles.css</code> once in the root layout.</li>
+<li>Import components from <code>@hau/axis-ui</code>; never use <code>@hau/axis-ui/src/...</code> deep imports.</li>
+</ol>
+<p>The package currently exposes <code>Alert</code>, <code>Button</code>, <code>Card</code>, <code>FormField</code>, <code>Input</code>, <code>Textarea</code>, <code>Box</code>, <code>Container</code>, <code>Stack</code>, <code>Text</code>, and <code>cn</code>. The package README and UI/UX contribution guide are the source of truth for adding or changing this public API.</p>
               
             </div>
           </div><footer>

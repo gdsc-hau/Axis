@@ -1,6 +1,6 @@
 # Documentation Rules
 
-Documentation is just as important as the code itself. Outdated or inaccurate documentation leads to confusion and bugs. 
+Documentation is just as important as the code itself. Outdated or inaccurate documentation leads to confusion and bugs.
 
 ## General Guidelines
 
@@ -11,20 +11,29 @@ Documentation is just as important as the code itself. Outdated or inaccurate do
 ## Adding New Pages
 
 If you are adding a completely new section or page to the documentation:
+
 1. Create the `.md` file in the appropriate directory inside `docs/`.
 2. Open `mkdocs.yml` in the root directory.
 3. Add the file path to the `nav` tree so it appears in the sidebar navigation.
 
 ## Testing Docs Locally
 
-We use MkDocs with the Material theme to generate this documentation site.
+We use MkDocs with the Read the Docs theme to generate this documentation site. The repository scripts keep the command consistent for every contributor.
 
 To preview your changes locally before committing:
+
 ```bash
-# If you don't have mkdocs installed, install it via pip
-pip install mkdocs-material
+# Install the Python documentation dependency if needed
+python -m pip install mkdocs
 
 # Run the local server
-mkdocs serve
+pnpm docs:serve
 ```
+
 The documentation site will be available at `http://127.0.0.1:8000/`. Verify that your formatting looks correct and that all internal links are working.
+
+Before opening the pull request, also run the production documentation build:
+
+```bash
+pnpm docs:build
+```

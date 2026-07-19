@@ -86,9 +86,9 @@
               <ul class="current">
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">Schema Overview</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#current-schema-signals">Current schema signals</a>
+    <li class="toctree-l2"><a class="reference internal" href="#high-level-domain-model">High-Level Domain Model</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#documentation-goals">Documentation goals</a>
+    <li class="toctree-l2"><a class="reference internal" href="#entity-relationship-diagram-erd">Entity Relationship Diagram (ERD)</a>
     </li>
     </ul>
                   </li>
@@ -103,12 +103,16 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/deployment/">Deployment</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../runbooks/security-deployment/">Security Deployment</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/troubleshooting/">Troubleshooting</a>
                   </li>
               </ul>
               <p class="caption"><span class="caption-text">Contributing</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/standards/">Standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contributing/ui-ux/">UI/UX Guide</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/docs-rules/">Documentation Rules</a>
                   </li>
@@ -137,17 +141,73 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="schema-overview">Schema Overview<a class="headerlink" href="#schema-overview" title="Permanent link">&para;</a></h1>
-<p>The data layer is powered by Supabase and PostgreSQL.</p>
-<h2 id="current-schema-signals">Current schema signals<a class="headerlink" href="#current-schema-signals" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Auth and role lookup references the <code>members</code> table</li>
-<li>Profile completion checks reference <code>member_profiles</code></li>
-<li>Shared database access comes from <code>packages/db</code></li>
-<li>The repository contains Supabase migrations under <a href="../../supabase/migrations">supabase/migrations</a></li>
-</ul>
-<h2 id="documentation-goals">Documentation goals<a class="headerlink" href="#documentation-goals" title="Permanent link">&para;</a></h2>
-<p>Use this section to explain the schema at a high level, including the major entities and how they support membership, events, rewards, certificates, and governance.</p>
+                <h1 id="database-schema-overview">Database Schema Overview<a class="headerlink" href="#database-schema-overview" title="Permanent link">&para;</a></h1>
+<p>The GDG HAU Axis platform relies on a robust relational PostgreSQL database hosted on Supabase.</p>
+<p>The schema is designed to ensure referential integrity (using foreign keys and cascading deletes) and to handle data changes safely (using automatic <code>updated_at</code> triggers).</p>
+<h2 id="high-level-domain-model">High-Level Domain Model<a class="headerlink" href="#high-level-domain-model" title="Permanent link">&para;</a></h2>
+<p>The database can be conceptually divided into four domains:</p>
+<ol>
+<li><strong>Identity &amp; Profiles</strong></li>
+<li>Core tables defining who a user is.</li>
+<li>
+<p>Tables: <code>members</code>, <code>member_credentials</code>, <code>id_qr_codes</code>. Profile fields are stored on <code>members</code>.</p>
+</li>
+<li>
+<p><strong>Events &amp; Engagement</strong></p>
+</li>
+<li>Tables tracking what is happening and who is attending.</li>
+<li>
+<p>Tables: <code>events</code>, <code>event_attendance</code>.</p>
+</li>
+<li>
+<p><strong>Gamification &amp; Rewards</strong></p>
+</li>
+<li>Tables handling the economy of GDG HAU.</li>
+<li>
+<p>Tables: <code>points_ledger</code>, <code>redemptions</code>, <code>badges</code>, <code>member_badges</code>.</p>
+</li>
+<li>
+<p><strong>System Logs &amp; Notifications</strong></p>
+</li>
+<li>Tables handling auditing and member messaging.</li>
+<li>Tables: <code>notifications</code>, <code>audit_logs</code>, <code>verification_logs</code>, <code>app_settings</code>.</li>
+</ol>
+<h2 id="entity-relationship-diagram-erd">Entity Relationship Diagram (ERD)<a class="headerlink" href="#entity-relationship-diagram-erd" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>erDiagram
+    MEMBERS ||--o{ ID_QR_CODES : owns
+    MEMBERS ||--o{ EVENT_ATTENDANCE : registers
+    EVENTS ||--o{ EVENT_ATTENDANCE : includes
+    MEMBERS ||--o{ POINTS_LEDGER : earns
+    MEMBERS ||--o{ REDEMPTIONS : requests
+    MEMBERS ||--o{ MEMBER_BADGES : achieves
+    BADGES ||--o{ MEMBER_BADGES : awarded_as
+    EVENTS ||--o{ CERTIFICATES : issues
+    MEMBERS ||--o{ CERTIFICATES : receives
+
+    MEMBERS {
+        UUID id PK
+        TEXT role
+        TIMESTAMPTZ updated_at
+    }
+    EVENTS {
+        UUID id PK
+        TEXT title
+        TIMESTAMPTZ start_at
+    }
+    EVENT_ATTENDANCE {
+        UUID id PK
+        UUID event_id FK
+        UUID member_id FK
+        TEXT status
+    }
+    POINTS_LEDGER {
+        UUID id PK
+        UUID member_id FK
+        INTEGER points
+        INTEGER balance_after
+    }
+</code></pre></div>
+<p><em>Note: This is a simplified diagram. For the exhaustive list of columns and relationships, refer to the <a href="../tables/">Tables Data Dictionary</a>.</em></p>
               
             </div>
           </div><footer>

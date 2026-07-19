@@ -66,11 +66,17 @@
               <ul class="current">
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">System Overview</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#primary-surfaces">Primary surfaces</a>
+    <li class="toctree-l2"><a class="reference internal" href="#high-level-architecture-diagram">High-Level Architecture Diagram</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#current-runtime-shape">Current runtime shape</a>
+    <li class="toctree-l2"><a class="reference internal" href="#core-infrastructure">Core Infrastructure</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#frontend-api-layer">Frontend &amp; API Layer</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#documentation-goal">Documentation goal</a>
+    <li class="toctree-l3"><a class="reference internal" href="#shared-logic-ui">Shared Logic &amp; UI</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#backend-database">Backend &amp; Database</a>
+    </li>
+        </ul>
     </li>
     </ul>
                   </li>
@@ -105,12 +111,16 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/deployment/">Deployment</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../runbooks/security-deployment/">Security Deployment</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/troubleshooting/">Troubleshooting</a>
                   </li>
               </ul>
               <p class="caption"><span class="caption-text">Contributing</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/standards/">Standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contributing/ui-ux/">UI/UX Guide</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/docs-rules/">Documentation Rules</a>
                   </li>
@@ -140,19 +150,70 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="system-overview">System Overview<a class="headerlink" href="#system-overview" title="Permanent link">&para;</a></h1>
-<p>The codebase is a pnpm and Turbo monorepo with two Next.js applications, shared domain packages, and Supabase-backed data services.</p>
-<h2 id="primary-surfaces">Primary surfaces<a class="headerlink" href="#primary-surfaces" title="Permanent link">&para;</a></h2>
+<p>The GDG HAU Axis platform is designed as a modern, decoupled, serverless-first architecture optimized for performance, type safety, and developer velocity.</p>
+<h2 id="high-level-architecture-diagram">High-Level Architecture Diagram<a class="headerlink" href="#high-level-architecture-diagram" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>graph TD
+    %% Clients
+    U1((Member)) --&gt;|Mobile/Web| GID[gdg-id App&lt;br/&gt;Next.js 15]
+    U2((Admin)) --&gt;|Desktop Web| GHUB[gdg-hub App&lt;br/&gt;Next.js 15]
+
+    %% Vercel / Apps layer
+    subgraph &quot;Vercel / Frontend Hosting&quot;
+        GID
+        GHUB
+    end
+
+    %% Internal Packages
+    subgraph &quot;Monorepo Shared Packages (@hau/*)&quot;
+        AUTH[auth]
+        DB_PKG[db]
+        UI[axis-ui]
+        LOGIC[points, events, etc.]
+    end
+
+    %% Wiring packages to apps
+    GID --&gt; AUTH
+    GID --&gt; DB_PKG
+    GID --&gt; UI
+
+    GHUB --&gt; AUTH
+    GHUB --&gt; DB_PKG
+    GHUB --&gt; UI
+    GHUB --&gt; LOGIC
+
+    %% Backend Service
+    subgraph &quot;Supabase / Backend&quot;
+        PG[(PostgreSQL&lt;br/&gt;Database)]
+        SA[Supabase Auth]
+        SS[Supabase Storage]
+    end
+
+    %% Wiring packages to backend
+    DB_PKG --&gt;|Supabase JS / SSR| PG
+    AUTH --&gt;|OAuth / JWT| SA
+    LOGIC --&gt;|Edge Functions / RPC| PG
+</code></pre></div>
+<h2 id="core-infrastructure">Core Infrastructure<a class="headerlink" href="#core-infrastructure" title="Permanent link">&para;</a></h2>
+<h3 id="frontend-api-layer">Frontend &amp; API Layer<a class="headerlink" href="#frontend-api-layer" title="Permanent link">&para;</a></h3>
+<p>Both <code>gdg-id</code> and <code>gdg-hub</code> are built using <strong>Next.js 15 (App Router)</strong>.</p>
 <ul>
-<li><a href="../../apps/gdg-hub">apps/gdg-hub</a>: the main community hub for public, member, and admin flows</li>
-<li><a href="../../apps/gdg-id">apps/gdg-id</a>: the identity-focused companion app</li>
-<li><a href="../../packages">packages/</a>: shared libraries for auth, database access, events, certificates, rewards, and UI primitives</li>
-<li><a href="../../supabase">supabase/</a>: database migrations, seed data, and edge functions</li>
+<li><strong>Server Components:</strong> We heavily utilize React Server Components (RSC) to fetch data directly from the database without creating intermediate API endpoints.</li>
+<li><strong>Server Actions:</strong> Form submissions and data mutations are handled via Next.js Server Actions, providing end-to-end type safety from the UI down to the database schema.</li>
+<li><strong>Hosting:</strong> Deployed to <strong>Vercel</strong> for global edge caching and seamless CI/CD.</li>
 </ul>
-<h2 id="current-runtime-shape">Current runtime shape<a class="headerlink" href="#current-runtime-shape" title="Permanent link">&para;</a></h2>
-<p>The root layout for <code>gdg-hub</code> sets the application metadata and loads the Inter font in <a href="../../apps/gdg-hub/app/layout.tsx">apps/gdg-hub/app/layout.tsx</a>.</p>
-<p>The application routes are grouped into public, auth, member, and admin surfaces, with API routes for leaderboard rebuilds, certificates, attendance, Luma sync, and redemptions.</p>
-<h2 id="documentation-goal">Documentation goal<a class="headerlink" href="#documentation-goal" title="Permanent link">&para;</a></h2>
-<p>This section should let contributors understand where a feature belongs before they start reading implementation details.</p>
+<h3 id="shared-logic-ui">Shared Logic &amp; UI<a class="headerlink" href="#shared-logic-ui" title="Permanent link">&para;</a></h3>
+<p>The Turborepo structure allows us to keep the apps thin.</p>
+<ul>
+<li><strong>UI:</strong> The source-based <code>@hau/axis-ui</code> package provides shared design tokens and application-agnostic React components. Both apps transpile the package, scan its source in Tailwind, and import its stylesheet once in their root layout.</li>
+<li><strong>Business Logic:</strong> Domain-specific logic (e.g., how points are calculated) is encapsulated in separate packages like <code>@hau/points</code> and <code>@hau/db</code> to guarantee that both apps interact with the database identically.</li>
+</ul>
+<h3 id="backend-database">Backend &amp; Database<a class="headerlink" href="#backend-database" title="Permanent link">&para;</a></h3>
+<p>We utilize <strong>Supabase</strong> as our complete backend-as-a-service.</p>
+<ul>
+<li><strong>PostgreSQL:</strong> The core database. We define all tables, views, and Row Level Security (RLS) policies here.</li>
+<li><strong>Auth:</strong> Handles Google OAuth, email/password logins, and session management. JWTs are securely passed to Next.js via cookies using <code>@supabase/ssr</code>.</li>
+<li><strong>Storage:</strong> Used to store user avatars, dynamically generated PDF certificates, and ID card assets.</li>
+</ul>
               
             </div>
           </div><footer>

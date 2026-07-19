@@ -24,6 +24,9 @@ importers:
       '@hau/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@hau/axis-ui':
+        specifier: workspace:*
+        version: link:../../packages/axis-ui
       '@hau/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -43,6 +46,9 @@ importers:
         specifier: ^19.0.0
         version: 19.2.7(react@19.2.7)
     devDependencies:
+      '@hau/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
       '@types/node':
         specifier: ^20
         version: 20.19.41
@@ -73,12 +79,12 @@ importers:
 
   apps/gdg-id:
     dependencies:
+      '@hau/axis-ui':
+        specifier: workspace:*
+        version: link:../../packages/axis-ui
       '@hau/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
-      '@hau/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       '@supabase/ssr':
         specifier: ^0.10.3
         version: 0.10.3(@supabase/supabase-js@2.106.2)
@@ -128,6 +134,9 @@ importers:
         specifier: latest
         version: 4.4.3
     devDependencies:
+      '@hau/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
       '@types/node':
         specifier: ^20
         version: 20.19.41
@@ -171,6 +180,25 @@ importers:
         specifier: ^2.39.0
         version: 2.106.2
 
+  packages/axis-ui:
+    dependencies:
+      react:
+        specifier: '>=18'
+        version: 19.2.7
+      react-dom:
+        specifier: '>=18'
+        version: 19.2.7(react@19.2.7)
+    devDependencies:
+      '@hau/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/react':
+        specifier: ^19
+        version: 19.2.15
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
   packages/badges: {}
 
   packages/certificates: {}
@@ -206,15 +234,6 @@ importers:
   packages/types: {}
 
   packages/typescript-config: {}
-
-  packages/ui:
-    dependencies:
-      react:
-        specifier: '>=18'
-        version: 19.2.6
-      react-dom:
-        specifier: '>=18'
-        version: 19.2.6(react@19.2.6)
 
 packages:
 
@@ -1898,11 +1917,6 @@ packages:
   raf@3.4.1:
     resolution: {integrity: sha512-Sq4CW4QhwOHE8ucn6J34MqtZCeWFP2aQSmrlroYgqAV1PjStIhJXxYuTgUIfkEk7zTLjmIjLmU5q+fbD1NnOJA==}
 
-  react-dom@19.2.6:
-    resolution: {integrity: sha512-0prMI+hvBbPjsWnxDLxlCGyM8PN6UuWjEUCYmZhO67xIV9Xasa/r/vDnq+Xyq4Lo27g8QSbO5YzARu0D1Sps3g==}
-    peerDependencies:
-      react: ^19.2.6
-
   react-dom@19.2.7:
     resolution: {integrity: sha512-t0BRVXvbiE/o20Hfw669rLbMCDWtYZLvmJigy2f0MxsXF+71pxhR3xOkspmsO8h3ZlNzyibAmtCa3l4lYKk6gQ==}
     peerDependencies:
@@ -1915,10 +1929,6 @@ packages:
     resolution: {integrity: sha512-xaywjo0eaF4S3LOz6ns5eoPbM2E+q9HYl4VATYpxK4bBniOhQ9noY2RJ9G4SnZFhUwzx63FUT6KdHzfKgUwyuQ==}
     peerDependencies:
       react: '*'
-
-  react@19.2.6:
-    resolution: {integrity: sha512-sfWGGfavi0xr8Pg0sVsyHMAOziVYKgPLNrS7ig+ivMNb3wbCBw3KxtflsGBAwD3gYQlE/AEZsTLgToRrSCjb0Q==}
-    engines: {node: '>=0.10.0'}
 
   react@19.2.7:
     resolution: {integrity: sha512-HNe9WslTbXmFK8o8cmwgAeJFSBvt1bPdHCVKtaaV+WlAN36mpT4hcRpwbf3fY56ar2oIXzsBpOAiIRHAdY0OlQ==}
@@ -4002,11 +4012,6 @@ snapshots:
       performance-now: 2.1.0
     optional: true
 
-  react-dom@19.2.6(react@19.2.6):
-    dependencies:
-      react: 19.2.6
-      scheduler: 0.27.0
-
   react-dom@19.2.7(react@19.2.7):
     dependencies:
       react: 19.2.7
@@ -4019,8 +4024,6 @@ snapshots:
       prop-types: 15.8.1
       qr.js: 0.0.0
       react: 19.2.7
-
-  react@19.2.6: {}
 
   react@19.2.7: {}
 

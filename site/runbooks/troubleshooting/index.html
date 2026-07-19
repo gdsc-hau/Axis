@@ -97,11 +97,17 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../deployment/">Deployment</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../security-deployment/">Security Deployment</a>
+                  </li>
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">Troubleshooting</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#common-issues">Common issues</a>
+    <li class="toctree-l2"><a class="reference internal" href="#turborepo-caching-issues">Turborepo Caching Issues</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#good-places-to-inspect">Good places to inspect</a>
+    <li class="toctree-l2"><a class="reference internal" href="#pnpm-workspace-phantom-dependencies">pnpm Workspace Phantom Dependencies</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#typescript-configuration-errors">TypeScript Configuration Errors</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#supabase-auth-not-working-locally">Supabase Auth Not Working Locally</a>
     </li>
     </ul>
                   </li>
@@ -109,6 +115,8 @@
               <p class="caption"><span class="caption-text">Contributing</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/standards/">Standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contributing/ui-ux/">UI/UX Guide</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/docs-rules/">Documentation Rules</a>
                   </li>
@@ -137,27 +145,41 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h1>
-<p>Use this page for common failures, logs to inspect, and recovery steps.</p>
-<h2 id="common-issues">Common issues<a class="headerlink" href="#common-issues" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Users get redirected to login unexpectedly: check middleware auth state and Supabase session cookies</li>
-<li>A member profile is treated as incomplete: verify <code>member_profiles</code> has both <code>bio</code> and <code>links</code></li>
-<li>Admin pages are inaccessible: confirm the member role in <code>members.role</code></li>
-<li>API routes return empty success responses: inspect the route handler and downstream Supabase or edge function calls</li>
-</ul>
-<h2 id="good-places-to-inspect">Good places to inspect<a class="headerlink" href="#good-places-to-inspect" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>apps/gdg-hub/middleware.ts</code></li>
-<li><code>packages/auth/src/roles.ts</code></li>
-<li><code>packages/db/src</code></li>
-<li><code>supabase/migrations</code></li>
-</ul>
+                <h1 id="troubleshooting-guide">Troubleshooting Guide<a class="headerlink" href="#troubleshooting-guide" title="Permanent link">&para;</a></h1>
+<p>This document catalogs common issues encountered during local development and their solutions.</p>
+<h2 id="turborepo-caching-issues">Turborepo Caching Issues<a class="headerlink" href="#turborepo-caching-issues" title="Permanent link">&para;</a></h2>
+<p><strong>Symptom:</strong> You made a change in <code>@hau/axis-ui</code> or <code>@hau/db</code>, but the change isn't reflecting in <code>gdg-hub</code> or <code>gdg-id</code>.
+<strong>Cause:</strong> Turborepo or Next.js might be serving heavily cached build artifacts.
+<strong>Solution:</strong>
+Delete the <code>.turbo</code> and <code>.next</code> folders across the workspace.</p>
+<div class="highlight"><pre><span></span><code>pnpm<span class="w"> </span>clean
+pnpm<span class="w"> </span>dev
+</code></pre></div>
+<h2 id="pnpm-workspace-phantom-dependencies">pnpm Workspace Phantom Dependencies<a class="headerlink" href="#pnpm-workspace-phantom-dependencies" title="Permanent link">&para;</a></h2>
+<p><strong>Symptom:</strong> <code>Cannot find module 'X'</code> when running an app, even though it's installed in the root <code>package.json</code>.
+<strong>Cause:</strong> pnpm uses strict symlinking. If a package (like <code>gdg-hub</code>) requires a dependency, it <em>must</em> be explicitly declared in <code>apps/gdg-hub/package.json</code>, not just at the monorepo root.
+<strong>Solution:</strong>
+Navigate to the app/package and add it:</p>
+<div class="highlight"><pre><span></span><code>pnpm<span class="w"> </span>--filter<span class="w"> </span>gdg-hub<span class="w"> </span>add<span class="w"> </span>X
+</code></pre></div>
+<h2 id="typescript-configuration-errors">TypeScript Configuration Errors<a class="headerlink" href="#typescript-configuration-errors" title="Permanent link">&para;</a></h2>
+<p><strong>Symptom:</strong> VSCode highlights valid code with red squiggly lines, complaining about missing types or paths like <code>@hau/db</code>.
+<strong>Cause:</strong> The TypeScript language server in VSCode is looking at the wrong <code>tsconfig.json</code> or needs to be restarted after a new package was added.
+<strong>Solution:</strong></p>
+<ol>
+<li>Open the Command Palette in VSCode (<code>Ctrl+Shift+P</code> / <code>Cmd+Shift+P</code>).</li>
+<li>Type <code>TypeScript: Restart TS server</code> and execute it.</li>
+</ol>
+<h2 id="supabase-auth-not-working-locally">Supabase Auth Not Working Locally<a class="headerlink" href="#supabase-auth-not-working-locally" title="Permanent link">&para;</a></h2>
+<p><strong>Symptom:</strong> You try to sign up or log in locally, and it fails or redirects in an infinite loop.
+<strong>Cause:</strong> The <code>NEXT_PUBLIC_SUPABASE_URL</code> or <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in your <code>.env.local</code> is missing or pointing to production instead of local (<code>http://127.0.0.1:54321</code>).
+<strong>Solution:</strong>
+Run <code>supabase status</code>, copy the local URL and Anon Key, and paste them into <code>.env.local</code>. Restart the Next.js server.</p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../deployment/" class="btn btn-neutral float-left" title="Deployment"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../security-deployment/" class="btn btn-neutral float-left" title="Security Deployment"><span class="icon icon-circle-arrow-left"></span> Previous</a>
         <a href="../../contributing/standards/" class="btn btn-neutral float-right" title="Standards">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
@@ -181,7 +203,7 @@
   <span class="rst-current-version" data-toggle="rst-current-version">
     
     
-      <span><a href="../deployment/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../security-deployment/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
       <span><a href="../../contributing/standards/" style="color: #fcfcfc">Next &raquo;</a></span>

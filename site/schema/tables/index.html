@@ -90,15 +90,21 @@
                   </li>
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">Tables</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#identity">Identity</a>
+    <li class="toctree-l2"><a class="reference internal" href="#members">members</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#community-and-events">Community and events</a>
+    <li class="toctree-l2"><a class="reference internal" href="#id_qr_codes">id_qr_codes</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#rewards-and-recognition">Rewards and recognition</a>
+    <li class="toctree-l2"><a class="reference internal" href="#events">events</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#shared-and-operational">Shared and operational</a>
+    <li class="toctree-l2"><a class="reference internal" href="#event_attendance">event_attendance</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#key-relationships">Key relationships</a>
+    <li class="toctree-l2"><a class="reference internal" href="#points_ledger">points_ledger</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#badges-member_badges">badges &amp; member_badges</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#certificates">certificates</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#redemptions">redemptions</a>
     </li>
     </ul>
                   </li>
@@ -109,12 +115,16 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/deployment/">Deployment</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../runbooks/security-deployment/">Security Deployment</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/troubleshooting/">Troubleshooting</a>
                   </li>
               </ul>
               <p class="caption"><span class="caption-text">Contributing</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/standards/">Standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contributing/ui-ux/">UI/UX Guide</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/docs-rules/">Documentation Rules</a>
                   </li>
@@ -143,52 +153,59 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="tables">Tables<a class="headerlink" href="#tables" title="Permanent link">&para;</a></h1>
-<p>The current migrations define these core tables and relationships:</p>
-<h2 id="identity">Identity<a class="headerlink" href="#identity" title="Permanent link">&para;</a></h2>
+                <h1 id="data-dictionary-tables">Data Dictionary &amp; Tables<a class="headerlink" href="#data-dictionary-tables" title="Permanent link">&para;</a></h1>
+<p>This document outlines the core tables in the <code>public</code> schema. All tables use <code>snake_case</code> naming conventions.</p>
+<h2 id="members"><code>members</code><a class="headerlink" href="#members" title="Permanent link">&para;</a></h2>
+<p>The core identity table.
+- <code>id</code> (UUID): Primary key for the member registry.
+- <code>auth_id</code> (UUID, nullable): Link to <code>auth.users.id</code> after activation.
+- <code>gdg_id</code> (TEXT): The human-readable GDG Holy Angel University ID.
+- <code>role</code> (TEXT): <code>MEMBER</code> or <code>ADMIN</code>.
+- <code>updated_at</code> (TIMESTAMPTZ)</p>
+<p>Profile data is flattened onto <code>members</code> through the <code>bio</code>, <code>phone_number</code>,
+<code>links</code>, and <code>status_message</code> columns. There is no active <code>member_profiles</code> table.</p>
+<h2 id="id_qr_codes"><code>id_qr_codes</code><a class="headerlink" href="#id_qr_codes" title="Permanent link">&para;</a></h2>
+<p>Stores the active QR code for a member's digital ID.
+- <code>member_id</code> (UUID): FK to <code>members</code>.
+- <code>qr_value</code> (TEXT): The securely hashed or random string encoded in the QR.
+- <code>expires_at</code> (TIMESTAMPTZ): When the QR code must be rotated.</p>
+<h2 id="events"><code>events</code><a class="headerlink" href="#events" title="Permanent link">&para;</a></h2>
+<p>A scheduled workshop, hackathon, or meeting.
+- <code>id</code> (UUID)
+- <code>title</code> (TEXT)
+- <code>description</code> (TEXT)
+- <code>location</code> (TEXT)
+- <code>luma_url</code> (TEXT): Link to external RSVP system if used.
+- <code>status</code> (TEXT): <code>DRAFT</code>, <code>PUBLISHED</code>, <code>COMPLETED</code>.</p>
+<h2 id="event_attendance"><code>event_attendance</code><a class="headerlink" href="#event_attendance" title="Permanent link">&para;</a></h2>
+<p>Tracks who RSVP'd and who actually attended.
+- <code>event_id</code> (UUID): FK to <code>events</code>.
+- <code>member_id</code> (UUID): FK to <code>members</code>.
+- <code>status</code> (TEXT): <code>REGISTERED</code> or <code>CHECKED_IN</code>.
+- <code>confirmed_by</code> (UUID): FK to the admin who scanned the QR code.</p>
+<h2 id="points_ledger"><code>points_ledger</code><a class="headerlink" href="#points_ledger" title="Permanent link">&para;</a></h2>
+<p>An append-only immutable ledger tracking the points economy.
+- <code>id</code> (UUID)
+- <code>member_id</code> (UUID): FK to <code>members</code>.
+- <code>source_type</code> (TEXT): Reason for points (e.g., <code>EVENT_ATTENDANCE</code>, <code>MARKETPLACE_REDEMPTION</code>).
+- <code>points</code> (INTEGER): Can be positive (earned) or negative (spent).
+- <code>balance_after</code> (INTEGER): The running total of the member's points <em>after</em> this transaction.</p>
+<h2 id="badges-member_badges"><code>badges</code> &amp; <code>member_badges</code><a class="headerlink" href="#badges-member_badges" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>members</code>: identity record with <code>student_id</code>, <code>email</code>, <code>hau_id</code>, <code>full_name</code>, <code>program</code>, <code>department</code>, and acceptance state</li>
-<li><code>member_profiles</code>: one-to-one profile data for a member</li>
-<li><code>member_credentials</code>: identity or document credentials tied to a member</li>
-<li><code>member_verifications</code>: verification events and reviewer notes</li>
-<li><code>id_qr_codes</code>: per-member QR values for identity checks</li>
-<li><code>verification_logs</code>: audit trail for verification actions</li>
+<li><code>badges</code>: Dictionary of available badges (e.g., "Hackathon Winner").</li>
+<li><code>member_badges</code>: Mapping table tracking which member earned which badge and when.</li>
 </ul>
-<h2 id="community-and-events">Community and events<a class="headerlink" href="#community-and-events" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>events</code>: event metadata including Luma URL, dates, status, and type</li>
-<li><code>event_attendance</code>: member registration, check-in, and confirmation state per event</li>
-<li><code>notifications</code>: user-facing notifications for members</li>
-</ul>
-<h2 id="rewards-and-recognition">Rewards and recognition<a class="headerlink" href="#rewards-and-recognition" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>points_ledger</code>: points transactions and running balances</li>
-<li><code>badges</code>: badge catalog</li>
-<li><code>member_badges</code>: badge ownership per member</li>
-<li><code>certificates</code>: issued certificates linked to members and optionally events</li>
-<li><code>redemptions</code>: reward redemption requests and approvals</li>
-</ul>
-<h2 id="shared-and-operational">Shared and operational<a class="headerlink" href="#shared-and-operational" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>app_settings</code>: key/value application settings</li>
-<li><code>audit_logs</code>: generic activity log for sensitive actions</li>
-</ul>
-<h2 id="key-relationships">Key relationships<a class="headerlink" href="#key-relationships" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>member_profiles.member_id</code> references <code>members.id</code></li>
-<li><code>member_credentials.member_id</code> references <code>members.id</code></li>
-<li><code>member_verifications.member_id</code> references <code>members.id</code></li>
-<li><code>member_verifications.verified_by</code> references <code>members.id</code></li>
-<li><code>event_attendance.event_id</code> references <code>events.id</code></li>
-<li><code>event_attendance.member_id</code> references <code>members.id</code></li>
-<li><code>points_ledger.member_id</code> references <code>members.id</code></li>
-<li><code>member_badges.member_id</code> references <code>members.id</code></li>
-<li><code>member_badges.badge_id</code> references <code>badges.id</code></li>
-<li><code>certificates.member_id</code> references <code>members.id</code></li>
-<li><code>certificates.event_id</code> references <code>events.id</code></li>
-<li><code>redemptions.member_id</code> references <code>members.id</code></li>
-<li><code>redemptions.approved_by</code> references <code>members.id</code></li>
-</ul>
+<h2 id="certificates"><code>certificates</code><a class="headerlink" href="#certificates" title="Permanent link">&para;</a></h2>
+<p>Tracks generated PDFs for event attendees.
+- <code>event_id</code> (UUID)
+- <code>member_id</code> (UUID)
+- <code>certificate_number</code> (TEXT): Unique verifier ID.
+- <code>pdf_url</code> (TEXT): Pointer to Supabase Storage.</p>
+<h2 id="redemptions"><code>redemptions</code><a class="headerlink" href="#redemptions" title="Permanent link">&para;</a></h2>
+<p>Marketplace requests made by members.
+- <code>member_id</code> (UUID)
+- <code>total_cost</code> (INTEGER): Points deducted.
+- <code>status</code> (TEXT): <code>PENDING</code>, <code>FULFILLED</code>, <code>REJECTED</code>.</p>
               
             </div>
           </div><footer>

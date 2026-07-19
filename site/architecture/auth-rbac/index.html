@@ -72,11 +72,19 @@
                   </li>
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">Auth and RBAC</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#current-implementation-clues">Current implementation clues</a>
+    <li class="toctree-l2"><a class="reference internal" href="#supabase-auth-vs-public-data">Supabase Auth vs. Public Data</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#the-auth_id-bridge">The auth_id Bridge</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#what-to-document-here">What to document here</a>
+        </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#current-route-protection">Current route protection</a>
+    <li class="toctree-l2"><a class="reference internal" href="#role-based-access-control-rbac">Role-Based Access Control (RBAC)</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#row-level-security-rls-example">Row Level Security (RLS) Example</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#hauauth-package">@hau/auth Package</a>
     </li>
     </ul>
                   </li>
@@ -105,12 +113,16 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/deployment/">Deployment</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../runbooks/security-deployment/">Security Deployment</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/troubleshooting/">Troubleshooting</a>
                   </li>
               </ul>
               <p class="caption"><span class="caption-text">Contributing</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/standards/">Standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contributing/ui-ux/">UI/UX Guide</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/docs-rules/">Documentation Rules</a>
                   </li>
@@ -139,25 +151,42 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="auth-and-rbac">Auth and RBAC<a class="headerlink" href="#auth-and-rbac" title="Permanent link">&para;</a></h1>
-<p>Authentication and authorization are shared concerns across the app.</p>
-<h2 id="current-implementation-clues">Current implementation clues<a class="headerlink" href="#current-implementation-clues" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>packages/auth/src/index.ts</code> exports session, roles, and guards helpers</li>
-<li><code>packages/auth/src/roles.ts</code> resolves a user's role from the <code>members</code> table</li>
-<li><code>packages/auth/src/guards.ts</code> is currently empty, so guard behavior still needs to be documented or implemented</li>
-<li><code>packages/auth/src/roles.ts</code> also checks profile completeness through <code>member_profiles</code></li>
-</ul>
-<h2 id="what-to-document-here">What to document here<a class="headerlink" href="#what-to-document-here" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Session lifecycle and Supabase auth flow</li>
-<li>Role model and permissions matrix</li>
-<li>Protected route groups and admin access rules</li>
-<li>Profile-completeness checks and onboarding gates</li>
-</ul>
-<h2 id="current-route-protection">Current route protection<a class="headerlink" href="#current-route-protection" title="Permanent link">&para;</a></h2>
-<p><code>apps/gdg-hub/middleware.ts</code> currently protects <code>/member</code> and <code>/admin</code>, redirects unauthenticated users to <code>/login</code>, and sends authenticated users away from the auth pages unless they are on <code>/verify</code>.</p>
-<p>That means the final RBAC story is split between middleware and role-aware layouts or pages.</p>
+                <h1 id="authentication-rbac">Authentication &amp; RBAC<a class="headerlink" href="#authentication-rbac" title="Permanent link">&para;</a></h1>
+<p>Authentication on the GDG HAU Axis platform is fully handled by <strong>Supabase Auth</strong>. This provides secure, scalable session management out-of-the-box.</p>
+<h2 id="supabase-auth-vs-public-data">Supabase Auth vs. Public Data<a class="headerlink" href="#supabase-auth-vs-public-data" title="Permanent link">&para;</a></h2>
+<p>Supabase maintains an internal table called <code>auth.users</code> which safely stores encrypted passwords, OAuth provider links, and session metadata.</p>
+<p>We <em>never</em> query <code>auth.users</code> directly in our application code. Instead, we use a custom public table called <code>public.members</code>.</p>
+<h3 id="the-auth_id-bridge">The <code>auth_id</code> Bridge<a class="headerlink" href="#the-auth_id-bridge" title="Permanent link">&para;</a></h3>
+<p>Unlike a typical Supabase project where <code>auth.users.id</code> and <code>public.members.id</code> share the same UUID via a trigger, Axis uses a <strong>pre-populated members table</strong> as the source of truth. Members are added by admins <em>before</em> they have a Supabase auth account.</p>
+<p>The link between an auth session and a member record is stored in the <code>auth_id</code> column on <code>public.members</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- Added via migration 0001_add_auth_id.sql</span>
+<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">public</span><span class="p">.</span><span class="n">members</span><span class="w"> </span>
+<span class="k">ADD</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="n">auth_id</span><span class="w"> </span><span class="n">UUID</span><span class="w"> </span><span class="k">UNIQUE</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="n">auth</span><span class="p">.</span><span class="n">users</span><span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">DELETE</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="k">NULL</span><span class="p">;</span>
+</code></pre></div>
+<p>When an admin sends an invitation:
+1. <code>auth.admin.generateLink({ type: 'invite', email })</code> creates an <code>auth.users</code> row and returns a signed link.
+2. When the member clicks the link and sets their password at <code>/activate</code>, the <code>activateAccount</code> server action calls <code>public.members.update({ auth_id: user.id })</code> to establish the link.
+3. All subsequent lookups use <code>.eq('auth_id', userId)</code> instead of <code>.eq('id', userId)</code>.</p>
+<p>This means <code>public.members</code> is <strong>never auto-populated by a trigger</strong> — it is always managed by administrators. The <code>auth_id</code> column is <code>NULL</code> until the member activates their account.</p>
+<blockquote>
+<p><strong>Important:</strong> Public self-registration via <code>/signup</code> is disabled. The <code>/signup</code> page is now an informational dead-end. All accounts must be invited by an <code>ADMIN</code>.</p>
+</blockquote>
+<h2 id="role-based-access-control-rbac">Role-Based Access Control (RBAC)<a class="headerlink" href="#role-based-access-control-rbac" title="Permanent link">&para;</a></h2>
+<p>As outlined in the <a href="../../product/roles/">Roles documentation</a>, we utilize two roles: <code>MEMBER</code> and <code>ADMIN</code>.</p>
+<p>We implement RBAC firmly at the database level using Supabase Row Level Security (RLS).</p>
+<h3 id="row-level-security-rls-example">Row Level Security (RLS) Example<a class="headerlink" href="#row-level-security-rls-example" title="Permanent link">&para;</a></h3>
+<p>Because Next.js Server Components and Server Actions pass the user's JWT to Supabase securely, Supabase knows exactly <em>who</em> is making the request.</p>
+<p>For example, the policy on the <code>events</code> table might look like this:
+- <strong>SELECT (Read):</strong> <code>true</code> (Anyone can view events)
+- <strong>INSERT/UPDATE/DELETE:</strong> <code>(SELECT role FROM public.members WHERE id = auth.uid()) = 'ADMIN'</code></p>
+<p>This guarantees that even if a malicious user discovers the API endpoint to delete an event, the database will reject the request because their role is not <code>ADMIN</code>.</p>
+<h2 id="hauauth-package"><code>@hau/auth</code> Package<a class="headerlink" href="#hauauth-package" title="Permanent link">&para;</a></h2>
+<p>To make authentication seamless in Next.js, we encapsulate <code>@supabase/ssr</code> logic inside the <code>@hau/auth</code> package.</p>
+<p>It exports utilities such as:
+- <code>createClient()</code>: Retrieves a configured Supabase client depending on whether it's running on the client, server component, or server action.
+- <code>getUser()</code>: Parses the cookies, verifies the JWT, and returns the user object.
+- <code>requireAuth()</code>: A helper function that throws an error or redirects if a user is not logged in.
+- <code>requireAdmin()</code>: A helper function that throws an error if the logged-in user is not an <code>ADMIN</code>.</p>
               
             </div>
           </div><footer>

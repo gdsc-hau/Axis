@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import "@hau/axis-ui/styles.css";
 import "./globals.css";
 
 const inter = Inter({
@@ -8,7 +9,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "GDG Hub — Axis",
-  description: "The community hub for GDG HAU — events, leaderboards, certificates, and more.",
+  description:
+    "The community hub for GDG HAU — events, leaderboards, certificates, and more.",
 };
 
 export default function RootLayout({
@@ -18,9 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        {children}
-      </body>
+      <body className={inter.className}>{children}</body>
     </html>
   );
 }

@@ -97,6 +97,8 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/deployment/">Deployment</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../runbooks/security-deployment/">Security Deployment</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/troubleshooting/">Troubleshooting</a>
                   </li>
               </ul>
@@ -104,7 +106,17 @@
               <ul class="current">
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">Standards</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#typescript-and-type-safety">TypeScript and Type Safety</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#react-nextjs-best-practices">React &amp; Next.js Best Practices</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#database-sql">Database &amp; SQL</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#pull-request-workflow">Pull Request Workflow</a>
+    </li>
     </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ui-ux/">UI/UX Guide</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../docs-rules/">Documentation Rules</a>
                   </li>
@@ -133,14 +145,40 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="standards">Standards<a class="headerlink" href="#standards" title="Permanent link">&para;</a></h1>
-<p>Document code style, review expectations, and repository conventions here.</p>
+                <h1 id="coding-standards">Coding Standards<a class="headerlink" href="#coding-standards" title="Permanent link">&para;</a></h1>
+<p>To ensure a high-quality, maintainable codebase, all contributions to the GDG HAU Axis project must adhere to the following standards.</p>
+<h2 id="typescript-and-type-safety">TypeScript and Type Safety<a class="headerlink" href="#typescript-and-type-safety" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Strict Mode:</strong> TypeScript strict mode is enabled across the monorepo. Do not bypass it using <code>@ts-ignore</code> unless absolutely necessary (and if so, explain why in a comment).</li>
+<li><strong>Zod Validation:</strong> All API inputs, form data, and Server Action arguments MUST be validated using Zod schemas defined in <code>@hau/contracts</code>. Do not trust client input.</li>
+<li><strong>No <code>any</code>:</strong> Avoid using the <code>any</code> type. If you are unsure of a type, use <code>unknown</code> and perform type narrowing.</li>
+</ul>
+<h2 id="react-nextjs-best-practices">React &amp; Next.js Best Practices<a class="headerlink" href="#react-nextjs-best-practices" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Server Components First:</strong> Default to building Server Components. Only add <code>'use client'</code> to components that require interactivity (hooks, event listeners) or browser APIs.</li>
+<li><strong>Server Actions:</strong> Use Server Actions for data mutations instead of creating traditional API route handlers, keeping logic closely tied to the UI components that trigger them.</li>
+<li><strong>Component Colocation:</strong> Keep styles, tests, and closely related sub-components in the same folder as the main component to maintain a clean structure.</li>
+<li><strong>Shared UI:</strong> Put reusable, presentational components and design tokens in <code>@hau/axis-ui</code>. Keep route-aware, data-bound, and product-specific compositions in the owning application. Consume packages through their public entry points; never deep-import <code>src/</code> files.</li>
+</ul>
+<h2 id="database-sql">Database &amp; SQL<a class="headerlink" href="#database-sql" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Schema Names:</strong> Use the exact table and column names defined by the current migrations and generated database types. Existing quoted camelCase names must remain quoted in SQL. Prefer <code>snake_case</code> for new database objects, but never rename an existing object without an explicit compatibility migration.</li>
+<li><strong>Row Level Security (RLS):</strong> Every new table must have RLS enabled. Write clear policies defining who can select, insert, update, or delete rows.</li>
+<li><strong>Migrations:</strong> Never alter production tables manually. Use the Supabase CLI to generate migration files.</li>
+</ul>
+<h2 id="pull-request-workflow">Pull Request Workflow<a class="headerlink" href="#pull-request-workflow" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Branch Naming:</strong> Use conventional prefixes like <code>feat/</code>, <code>fix/</code>, <code>docs/</code>, <code>chore/</code> followed by a descriptive name (e.g., <code>feat/add-event-rsvp</code>).</li>
+<li><strong>Commit Messages:</strong> Follow <a href="https://www.conventionalcommits.org/en/v1.0.0/">Conventional Commits</a>.</li>
+<li><strong>Local Checks:</strong> Before pushing, run the checks relevant to the change. For application work, run <code>pnpm lint</code>, <code>pnpm typecheck</code>, and <code>pnpm test</code>. Add <code>pnpm build</code> for routing, configuration, or production-sensitive changes.</li>
+</ol>
+<p>The repository-root <code>CONTRIBUTING.md</code> defines the simple issue, branch, commit, and pull-request workflow. UI/UX and shared component work must also follow the <a href="../ui-ux/">UI/UX contribution guide</a>.</p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
         <a href="../../runbooks/troubleshooting/" class="btn btn-neutral float-left" title="Troubleshooting"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../docs-rules/" class="btn btn-neutral float-right" title="Documentation Rules">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../ui-ux/" class="btn btn-neutral float-right" title="UI/UX Guide">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -166,7 +204,7 @@
       <span><a href="../../runbooks/troubleshooting/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../docs-rules/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../ui-ux/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

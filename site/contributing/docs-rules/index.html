@@ -97,6 +97,8 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/deployment/">Deployment</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../runbooks/security-deployment/">Security Deployment</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/troubleshooting/">Troubleshooting</a>
                   </li>
               </ul>
@@ -104,8 +106,16 @@
               <ul class="current">
                   <li class="toctree-l1"><a class="reference internal" href="../standards/">Standards</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ui-ux/">UI/UX Guide</a>
+                  </li>
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">Documentation Rules</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#general-guidelines">General Guidelines</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#adding-new-pages">Adding New Pages</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#testing-docs-locally">Testing Docs Locally</a>
+    </li>
     </ul>
                   </li>
               </ul>
@@ -134,13 +144,38 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="documentation-rules">Documentation Rules<a class="headerlink" href="#documentation-rules" title="Permanent link">&para;</a></h1>
-<p>Keep documentation Markdown-first, concise, and close to the code it describes.</p>
-<p>When docs change, update the relevant page in MkDocs rather than leaving notes only in source files.</p>
+<p>Documentation is just as important as the code itself. Outdated or inaccurate documentation leads to confusion and bugs.</p>
+<h2 id="general-guidelines">General Guidelines<a class="headerlink" href="#general-guidelines" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Keep it Living:</strong> Whenever you add a new feature, change the architecture, or update a database table, you MUST update the corresponding markdown file in the <code>docs/</code> directory in the same Pull Request.</li>
+<li><strong>No Secrets:</strong> <strong>Never</strong> hardcode API keys, Supabase URLs, or production passwords into the documentation. If you need to demonstrate how to use an environment variable, use dummy values (e.g., <code>SUPABASE_KEY=your-anon-key-here</code>).</li>
+<li><strong>Clear Formatting:</strong> Use standard Markdown features: headers for hierarchy, bullet points for lists, and code blocks with syntax highlighting for code snippets.</li>
+</ul>
+<h2 id="adding-new-pages">Adding New Pages<a class="headerlink" href="#adding-new-pages" title="Permanent link">&para;</a></h2>
+<p>If you are adding a completely new section or page to the documentation:</p>
+<ol>
+<li>Create the <code>.md</code> file in the appropriate directory inside <code>docs/</code>.</li>
+<li>Open <code>mkdocs.yml</code> in the root directory.</li>
+<li>Add the file path to the <code>nav</code> tree so it appears in the sidebar navigation.</li>
+</ol>
+<h2 id="testing-docs-locally">Testing Docs Locally<a class="headerlink" href="#testing-docs-locally" title="Permanent link">&para;</a></h2>
+<p>We use MkDocs with the Read the Docs theme to generate this documentation site. The repository scripts keep the command consistent for every contributor.</p>
+<p>To preview your changes locally before committing:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Install the Python documentation dependency if needed</span>
+python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>mkdocs
+
+<span class="c1"># Run the local server</span>
+pnpm<span class="w"> </span>docs:serve
+</code></pre></div>
+<p>The documentation site will be available at <code>http://127.0.0.1:8000/</code>. Verify that your formatting looks correct and that all internal links are working.</p>
+<p>Before opening the pull request, also run the production documentation build:</p>
+<div class="highlight"><pre><span></span><code>pnpm<span class="w"> </span>docs:build
+</code></pre></div>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../standards/" class="btn btn-neutral float-left" title="Standards"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../ui-ux/" class="btn btn-neutral float-left" title="UI/UX Guide"><span class="icon icon-circle-arrow-left"></span> Previous</a>
     </div>
 
   <hr/>
@@ -163,7 +198,7 @@
   <span class="rst-current-version" data-toggle="rst-current-version">
     
     
-      <span><a href="../standards/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../ui-ux/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
   </span>

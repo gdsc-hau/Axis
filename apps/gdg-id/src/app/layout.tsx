@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
 import { VT323 } from "next/font/google";
+import "@hau/axis-ui/styles.css";
 import "./globals.css";
 import ChatbotWidget from "../components/Chatbot/ChatbotWidget";
 
 const vt323 = VT323({
-  weight: '400',
-  subsets: ['latin'],
+  weight: "400",
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
   title: "GDG HAU ID Platform",
-  description: "The digital identity and membership verification hub for GDG HAU.",
+  description:
+    "The digital identity and membership verification hub for GDG HAU.",
   icons: {
     icon: "/gdg_icon.png",
   },
@@ -34,4 +36,3 @@ export default function RootLayout({
     </html>
   );
 }
-

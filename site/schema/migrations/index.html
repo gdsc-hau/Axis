@@ -88,11 +88,15 @@
                   </li>
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">Migrations</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#migration-shape">Migration shape</a>
+    <li class="toctree-l2"><a class="reference internal" href="#never-mutate-production-manually">Never Mutate Production Manually</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#conventions-observed-in-the-migrations">Conventions observed in the migrations</a>
+    <li class="toctree-l2"><a class="reference internal" href="#creating-a-migration">Creating a Migration</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#notes-for-future-changes">Notes for future changes</a>
+    <li class="toctree-l2"><a class="reference internal" href="#writing-migrations-by-hand">Writing Migrations by Hand</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#applying-migrations">Applying Migrations</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#rollbacks">Rollbacks</a>
     </li>
     </ul>
                   </li>
@@ -105,12 +109,16 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/deployment/">Deployment</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../runbooks/security-deployment/">Security Deployment</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/troubleshooting/">Troubleshooting</a>
                   </li>
               </ul>
               <p class="caption"><span class="caption-text">Contributing</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/standards/">Standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contributing/ui-ux/">UI/UX Guide</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/docs-rules/">Documentation Rules</a>
                   </li>
@@ -139,31 +147,38 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="migrations">Migrations<a class="headerlink" href="#migrations" title="Permanent link">&para;</a></h1>
-<p>The repository currently has two migration files:</p>
+                <h1 id="supabase-migrations">Supabase Migrations<a class="headerlink" href="#supabase-migrations" title="Permanent link">&para;</a></h1>
+<p>We manage all database schema changes through <strong>Supabase Migrations</strong>. This ensures that the local database, staging, and production are always perfectly synchronized.</p>
+<h2 id="never-mutate-production-manually">Never Mutate Production Manually<a class="headerlink" href="#never-mutate-production-manually" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>[!WARNING]
+Do <strong>not</strong> use the Supabase Studio UI in production to create tables, add columns, or write SQL directly.
+All changes must be captured in a migration file and checked into Git.</p>
+</blockquote>
+<h2 id="creating-a-migration">Creating a Migration<a class="headerlink" href="#creating-a-migration" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Make changes locally:</strong> You can use the local Supabase Studio (<code>http://127.0.0.1:54323</code> when <code>supabase start</code> is running) to create tables or columns via the UI.</li>
+<li><strong>Generate the migration file:</strong> Once you are happy with the local schema changes, ask the CLI to look at the difference between your local database and the last migration file:
+   <div class="highlight"><pre><span></span><code>supabase<span class="w"> </span>db<span class="w"> </span>diff<span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;describe_your_change&quot;</span>
+</code></pre></div>
+   This will generate a file like <code>supabase/migrations/20260711123456_describe_your_change.sql</code>.</li>
+<li><strong>Review the SQL:</strong> Open the generated file and verify it only contains the expected <code>CREATE TABLE</code> or <code>ALTER TABLE</code> statements.</li>
+<li><strong>Commit to Git:</strong> Add this file to your pull request.</li>
+</ol>
+<h2 id="writing-migrations-by-hand">Writing Migrations by Hand<a class="headerlink" href="#writing-migrations-by-hand" title="Permanent link">&para;</a></h2>
+<p>Sometimes it is safer or cleaner to write the SQL by hand:
+<div class="highlight"><pre><span></span><code>supabase<span class="w"> </span>migration<span class="w"> </span>new<span class="w"> </span><span class="s2">&quot;add_new_feature_table&quot;</span>
+</code></pre></div>
+This creates an empty <code>.sql</code> file in <code>supabase/migrations/</code> for you to write your SQL manually.</p>
+<h2 id="applying-migrations">Applying Migrations<a class="headerlink" href="#applying-migrations" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../../supabase/migrations/0000_initial_schema.sql">supabase/migrations/0000_initial_schema.sql</a></li>
-<li><a href="../../supabase/migrations/20260526000000_init_members.sql">supabase/migrations/20260526000000_init_members.sql</a></li>
+<li><strong>Locally:</strong> If you pull down a new migration from <code>main</code>, run <code>supabase db reset</code> or <code>supabase migration up</code> to apply it to your local Docker database.</li>
+<li><strong>Production:</strong> When a PR is merged into the <code>main</code> branch, a GitHub Action automatically runs <code>supabase link</code> and <code>supabase db push</code> to apply the migrations to the live database safely.</li>
 </ul>
-<h2 id="migration-shape">Migration shape<a class="headerlink" href="#migration-shape" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>0000_initial_schema.sql</code> defines the standardized schema for members, profiles, events, rewards, certificates, redemptions, notifications, and audit logs</li>
-<li><code>20260526000000_init_members.sql</code> creates the base <code>members</code> table with <code>student_id</code>, <code>email</code>, <code>hau_id</code>, and index support</li>
-</ul>
-<h2 id="conventions-observed-in-the-migrations">Conventions observed in the migrations<a class="headerlink" href="#conventions-observed-in-the-migrations" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Tables use UUID primary keys</li>
-<li>Timestamps default to <code>NOW()</code> or <code>DEFAULT NOW()</code></li>
-<li>Update tracking is handled with a reusable <code>set_updated_at()</code> trigger function</li>
-<li>Most foreign keys use <code>ON DELETE CASCADE</code> for child records</li>
-<li>Administrative and audit tables use <code>ON DELETE SET NULL</code> where preserving history is important</li>
-</ul>
-<h2 id="notes-for-future-changes">Notes for future changes<a class="headerlink" href="#notes-for-future-changes" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Keep migration order stable and additive where possible</li>
-<li>If a table is already live, prefer safe <code>ALTER TABLE IF EXISTS</code> updates over destructive recreation</li>
-<li>Document any schema dependency in the matching schema page when a migration changes a core relation</li>
-</ul>
+<h2 id="rollbacks">Rollbacks<a class="headerlink" href="#rollbacks" title="Permanent link">&para;</a></h2>
+<p>If a migration fails in production, it usually rolls back automatically (since Supabase wraps migrations in a transaction). If you need to revert a change locally to try again:
+<div class="highlight"><pre><span></span><code>supabase<span class="w"> </span>migration<span class="w"> </span>down
+</code></pre></div></p>
               
             </div>
           </div><footer>

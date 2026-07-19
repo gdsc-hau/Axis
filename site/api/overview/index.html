@@ -77,7 +77,9 @@
               <ul class="current">
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">API Overview</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#route-families">Route families</a>
+    <li class="toctree-l2"><a class="reference internal" href="#how-data-is-read-server-components">How Data is Read (Server Components)</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#how-data-is-mutated-server-actions">How Data is Mutated (Server Actions)</a>
     </li>
     </ul>
                   </li>
@@ -101,12 +103,16 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/deployment/">Deployment</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../runbooks/security-deployment/">Security Deployment</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/troubleshooting/">Troubleshooting</a>
                   </li>
               </ul>
               <p class="caption"><span class="caption-text">Contributing</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/standards/">Standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contributing/ui-ux/">UI/UX Guide</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/docs-rules/">Documentation Rules</a>
                   </li>
@@ -135,18 +141,40 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="api-overview">API Overview<a class="headerlink" href="#api-overview" title="Permanent link">&para;</a></h1>
-<p>The platform exposes route handlers for auth callbacks, leaderboard rebuilds, certificate issuance, attendance confirmation, Luma sync, and redemption creation.</p>
-<h2 id="route-families">Route families<a class="headerlink" href="#route-families" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>auth/callback</code>: handles authentication return flows</li>
-<li><code>api/leaderboard/rebuild</code>: refreshes leaderboard data</li>
-<li><code>api/certificates/issue</code> and <code>api/certificates/resend</code>: certificate workflows</li>
-<li><code>api/attendance/confirm</code>: attendance confirmation workflow</li>
-<li><code>api/luma/sync</code>: imports or refreshes event data from Luma</li>
-<li><code>api/redemptions/create</code>: creates redemption requests</li>
-</ul>
-<p>This section should document the purpose, inputs, outputs, and permissions for each endpoint.</p>
+                <h1 id="api-data-flow-overview">API &amp; Data Flow Overview<a class="headerlink" href="#api-data-flow-overview" title="Permanent link">&para;</a></h1>
+<p>Because we use Next.js App Router and Supabase, our "API" looks quite different from a traditional Express/Node backend.</p>
+<p>We do not write many traditional REST API routes (e.g., <code>/api/users</code>). Instead, we leverage <strong>React Server Components (RSC)</strong> and <strong>Server Actions</strong>.</p>
+<h2 id="how-data-is-read-server-components">How Data is Read (Server Components)<a class="headerlink" href="#how-data-is-read-server-components" title="Permanent link">&para;</a></h2>
+<p>To fetch data to display on the screen, we query the database <em>directly</em> from the server component.</p>
+<p><div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">createClient</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@hau/db/server&#39;</span><span class="p">;</span>
+
+<span class="k">export</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">MembersPage</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">supabase</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">createClient</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="kt">members</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">supabase</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="s1">&#39;members&#39;</span><span class="p">).</span><span class="nx">select</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">MembersTable</span><span class="w"> </span><span class="na">data</span><span class="o">=</span><span class="p">{</span><span class="nx">members</span><span class="p">}</span><span class="w"> </span><span class="p">/&gt;;</span>
+<span class="p">}</span>
+</code></pre></div>
+<em>Why this is good:</em> It removes the need for a separate <code>fetch('/api/members')</code> call from the client, eliminating network waterfalls and ensuring the UI loads with data instantly.</p>
+<h2 id="how-data-is-mutated-server-actions">How Data is Mutated (Server Actions)<a class="headerlink" href="#how-data-is-mutated-server-actions" title="Permanent link">&para;</a></h2>
+<p>To handle form submissions, clicks, or data updates, we use Server Actions. These are asynchronous functions executed on the server but called from client components.</p>
+<div class="highlight"><pre><span></span><code><span class="s1">&#39;use server&#39;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">createClient</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@hau/db/server&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">revalidatePath</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;next/cache&#39;</span><span class="p">;</span>
+
+<span class="k">export</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">awardPointsAction</span><span class="p">(</span><span class="nx">memberId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">points</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">supabase</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">createClient</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// 1. Validate Admin Role (handled automatically if RLS is strong, or explicitly here)</span>
+
+<span class="w">  </span><span class="c1">// 2. Perform DB Mutation</span>
+<span class="w">  </span><span class="k">await</span><span class="w"> </span><span class="nx">supabase</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="s1">&#39;points_ledger&#39;</span><span class="p">).</span><span class="nx">insert</span><span class="p">({</span><span class="w"> </span><span class="nx">member_id</span><span class="o">:</span><span class="w"> </span><span class="kt">memberId</span><span class="p">,</span><span class="w"> </span><span class="nx">points</span><span class="w"> </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// 3. Clear cache so the UI updates</span>
+<span class="w">  </span><span class="nx">revalidatePath</span><span class="p">(</span><span class="s1">&#39;/admin/members&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>These patterns ensure strong type safety (because the server action and the UI share the same TypeScript scope) and faster development velocity.</p>
               
             </div>
           </div><footer>
