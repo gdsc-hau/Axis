@@ -1,6 +1,6 @@
-import { redirect } from 'next/navigation';
-import { getUser, getUserRole } from '@hau/auth';
-import { AdminSidebar } from './AdminSidebar';
+import { redirect } from "next/navigation";
+import { getUser, getUserRole } from "@hau/auth";
+import { AdminSidebar } from "./AdminSidebar";
 
 export default async function AdminLayout({
   children,
@@ -10,13 +10,13 @@ export default async function AdminLayout({
   const user = await getUser();
 
   if (!user) {
-    redirect('/login');
+    redirect("/login");
   }
 
   const role = await getUserRole(user.id);
 
-  if (role !== 'ADMIN') {
-    redirect('/member/dashboard');
+  if (role !== "ADMIN") {
+    redirect("/member/dashboard");
   }
 
   return (

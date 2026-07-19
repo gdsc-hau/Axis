@@ -1,31 +1,41 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
 
   const navLinks = [
-    { name: 'Home', href: '/' },
-    { name: 'About', href: '/about' },
-    { name: 'FAQs', href: '/faq' },
-    { name: 'Contact', href: '/contact' },
-    { name: 'Coming Soon', href: '/coming-soon' },
+    { name: "Home", href: "/" },
+    { name: "About", href: "/about" },
+    { name: "FAQs", href: "/faq" },
+    { name: "Contact", href: "/contact" },
+    { name: "Coming Soon", href: "/coming-soon" },
   ];
 
   return (
     <header className="absolute top-0 left-0 w-full px-4 md:px-8 py-4 flex items-center justify-between z-50 border-b border-white/5 bg-[#030305]/40 backdrop-blur-md font-mono">
       <div className="flex items-center gap-3 md:gap-4">
         <Link href="/" className="flex items-center justify-center shrink-0">
-          <Image src="/gdg_icon.png" alt="GDG Logo" width={40} height={40} className="animate-[pulse_4s_infinite] w-8 h-8 md:w-10 md:h-10 object-contain" />
+          <Image
+            src="/gdg_icon.png"
+            alt="GDG Logo"
+            width={40}
+            height={40}
+            className="animate-[pulse_4s_infinite] w-8 h-8 md:w-10 md:h-10 object-contain"
+          />
         </Link>
         <Link href="/">
-          <h2 className="text-white font-bold text-xs md:text-sm uppercase tracking-wider line-clamp-1">Google Developer Group</h2>
-          <p className="text-blue-500 text-[10px] md:text-xs font-semibold tracking-tight mt-0.5">Holy Angel University</p>
+          <h2 className="text-white font-bold text-xs md:text-sm uppercase tracking-wider line-clamp-1">
+            Google Developer Group
+          </h2>
+          <p className="text-blue-500 text-[10px] md:text-xs font-semibold tracking-tight mt-0.5">
+            Holy Angel University
+          </p>
         </Link>
       </div>
 
@@ -36,10 +46,10 @@ export default function Navbar() {
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
-              <Link 
-                key={link.name} 
-                href={link.href} 
-                className={`${isActive ? 'text-white font-semibold' : 'text-gray-400'} hover:text-white transition-colors tracking-wide`}
+              <Link
+                key={link.name}
+                href={link.href}
+                className={`${isActive ? "text-white font-semibold" : "text-gray-400"} hover:text-white transition-colors tracking-wide`}
               >
                 {link.name}
               </Link>
@@ -53,18 +63,38 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Menu Action Button */}
-        <button 
+        <button
           onClick={() => setMenuOpen(!menuOpen)}
           className="flex md:hidden items-center justify-center w-8 h-8 text-gray-400 hover:text-white transition-colors focus:outline-none"
           title="Toggle Menu"
         >
           {menuOpen ? (
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           ) : (
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
             </svg>
           )}
         </button>
@@ -76,11 +106,11 @@ export default function Navbar() {
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
-              <Link 
-                key={link.name} 
-                href={link.href} 
-                onClick={() => setMenuOpen(false)} 
-                className={`${isActive ? 'text-white font-semibold' : 'text-gray-400'} hover:text-white text-sm py-2.5 border-b border-white/5 transition-colors tracking-wide`}
+              <Link
+                key={link.name}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                className={`${isActive ? "text-white font-semibold" : "text-gray-400"} hover:text-white text-sm py-2.5 border-b border-white/5 transition-colors tracking-wide`}
               >
                 {link.name}
               </Link>

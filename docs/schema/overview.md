@@ -62,4 +62,4 @@ erDiagram
     }
 ```
 
-*Note: This is a simplified diagram. For the exhaustive list of columns and relationships, refer to the [Tables Data Dictionary](tables.md).*
+_Note: This is a simplified diagram. For the exhaustive list of columns and relationships, refer to the [Tables Data Dictionary](tables.md)._

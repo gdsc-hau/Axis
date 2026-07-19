@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 /**
  * Single source of truth for GDG HAU Member data.
@@ -40,13 +40,13 @@ export type MemberSearchResult = z.infer<typeof MemberSearchResultSchema>;
 /**
  * API Route Validation
  */
-export const SearchRequestSchema = z.discriminatedUnion('type', [
+export const SearchRequestSchema = z.discriminatedUnion("type", [
   z.object({
-    type: z.literal('email'),
+    type: z.literal("email"),
     value: z.string().trim().email().max(254),
   }),
   z.object({
-    type: z.literal('barcode'),
+    type: z.literal("barcode"),
     value: z.string().trim().min(1).max(128),
   }),
 ]);

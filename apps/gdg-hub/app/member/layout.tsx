@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation';
-import { getUser, isProfileComplete } from '@hau/auth';
+import { redirect } from "next/navigation";
+import { getUser, isProfileComplete } from "@hau/auth";
 
 export default async function MemberLayout({
   children,
@@ -9,14 +9,14 @@ export default async function MemberLayout({
   const user = await getUser();
 
   if (!user) {
-    redirect('/login');
+    redirect("/login");
   }
 
   const profileComplete = await isProfileComplete(user.id);
 
   if (!profileComplete) {
     // If their profile is incomplete, force them to complete it via the verify route
-    redirect('/verify');
+    redirect("/verify");
   }
 
   return (
@@ -30,10 +30,8 @@ export default async function MemberLayout({
           {/* Add member navigation links here */}
         </nav>
       </aside>
-      
-      <main className="flex-1 p-8 overflow-y-auto">
-        {children}
-      </main>
+
+      <main className="flex-1 p-8 overflow-y-auto">{children}</main>
     </div>
   );
 }

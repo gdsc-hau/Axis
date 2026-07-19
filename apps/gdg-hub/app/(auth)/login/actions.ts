@@ -1,15 +1,14 @@
-'use server';
+"use server";
 
-import { redirect } from 'next/navigation';
-import { createServerClientInstance } from '@hau/db';
+import { redirect } from "next/navigation";
+import { createServerClientInstance } from "@hau/db";
 
 export async function login(formData: FormData) {
-
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
 
   if (!email || !password) {
-    return { error: 'Email and password are required' };
+    return { error: "Email and password are required" };
   }
 
   const supabase = await createServerClientInstance();
@@ -23,5 +22,5 @@ export async function login(formData: FormData) {
     return { error: error.message };
   }
 
-  redirect('/member/dashboard');
+  redirect("/member/dashboard");
 }

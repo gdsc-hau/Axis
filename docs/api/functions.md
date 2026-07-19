@@ -14,8 +14,8 @@ From your Next.js server components or actions, you use the `.rpc()` method prov
 
 ```typescript
 const supabase = await createClient();
-const { data, error } = await supabase.rpc('calculate_member_points', {
-  member_uuid: '1234-abcd'
+const { data, error } = await supabase.rpc("calculate_member_points", {
+  member_uuid: "1234-abcd",
 });
 ```
 

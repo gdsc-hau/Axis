@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { completeProfile } from './actions';
+import { useState } from "react";
+import { completeProfile } from "./actions";
 
 export default function VerifyPage() {
   const [error, setError] = useState<string | null>(null);
@@ -16,7 +16,7 @@ export default function VerifyPage() {
     if (result?.error) {
       setError(result.error);
     }
-    
+
     setLoading(false);
   }
 
@@ -27,16 +27,19 @@ export default function VerifyPage() {
         <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
           Please complete your profile to access the member portal.
         </p>
-        
+
         {error && (
           <div className="mb-4 p-4 text-sm text-red-800 bg-red-100 rounded-lg dark:bg-red-900/30 dark:text-red-400">
             {error}
           </div>
         )}
-        
+
         <form action={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1" htmlFor="fullName">
+            <label
+              className="block text-sm font-medium mb-1"
+              htmlFor="fullName"
+            >
               Full Name
             </label>
             <input
@@ -62,7 +65,10 @@ export default function VerifyPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1" htmlFor="linkedin">
+            <label
+              className="block text-sm font-medium mb-1"
+              htmlFor="linkedin"
+            >
               LinkedIn Profile URL (Optional)
             </label>
             <input
@@ -90,7 +96,7 @@ export default function VerifyPage() {
             disabled={loading}
             className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md disabled:opacity-50 transition-colors mt-6"
           >
-            {loading ? 'Saving...' : 'Complete Profile'}
+            {loading ? "Saving..." : "Complete Profile"}
           </button>
         </form>
       </div>

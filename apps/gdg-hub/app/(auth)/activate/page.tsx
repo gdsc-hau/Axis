@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { activateAccount } from './actions';
+import { useState } from "react";
+import { activateAccount } from "./actions";
 
 export default function ActivatePage() {
   const [error, setError] = useState<string | null>(null);
@@ -86,12 +86,12 @@ export default function ActivatePage() {
             disabled={loading}
             className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg disabled:opacity-50 transition-colors mt-2"
           >
-            {loading ? 'Activating…' : 'Activate Account'}
+            {loading ? "Activating…" : "Activate Account"}
           </button>
         </form>
 
         <p className="mt-6 text-center text-xs text-zinc-400 dark:text-zinc-500">
-          Having trouble?{' '}
+          Having trouble?{" "}
           <a
             href="mailto:gdg@hau.edu.ph"
             className="underline hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"

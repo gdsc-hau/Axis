@@ -87,6 +87,7 @@ sequenceDiagram
 ## 3. Data Flow & Security Rules
 
 ### Principle of Least Privilege & Monorepo Boundaries
+
 1. **Never Import App to App**: Under no circumstances should packages import from applications, or applications import from other applications.
 2. **Access DB via `@hau/db`**: Database requests must route through `@hau/db` client instances (`createServerClientInstance` for Server Components, `createAdminClient` strictly for server-side admin privilege procedures).
 3. **Data Masking**: Member lookups (`gdg-id`) must filter payloads through the `PublicMemberProfileSchema` Zod model to strip private data (e.g. `student_id`).

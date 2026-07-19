@@ -24,7 +24,7 @@ This document outlines the major user journeys supported by the GDG HAU Axis pla
 
 1. **Event Creation (Admin):** An `ADMIN` creates an event in `gdg-hub`, setting the title, date, and optionally a Luma URL for external registration.
 2. **Registration:** A `MEMBER` RSVPs for the event. A record is created in `event_attendance` with status `REGISTERED`.
-3. **Check-In (At Event):** 
+3. **Check-In (At Event):**
    - The member presents their digital GDG ID (QR Code) via `gdg-id`.
    - An `ADMIN` uses a scanner (or the `gdg-hub` interface) to scan the QR code.
    - The system verifies the QR code, marks the attendance record as `CHECKED_IN`, and logs the `verified_by` ID.

@@ -22,9 +22,11 @@ We manage all database schema changes through **Supabase Migrations**. This ensu
 ## Writing Migrations by Hand
 
 Sometimes it is safer or cleaner to write the SQL by hand:
+
 ```bash
 supabase migration new "add_new_feature_table"
 ```
+
 This creates an empty `.sql` file in `supabase/migrations/` for you to write your SQL manually.
 
 ## Applying Migrations
@@ -35,6 +37,7 @@ This creates an empty `.sql` file in `supabase/migrations/` for you to write you
 ## Rollbacks
 
 If a migration fails in production, it usually rolls back automatically (since Supabase wraps migrations in a transaction). If you need to revert a change locally to try again:
+
 ```bash
 supabase migration down
 ```
