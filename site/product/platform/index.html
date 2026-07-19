@@ -57,6 +57,12 @@
               <ul class="current">
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">Platform</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#1-gdg-hub-appsgdg-hub">1. GDG Hub (apps/gdg-hub)</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#2-gdg-id-appsgdg-id">2. GDG ID (apps/gdg-id)</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#why-two-apps">Why Two Apps?</a>
+    </li>
     </ul>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../roles/">Roles</a>
@@ -99,12 +105,16 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/deployment/">Deployment</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../runbooks/security-deployment/">Security Deployment</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/troubleshooting/">Troubleshooting</a>
                   </li>
               </ul>
               <p class="caption"><span class="caption-text">Contributing</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/standards/">Standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contributing/ui-ux/">UI/UX Guide</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/docs-rules/">Documentation Rules</a>
                   </li>
@@ -133,9 +143,34 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="platform">Platform<a class="headerlink" href="#platform" title="Permanent link">&para;</a></h1>
-<p>The platform is a digital identity and membership hub for GDG HAU.</p>
-<p>It includes public pages, member workflows, admin workflows, and API endpoints that support event, rewards, certificate, and leaderboard features.</p>
+                <h1 id="platform-breakdown">Platform Breakdown<a class="headerlink" href="#platform-breakdown" title="Permanent link">&para;</a></h1>
+<p>The GDG HAU Axis ecosystem consists of two primary user-facing applications, each serving a distinct purpose and audience.</p>
+<h2 id="1-gdg-hub-appsgdg-hub">1. GDG Hub (<code>apps/gdg-hub</code>)<a class="headerlink" href="#1-gdg-hub-appsgdg-hub" title="Permanent link">&para;</a></h2>
+<p>The <strong>GDG Hub</strong> is the internal operational portal for the community. It serves as the administrative backend where organizers manage the community and active members track their involvement.</p>
+<p><strong>Key Features:</strong>
+- <strong>Member Directory:</strong> A searchable database of all registered GDG members.
+- <strong>Event Management:</strong> Create, publish, and manage RSVPs for workshops, hackathons, and study jams.
+- <strong>Attendance Tracking:</strong> Check-in functionality for events to ensure accurate participation records.
+- <strong>Points Ledger:</strong> A system to award and track points for members based on their activity and engagement.
+- <strong>Marketplace Management:</strong> Define redeemable swag items and approve point redemptions.</p>
+<p><strong>Primary Audience:</strong>
+- GDG Officers and Core Team Members (ADMIN role)
+- Highly active members checking their points, RSVPing to exclusive events, or redeeming swag.</p>
+<h2 id="2-gdg-id-appsgdg-id">2. GDG ID (<code>apps/gdg-id</code>)<a class="headerlink" href="#2-gdg-id-appsgdg-id" title="Permanent link">&para;</a></h2>
+<p>The <strong>GDG ID</strong> application is the public-facing identity portal. It is designed to be mobile-first and serves as the digital portfolio for every member.</p>
+<p><strong>Key Features:</strong>
+- <strong>Digital ID Card:</strong> A scannable, visually appealing GDG membership card containing a unique QR code.
+- <strong>Public Profile:</strong> A shareable page showcasing the member's bio, skills, and links (GitHub, LinkedIn).
+- <strong>Certificates &amp; Badges Wallet:</strong> A public showcase of earned certificates from events and badges awarded for specific achievements or roles.
+- <strong>Verification Portal:</strong> Allows third parties (like sponsors or other organizations) to scan the QR code and verify the member's standing and credentials.</p>
+<p><strong>Primary Audience:</strong>
+- General Members accessing their digital ID for events.
+- External viewers (recruiters, sponsors, other students) verifying a student's involvement or checking their portfolio.</p>
+<h2 id="why-two-apps">Why Two Apps?<a class="headerlink" href="#why-two-apps" title="Permanent link">&para;</a></h2>
+<p>Separating the Hub and the ID portal allows us to:
+1. <strong>Optimize for Audience:</strong> The Hub is a data-heavy dashboard optimized for desktop, while the ID portal is a lightweight, mobile-first web app.
+2. <strong>Security:</strong> The public ID portal has minimal access to sensitive administrative data.
+3. <strong>Deployment:</strong> We can scale and deploy them independently. During a large event where hundreds of students load their ID cards simultaneously, <code>gdg-id</code> can scale without impacting the performance of <code>gdg-hub</code> for organizers checking people in.</p>
               
             </div>
           </div><footer>

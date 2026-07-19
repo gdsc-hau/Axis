@@ -59,6 +59,18 @@
                   </li>
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">Roles</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#user-roles">User Roles</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-member">1. MEMBER</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-admin">2. ADMIN</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#technical-implementation">Technical Implementation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#upgrading-a-member">Upgrading a Member</a>
+    </li>
     </ul>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../flows/">User Flows</a>
@@ -99,12 +111,16 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/deployment/">Deployment</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../runbooks/security-deployment/">Security Deployment</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/troubleshooting/">Troubleshooting</a>
                   </li>
               </ul>
               <p class="caption"><span class="caption-text">Contributing</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/standards/">Standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contributing/ui-ux/">UI/UX Guide</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/docs-rules/">Documentation Rules</a>
                   </li>
@@ -133,13 +149,45 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="roles">Roles<a class="headerlink" href="#roles" title="Permanent link">&para;</a></h1>
-<p>The product serves multiple user roles.</p>
-<ul>
-<li>Guests browse public pages and learn about the community.</li>
-<li>Members manage their profile, rewards, events, and membership-related data.</li>
-<li>Admins manage members, events, articles, reports, rewards, and governance workflows.</li>
-</ul>
+                <h1 id="roles-access-control">Roles &amp; Access Control<a class="headerlink" href="#roles-access-control" title="Permanent link">&para;</a></h1>
+<p>The GDG HAU Axis platform utilizes a straightforward Role-Based Access Control (RBAC) system to ensure data security and operational integrity.</p>
+<h2 id="user-roles">User Roles<a class="headerlink" href="#user-roles" title="Permanent link">&para;</a></h2>
+<p>Currently, the system defines two primary roles in the <code>members</code> table:</p>
+<h3 id="1-member">1. <code>MEMBER</code><a class="headerlink" href="#1-member" title="Permanent link">&para;</a></h3>
+<p>The default role assigned to any student who registers for a GDG HAU account.</p>
+<p><strong>Capabilities:</strong>
+- Access their own digital ID via <code>gdg-id</code>.
+- Edit their own public profile (bio, social links).
+- View their own points ledger and transaction history.
+- RSVP to public events.
+- Download their own certificates and view their earned badges.
+- Request point redemptions in the marketplace.</p>
+<h3 id="2-admin">2. <code>ADMIN</code><a class="headerlink" href="#2-admin" title="Permanent link">&para;</a></h3>
+<p>Assigned to the GDG HAU Executive Team, Core Officers, and technical maintainers.</p>
+<p><strong>Capabilities:</strong>
+- <strong>All <code>MEMBER</code> capabilities.</strong>
+- <strong>Member Management:</strong> View and edit profiles of other members, manually adjust the points ledger, and assign badges.
+- <strong>Event Operations:</strong> Create and modify events, manage RSVPs, and perform check-ins.
+- <strong>Marketplace Ops:</strong> Approve or reject point redemption requests.
+- <strong>System Settings:</strong> Modify global application settings.</p>
+<h2 id="technical-implementation">Technical Implementation<a class="headerlink" href="#technical-implementation" title="Permanent link">&para;</a></h2>
+<p>Role enforcement happens at multiple layers to ensure maximum security:</p>
+<ol>
+<li>
+<p><strong>Database Level (Row Level Security):</strong>
+   Supabase RLS policies are the ultimate source of truth. A policy like <code>auth.uid() = id OR (SELECT role FROM members WHERE id = auth.uid()) = 'ADMIN'</code> ensures that even if the API is bypassed, unauthorized data cannot be read or modified.</p>
+</li>
+<li>
+<p><strong>API &amp; Server Actions Level:</strong>
+   Next.js Server Actions and API routes (found in <code>@hau/db</code> or the apps) check the user's session and role before executing mutations. </p>
+</li>
+<li>
+<p><strong>UI Level:</strong>
+   Frontend components conditionally render based on the user's role. For example, the "Create Event" button is entirely hidden from <code>MEMBER</code> users. <em>Note: UI hiding is for UX, not security. RLS provides the actual security.</em></p>
+</li>
+</ol>
+<h2 id="upgrading-a-member">Upgrading a Member<a class="headerlink" href="#upgrading-a-member" title="Permanent link">&para;</a></h2>
+<p>Currently, upgrading a user from <code>MEMBER</code> to <code>ADMIN</code> must be done manually by an existing <code>ADMIN</code> via the <code>gdg-hub</code> dashboard or by directly executing a SQL command in the Supabase Studio.</p>
               
             </div>
           </div><footer>

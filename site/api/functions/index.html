@@ -81,6 +81,12 @@
                   </li>
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">Functions</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#why-use-postgres-functions">Why use Postgres Functions?</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#how-to-call-functions">How to Call Functions</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#important-functions">Important Functions</a>
+    </li>
     </ul>
                   </li>
               </ul>
@@ -99,12 +105,16 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/deployment/">Deployment</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../runbooks/security-deployment/">Security Deployment</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/troubleshooting/">Troubleshooting</a>
                   </li>
               </ul>
               <p class="caption"><span class="caption-text">Contributing</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/standards/">Standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contributing/ui-ux/">UI/UX Guide</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/docs-rules/">Documentation Rules</a>
                   </li>
@@ -133,9 +143,27 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="functions">Functions<a class="headerlink" href="#functions" title="Permanent link">&para;</a></h1>
-<p>Document server-side functions, background jobs, and any externally invoked workflow logic here.</p>
-<p>Use this page for implementation notes, side effects, and operational constraints.</p>
+                <h1 id="supabase-postgres-functions-rpc">Supabase Postgres Functions (RPC)<a class="headerlink" href="#supabase-postgres-functions-rpc" title="Permanent link">&para;</a></h1>
+<p>In addition to Next.js Server Actions, we occasionally push complex logic directly into the PostgreSQL database using Functions (often referred to as RPC - Remote Procedure Calls).</p>
+<h2 id="why-use-postgres-functions">Why use Postgres Functions?<a class="headerlink" href="#why-use-postgres-functions" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Atomicity &amp; Transactions:</strong> If a process involves deducting points, generating a record, and updating a status simultaneously, a Postgres Function ensures all steps succeed or fail together as a single transaction.</li>
+<li><strong>Performance:</strong> Running complex calculations (like summing a massive ledger) on the database is faster than pulling all records to the Next.js server to sum them in JavaScript.</li>
+<li><strong>Database-Level Integrity:</strong> Functions can be tied to triggers. For instance, creating a <code>member_profile</code> row automatically when an <code>auth.user</code> is created.</li>
+</ol>
+<h2 id="how-to-call-functions">How to Call Functions<a class="headerlink" href="#how-to-call-functions" title="Permanent link">&para;</a></h2>
+<p>From your Next.js server components or actions, you use the <code>.rpc()</code> method provided by Supabase:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">supabase</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">createClient</span><span class="p">();</span>
+<span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">data</span><span class="p">,</span><span class="w"> </span><span class="nx">error</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">supabase</span><span class="p">.</span><span class="nx">rpc</span><span class="p">(</span><span class="s1">&#39;calculate_member_points&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">member_uuid</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;1234-abcd&#39;</span>
+<span class="p">});</span>
+</code></pre></div>
+<h2 id="important-functions">Important Functions<a class="headerlink" href="#important-functions" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>set_updated_at()</code>: A trigger function attached to nearly all tables that automatically updates the <code>updated_at</code> column whenever a row is modified.</li>
+</ul>
+<p>Axis deliberately does not auto-create public member records. Administrators preload
+<code>public.members</code>, and account activation links the Auth user through <code>members.auth_id</code>.</p>
               
             </div>
           </div><footer>

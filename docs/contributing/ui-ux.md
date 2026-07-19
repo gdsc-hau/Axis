@@ -14,6 +14,14 @@ import { Button, Card, Container, Stack } from "@hau/axis-ui";
 
 Do not copy the component into each application and do not deep-import files such as `@hau/axis-ui/src/components/button/Button`.
 
+The current public API includes:
+
+- components: `Alert`, `Button`, `Card`, `FormField`, `Input`, and `Textarea`;
+- primitives: `Box`, `Container`, `Stack`, and `Text`;
+- utility: `cn`.
+
+`CardHeader`, `CardTitle`, `CardDescription`, and `CardContent` are also exported as parts of the card composition. Check `packages/axis-ui/src/index.ts` before proposing a duplicate component.
+
 ## What belongs in `axis-ui`?
 
 Add a component when it is reusable, presentational, and independent of product data.
@@ -33,6 +41,12 @@ Keep these in an application:
 - member, event, points, or marketplace business rules;
 - application-specific copy and navigation;
 - components that are experimental or have only one highly specific consumer.
+
+Use this ownership test:
+
+- If it defines a reusable visual rule or interaction, place it in `axis-ui`.
+- If it knows the current route, user role, Supabase data, or product wording, place it in the application.
+- If it validates data or implements member, event, points, or certificate rules, place it in the appropriate shared contract or domain package.
 
 ## Package structure
 
@@ -70,6 +84,8 @@ feat(axis-ui): add accessible modal component
 ```
 
 Set the owner, priority, target date, project status, dependencies, and acceptance criteria. Link the design source and name the first screens that will consume the component.
+
+A design-only task should still deliver enough information for implementation without guessing. If implementation is a separate issue, link both issues and make the design task a dependency of the code task.
 
 ### 2. Specify the component
 
@@ -164,6 +180,7 @@ Run:
 pnpm --filter @hau/axis-ui typecheck
 pnpm lint
 pnpm typecheck
+pnpm test
 pnpm build
 ```
 

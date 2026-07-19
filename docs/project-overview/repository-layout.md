@@ -53,3 +53,5 @@ The `workspace:*` version indicator tells pnpm to resolve these packages locally
 ## Ownership rule
 
 Code starts in the narrowest correct owner. Route and product-specific code stays in `apps/`. A module moves to `packages/` when it represents a stable shared contract, UI primitive, infrastructure service, or domain rule. Packages expose a small public API through `src/index.ts`; apps do not deep-import package internals, and packages never import from apps.
+
+For UI work, tokens and reusable presentational components belong in `packages/axis-ui`; complete screens, route-aware navigation, product copy, and data-bound compositions stay in the relevant app. See the [UI/UX contribution guide](../contributing/ui-ux.md) for the handoff and implementation workflow.

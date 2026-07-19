@@ -79,9 +79,11 @@
                   </li>
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">Routes</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#current-handlers">Current handlers</a>
+    <li class="toctree-l2"><a class="reference internal" href="#when-to-use-api-routes">When to use API Routes</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#observed-behavior">Observed behavior</a>
+    <li class="toctree-l2"><a class="reference internal" href="#security-in-api-routes">Security in API Routes</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#existing-routes">Existing Routes</a>
     </li>
     </ul>
                   </li>
@@ -103,12 +105,16 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/deployment/">Deployment</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../runbooks/security-deployment/">Security Deployment</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/troubleshooting/">Troubleshooting</a>
                   </li>
               </ul>
               <p class="caption"><span class="caption-text">Contributing</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/standards/">Standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contributing/ui-ux/">UI/UX Guide</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/docs-rules/">Documentation Rules</a>
                   </li>
@@ -137,32 +143,39 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="routes">Routes<a class="headerlink" href="#routes" title="Permanent link">&para;</a></h1>
-<p>Document each route handler here, grouped by domain.</p>
+                <h1 id="api-routes">API Routes<a class="headerlink" href="#api-routes" title="Permanent link">&para;</a></h1>
+<p>While Next.js App Router minimizes the need for traditional API routes, we still use Route Handlers (<code>app/api/.../route.ts</code>) for specific scenarios where Server Actions are not applicable.</p>
+<h2 id="when-to-use-api-routes">When to use API Routes<a class="headerlink" href="#when-to-use-api-routes" title="Permanent link">&para;</a></h2>
+<p>You should only create an API Route handler if you are building:
+1. <strong>Webhooks:</strong> Receiving data from third-party services (e.g., Stripe, Luma) that need to POST to a public URL.
+2. <strong>Third-Party Integrations:</strong> Providing a JSON API for external sponsors or organizations to verify member credentials programmatically.
+3. <strong>File Streaming/Generation:</strong> Generating PDFs dynamically or streaming large payloads that are better handled via standard HTTP responses rather than Server Actions.</p>
+<h2 id="security-in-api-routes">Security in API Routes<a class="headerlink" href="#security-in-api-routes" title="Permanent link">&para;</a></h2>
+<p>Because API Routes do not have a built-in React UI context, you must manually verify the user's session if the route is protected.</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">createClient</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@hau/db/server&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">NextResponse</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;next/server&#39;</span><span class="p">;</span>
+
+<span class="k">export</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">POST</span><span class="p">(</span><span class="nx">request</span><span class="o">:</span><span class="w"> </span><span class="kt">Request</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">supabase</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">createClient</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">user</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">supabase</span><span class="p">.</span><span class="nx">auth</span><span class="p">.</span><span class="nx">getUser</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">user</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">NextResponse</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span><span class="w"> </span><span class="nx">error</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;Unauthorized&#39;</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">status</span><span class="o">:</span><span class="w"> </span><span class="kt">401</span><span class="w"> </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// Handle logic...</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">NextResponse</span><span class="p">.</span><span class="nx">json</span><span class="p">({</span><span class="w"> </span><span class="nx">success</span><span class="o">:</span><span class="w"> </span><span class="kt">true</span><span class="w"> </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="existing-routes">Existing Routes<a class="headerlink" href="#existing-routes" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Auth</li>
-<li>Certificates</li>
-<li>Events and attendance</li>
-<li>Leaderboard</li>
-<li>Redemptions</li>
-<li>Luma sync</li>
+<li><code>gdg-id POST /api/search</code>: Rate-limited approved-member lookup.</li>
+<li><code>gdg-id POST /api/verify</code>: Validates a signed, unexpired QR credential and returns the approved public profile.</li>
+<li><code>gdg-hub GET /auth/callback</code>: Exchanges a Supabase invite, confirmation, or password-recovery code for a session.</li>
+<li><code>gdg-hub /forgot-password</code>: Requests a non-enumerating Supabase password recovery email.</li>
+<li><code>gdg-hub /reset-password</code>: Validates the temporary recovery session and updates the password for an approved member.</li>
 </ul>
-<h2 id="current-handlers">Current handlers<a class="headerlink" href="#current-handlers" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="../../apps/gdg-hub/app/auth/callback/route.ts">apps/gdg-hub/app/auth/callback/route.ts</a></li>
-<li><a href="../../apps/gdg-hub/app/api/certificates/issue/route.ts">apps/gdg-hub/app/api/certificates/issue/route.ts</a></li>
-<li><a href="../../apps/gdg-hub/app/api/certificates/resend/route.ts">apps/gdg-hub/app/api/certificates/resend/route.ts</a></li>
-<li><a href="../../apps/gdg-hub/app/api/attendance/confirm/route.ts">apps/gdg-hub/app/api/attendance/confirm/route.ts</a></li>
-<li><a href="../../apps/gdg-hub/app/api/luma/sync/route.ts">apps/gdg-hub/app/api/luma/sync/route.ts</a></li>
-<li><a href="../../apps/gdg-hub/app/api/leaderboard/rebuild/route.ts">apps/gdg-hub/app/api/leaderboard/rebuild/route.ts</a></li>
-<li><a href="../../apps/gdg-hub/app/api/redemptions/create/route.ts">apps/gdg-hub/app/api/redemptions/create/route.ts</a></li>
-</ul>
-<h2 id="observed-behavior">Observed behavior<a class="headerlink" href="#observed-behavior" title="Permanent link">&para;</a></h2>
-<ul>
-<li>The leaderboard rebuild route currently responds with a simple JSON status payload</li>
-<li>The middleware protects member and admin pages before users reach those handlers</li>
-<li>The auth callback route is used to complete the sign-in flow</li>
-</ul>
+<p>The feature handlers under <code>gdg-hub/app/api</code> are placeholders and must not be treated as implemented APIs.</p>
               
             </div>
           </div><footer>

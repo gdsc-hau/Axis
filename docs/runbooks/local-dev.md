@@ -33,8 +33,8 @@ pnpm dev
 
 By default:
 
-- `gdg-hub` runs on `http://localhost:3000`
-- `gdg-id` runs on `http://localhost:3001`
+- `gdg-id` runs on `http://localhost:3000`
+- `gdg-hub` runs on `http://localhost:3001`
 
 If you only want to run one specific app (for example, to save memory):
 
