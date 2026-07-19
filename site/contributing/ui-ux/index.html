@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>UI/UX Guide - Axis Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "UI/UX Guide";
+        var mkdocs_page_input_path = "contributing\\ui-ux.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> Axis Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Project Overview</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../project-overview/mission/">Mission and Context</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../project-overview/repository-layout/">Repository Layout</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../project-overview/getting-started/">Getting Started</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Product</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../product/platform/">Platform</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../product/roles/">Roles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../product/flows/">User Flows</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Architecture</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../architecture/overview/">System Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../architecture/apps/">Apps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../architecture/packages/">Shared Packages</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../architecture/auth-rbac/">Auth and RBAC</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/overview/">API Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/routes/">Routes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../api/functions/">Functions</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Data</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../schema/overview/">Schema Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../schema/migrations/">Migrations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../schema/tables/">Tables</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Runbooks</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../runbooks/local-dev/">Local Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../runbooks/deployment/">Deployment</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../runbooks/security-deployment/">Security Deployment</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../runbooks/troubleshooting/">Troubleshooting</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../standards/">Standards</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">UI/UX Guide</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#can-uiux-contributors-add-components-as-code">Can UI/UX contributors add components as code?</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#what-belongs-in-axis-ui">What belongs in axis-ui?</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#package-structure">Package structure</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#designer-to-code-workflow">Designer-to-code workflow</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-create-a-task-issue">1. Create a task issue</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-specify-the-component">2. Specify the component</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-agree-on-the-component-api">3. Agree on the component API</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#4-implement-the-component">4. Implement the component</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#5-review-the-result-in-a-real-application">5. Review the result in a real application</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#6-verify-before-review">6. Verify before review</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#importing-components-in-an-application">Importing components in an application</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#review-checklist">Review checklist</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../docs-rules/">Documentation Rules</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Axis Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Contributing</li>
+      <li class="breadcrumb-item active">UI/UX Guide</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="uiux-contribution-guide">UI/UX Contribution Guide<a class="headerlink" href="#uiux-contribution-guide" title="Permanent link">&para;</a></h1>
+<p>This guide explains how designers and developers collaborate on the Axis design system in <code>packages/axis-ui</code>.</p>
+<h2 id="can-uiux-contributors-add-components-as-code">Can UI/UX contributors add components as code?<a class="headerlink" href="#can-uiux-contributors-add-components-as-code" title="Permanent link">&para;</a></h2>
+<p>Yes. A UI/UX contributor who is comfortable with React, TypeScript, and Tailwind may implement a component directly in <code>@hau/axis-ui</code>. A designer who does not code can provide a complete component specification through a task issue, then work with a developer during implementation and review.</p>
+<p>Applications consume approved components from the package root:</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Button</span><span class="p">,</span><span class="w"> </span><span class="nx">Card</span><span class="p">,</span><span class="w"> </span><span class="nx">Container</span><span class="p">,</span><span class="w"> </span><span class="nx">Stack</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;@hau/axis-ui&quot;</span><span class="p">;</span>
+</code></pre></div>
+<p>Do not copy the component into each application and do not deep-import files such as <code>@hau/axis-ui/src/components/button/Button</code>.</p>
+<p>The current public API includes:</p>
+<ul>
+<li>components: <code>Alert</code>, <code>Button</code>, <code>Card</code>, <code>FormField</code>, <code>Input</code>, and <code>Textarea</code>;</li>
+<li>primitives: <code>Box</code>, <code>Container</code>, <code>Stack</code>, and <code>Text</code>;</li>
+<li>utility: <code>cn</code>.</li>
+</ul>
+<p><code>CardHeader</code>, <code>CardTitle</code>, <code>CardDescription</code>, and <code>CardContent</code> are also exported as parts of the card composition. Check <code>packages/axis-ui/src/index.ts</code> before proposing a duplicate component.</p>
+<h2 id="what-belongs-in-axis-ui">What belongs in <code>axis-ui</code>?<a class="headerlink" href="#what-belongs-in-axis-ui" title="Permanent link">&para;</a></h2>
+<p>Add a component when it is reusable, presentational, and independent of product data.</p>
+<p>Good candidates:</p>
+<ul>
+<li>buttons, inputs, alerts, badges, dialogs, tabs, tooltips, and tables;</li>
+<li>layout primitives such as containers, stacks, grids, and text;</li>
+<li>design tokens for color, spacing, radius, typography, shadow, and motion;</li>
+<li>reusable interaction and accessibility behavior;</li>
+<li>stable compositions that are needed by more than one screen or application.</li>
+</ul>
+<p>Keep these in an application:</p>
+<ul>
+<li>routes and complete pages;</li>
+<li>Supabase queries and authentication logic;</li>
+<li>member, event, points, or marketplace business rules;</li>
+<li>application-specific copy and navigation;</li>
+<li>components that are experimental or have only one highly specific consumer.</li>
+</ul>
+<p>Use this ownership test:</p>
+<ul>
+<li>If it defines a reusable visual rule or interaction, place it in <code>axis-ui</code>.</li>
+<li>If it knows the current route, user role, Supabase data, or product wording, place it in the application.</li>
+<li>If it validates data or implements member, event, points, or certificate rules, place it in the appropriate shared contract or domain package.</li>
+</ul>
+<h2 id="package-structure">Package structure<a class="headerlink" href="#package-structure" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>packages/axis-ui/
+├── src/
+│   ├── components/
+│   │   └── component-name/
+│   │       ├── ComponentName.tsx
+│   │       ├── ComponentName.styles.ts
+│   │       ├── ComponentName.types.ts
+│   │       └── index.ts
+│   ├── primitives/
+│   │   └── primitive-name/
+│   │       ├── PrimitiveName.tsx
+│   │       └── index.ts
+│   ├── utils/
+│   ├── index.ts
+│   └── styles.css
+├── package.json
+├── README.md
+└── tsconfig.json
+</code></pre></div>
+<p>Use lowercase kebab-case folders and PascalCase React files. A small component may keep its types or style map in the component file; split them when the API or variants become substantial.</p>
+<h2 id="designer-to-code-workflow">Designer-to-code workflow<a class="headerlink" href="#designer-to-code-workflow" title="Permanent link">&para;</a></h2>
+<h3 id="1-create-a-task-issue">1. Create a task issue<a class="headerlink" href="#1-create-a-task-issue" title="Permanent link">&para;</a></h3>
+<p>Choose the <strong>Task assignment</strong> issue template and use a title such as:</p>
+<div class="highlight"><pre><span></span><code>feat(axis-ui): add accessible modal component
+</code></pre></div>
+<p>Set the owner, priority, target date, project status, dependencies, and acceptance criteria. Link the design source and name the first screens that will consume the component.</p>
+<p>A design-only task should still deliver enough information for implementation without guessing. If implementation is a separate issue, link both issues and make the design task a dependency of the code task.</p>
+<h3 id="2-specify-the-component">2. Specify the component<a class="headerlink" href="#2-specify-the-component" title="Permanent link">&para;</a></h3>
+<p>The design handoff must define:</p>
+<ul>
+<li>purpose and intended use;</li>
+<li>anatomy and content rules;</li>
+<li>variants and sizes;</li>
+<li>default, hover, focus, active, disabled, loading, empty, and error states where relevant;</li>
+<li>light and dark appearance;</li>
+<li>responsive behavior and minimum/maximum dimensions;</li>
+<li>spacing, typography, color, radius, shadow, icons, and motion;</li>
+<li>keyboard behavior, focus order, accessible name, and screen-reader expectations;</li>
+<li>examples of correct and incorrect use.</li>
+</ul>
+<p>Use existing tokens from <code>src/styles.css</code>. If a new token is necessary, explain why an existing semantic token cannot represent the design.</p>
+<h3 id="3-agree-on-the-component-api">3. Agree on the component API<a class="headerlink" href="#3-agree-on-the-component-api" title="Permanent link">&para;</a></h3>
+<p>Design and development should agree on code-facing names before implementation:</p>
+<div class="highlight"><pre><span></span><code><span class="p">&lt;</span><span class="nt">Button</span><span class="w"> </span><span class="na">variant</span><span class="o">=</span><span class="s">&quot;primary&quot;</span><span class="w"> </span><span class="na">size</span><span class="o">=</span><span class="s">&quot;md&quot;</span><span class="w"> </span><span class="na">loading</span><span class="o">=</span><span class="p">{</span><span class="nx">isSaving</span><span class="p">}&gt;</span>
+<span class="w">  </span><span class="nx">Save</span><span class="w"> </span><span class="nx">changes</span>
+<span class="p">&lt;/</span><span class="nt">Button</span><span class="p">&gt;</span>
+</code></pre></div>
+<p>Prefer a small set of meaningful variants over styling props such as arbitrary colors or pixel values. Consumers may use <code>className</code> for layout, but core visual states belong to the component.</p>
+<h3 id="4-implement-the-component">4. Implement the component<a class="headerlink" href="#4-implement-the-component" title="Permanent link">&para;</a></h3>
+<p>A code contribution should:</p>
+<ul>
+<li>use semantic HTML before ARIA workarounds;</li>
+<li>forward refs for interactive primitives;</li>
+<li>preserve standard HTML attributes;</li>
+<li>support keyboard and visible focus behavior;</li>
+<li>avoid imports from Next.js, Supabase, <code>apps/</code>, or domain packages;</li>
+<li>use static Tailwind class names so both applications generate the required CSS;</li>
+<li>export types and components through the component <code>index.ts</code> and package <code>src/index.ts</code>;</li>
+<li>avoid real member data, production screenshots, or secrets in examples.</li>
+</ul>
+<p>Minimal pattern:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// components/example/Example.types.ts</span>
+<span class="k">import</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">HTMLAttributes</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;react&quot;</span><span class="p">;</span>
+
+<span class="k">export</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="nx">ExampleProps</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">HTMLAttributes</span><span class="p">&lt;</span><span class="nt">HTMLDivElement</span><span class="p">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">tone</span><span class="o">?:</span><span class="w"> </span><span class="s2">&quot;default&quot;</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="s2">&quot;highlighted&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1">// components/example/Example.tsx</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">forwardRef</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;react&quot;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">cn</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;../../utils/cn&quot;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">ExampleProps</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;./Example.types&quot;</span><span class="p">;</span>
+
+<span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">Example</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">forwardRef</span><span class="p">&lt;</span><span class="nt">HTMLDivElement</span><span class="err">,</span><span class="w"> </span><span class="na">ExampleProps</span><span class="p">&gt;(</span>
+<span class="w">  </span><span class="kd">function</span><span class="w"> </span><span class="nx">Example</span><span class="p">({</span><span class="w"> </span><span class="nx">className</span><span class="p">,</span><span class="w"> </span><span class="nx">tone</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;default&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">...</span><span class="nx">props</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="nx">ref</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">div</span>
+<span class="w">        </span><span class="na">ref</span><span class="o">=</span><span class="p">{</span><span class="nx">ref</span><span class="p">}</span>
+<span class="w">        </span><span class="na">className</span><span class="o">=</span><span class="p">{</span><span class="nx">cn</span><span class="p">(</span>
+<span class="w">          </span><span class="s2">&quot;rounded-lg&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nx">tone</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s2">&quot;highlighted&quot;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="s2">&quot;bg-blue-50&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="nx">className</span><span class="p">,</span>
+<span class="w">        </span><span class="p">)}</span>
+<span class="w">        </span><span class="p">{</span><span class="na">...props</span><span class="p">}</span>
+<span class="w">      </span><span class="p">/&gt;</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="p">);</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1">// components/example/index.ts</span>
+<span class="k">export</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Example</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;./Example&quot;</span><span class="p">;</span>
+<span class="k">export</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">ExampleProps</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;./Example.types&quot;</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="5-review-the-result-in-a-real-application">5. Review the result in a real application<a class="headerlink" href="#5-review-the-result-in-a-real-application" title="Permanent link">&para;</a></h3>
+<p>The first pull request should use the component in at least one real screen. Review it at narrow mobile, tablet, and desktop widths; with keyboard-only input; in light and dark modes; and with long, missing, loading, disabled, and error content.</p>
+<h3 id="6-verify-before-review">6. Verify before review<a class="headerlink" href="#6-verify-before-review" title="Permanent link">&para;</a></h3>
+<p>Run:</p>
+<div class="highlight"><pre><span></span><code>pnpm<span class="w"> </span>--filter<span class="w"> </span>@hau/axis-ui<span class="w"> </span>typecheck
+pnpm<span class="w"> </span>lint
+pnpm<span class="w"> </span>typecheck
+pnpm<span class="w"> </span><span class="nb">test</span>
+pnpm<span class="w"> </span>build
+</code></pre></div>
+<p>The pull request must include screenshots or a short recording for visual changes and list the states that were manually checked.</p>
+<h2 id="importing-components-in-an-application">Importing components in an application<a class="headerlink" href="#importing-components-in-an-application" title="Permanent link">&para;</a></h2>
+<p>The application declares the workspace dependency:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&quot;@hau/axis-ui&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;workspace:*&quot;</span>
+</code></pre></div>
+<p>The application root layout imports tokens once:</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="s2">&quot;@hau/axis-ui/styles.css&quot;</span><span class="p">;</span>
+</code></pre></div>
+<p>Individual screens import component code:</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Alert</span><span class="p">,</span><span class="w"> </span><span class="nx">Button</span><span class="p">,</span><span class="w"> </span><span class="nx">FormField</span><span class="p">,</span><span class="w"> </span><span class="nx">Input</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;@hau/axis-ui&quot;</span><span class="p">;</span>
+</code></pre></div>
+<p>This is a source-based internal package. Next.js transpiles it directly, so component updates are available to both applications without publishing to npm.</p>
+<h2 id="review-checklist">Review checklist<a class="headerlink" href="#review-checklist" title="Permanent link">&para;</a></h2>
+<ul>
+<li>[ ] The component belongs in the shared design system.</li>
+<li>[ ] Names match the approved design terminology.</li>
+<li>[ ] All required interaction states are implemented.</li>
+<li>[ ] Light, dark, mobile, and desktop behavior were reviewed.</li>
+<li>[ ] Keyboard navigation and visible focus work.</li>
+<li>[ ] Labels, roles, and announcements are meaningful to assistive technology.</li>
+<li>[ ] Design tokens are used instead of one-off values where possible.</li>
+<li>[ ] The component has no application or backend dependency.</li>
+<li>[ ] Public exports and usage documentation are updated.</li>
+<li>[ ] A real application consumes the component.</li>
+<li>[ ] Lint, type checks, and production builds pass.</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../standards/" class="btn btn-neutral float-left" title="Standards"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../docs-rules/" class="btn btn-neutral float-right" title="Documentation Rules">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../standards/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../docs-rules/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

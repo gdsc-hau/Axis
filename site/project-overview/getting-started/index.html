@@ -52,6 +52,20 @@
                   </li>
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">Getting Started</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#1-prerequisites">1. Prerequisites</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#2-clone-the-repository">2. Clone the Repository</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#3-install-dependencies">3. Install Dependencies</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#4-environment-variables">4. Environment Variables</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#5-start-local-supabase">5. Start Local Supabase</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#6-run-the-development-server">6. Run the Development Server</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#7-useful-commands">7. Useful Commands</a>
+    </li>
     </ul>
                   </li>
               </ul>
@@ -99,12 +113,16 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/deployment/">Deployment</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../runbooks/security-deployment/">Security Deployment</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/troubleshooting/">Troubleshooting</a>
                   </li>
               </ul>
               <p class="caption"><span class="caption-text">Contributing</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/standards/">Standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contributing/ui-ux/">UI/UX Guide</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/docs-rules/">Documentation Rules</a>
                   </li>
@@ -134,12 +152,61 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h1>
-<ol>
-<li>Install dependencies with <code>pnpm install</code>.</li>
-<li>Configure local environment variables from <code>env.example</code>.</li>
-<li>Start the app with <code>pnpm dev</code>.</li>
-</ol>
-<p>For documentation work, the MkDocs site can be served separately with <code>mkdocs serve</code> once MkDocs is installed in your environment.</p>
+<p>Follow this guide to set up your local development environment for the GDG HAU Axis monorepo.</p>
+<h2 id="1-prerequisites">1. Prerequisites<a class="headerlink" href="#1-prerequisites" title="Permanent link">&para;</a></h2>
+<p>Before cloning the repository, ensure you have the following installed on your machine:</p>
+<ul>
+<li><strong><a href="https://git-scm.com/">Git</a></strong>: For version control.</li>
+<li><strong><a href="https://nodejs.org/">Node.js</a> (v20+)</strong>: JavaScript runtime.</li>
+<li><strong><a href="https://nodejs.org/api/corepack.html">Corepack</a></strong>: Included with Node.js and used to select the pnpm version pinned in the root <code>package.json</code>.</li>
+<li><strong><a href="https://www.docker.com/products/docker-desktop/">Docker Desktop</a></strong>: Required for running the local Supabase instance.</li>
+<li><strong><a href="https://supabase.com/docs/guides/cli">Supabase CLI</a></strong>: For database migrations and local development.</li>
+</ul>
+<h2 id="2-clone-the-repository">2. Clone the Repository<a class="headerlink" href="#2-clone-the-repository" title="Permanent link">&para;</a></h2>
+<p>Clone the project to your local machine and navigate into the directory:</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/gdsc-hau/Axis.git
+<span class="nb">cd</span><span class="w"> </span>Axis
+</code></pre></div>
+<h2 id="3-install-dependencies">3. Install Dependencies<a class="headerlink" href="#3-install-dependencies" title="Permanent link">&para;</a></h2>
+<p>Install the monorepo dependencies using pnpm. This will link all the local <code>packages/*</code> to the <code>apps/*</code> correctly.</p>
+<div class="highlight"><pre><span></span><code>corepack<span class="w"> </span><span class="nb">enable</span>
+pnpm<span class="w"> </span>install
+</code></pre></div>
+<h2 id="4-environment-variables">4. Environment Variables<a class="headerlink" href="#4-environment-variables" title="Permanent link">&para;</a></h2>
+<p>Both applications require their own uncommitted <code>.env.local</code> file:</p>
+<ul>
+<li><code>apps/gdg-hub/.env.local</code></li>
+<li><code>apps/gdg-id/.env.local</code></li>
+</ul>
+<p>Use <code>apps/gdg-hub/.env.example</code> as the reference for shared Supabase variables. The <code>gdg-id</code> file also requires <code>QR_SIGNING_SECRET</code>, a private random value containing at least 32 characters. <code>UPSTASH_REDIS_REST_URL</code> and <code>UPSTASH_REDIS_REST_TOKEN</code> are optional locally; without them, the app uses its local fallback rate limiter.</p>
+<p>Running <code>supabase status</code> prints the local URL and keys. Put the appropriate local values in both files, keep server-only keys out of client code, and never commit either <code>.env.local</code> file.</p>
+<h2 id="5-start-local-supabase">5. Start Local Supabase<a class="headerlink" href="#5-start-local-supabase" title="Permanent link">&para;</a></h2>
+<p>To start the local database, auth service, and storage:</p>
+<div class="highlight"><pre><span></span><code>supabase<span class="w"> </span>start
+</code></pre></div>
+<p><em>Note: Make sure Docker is running before executing this command.</em></p>
+<p>This command will automatically apply all SQL migrations found in <code>supabase/migrations/</code> to your local database container.</p>
+<p>To stop the local database later, run:</p>
+<div class="highlight"><pre><span></span><code>supabase<span class="w"> </span>stop
+</code></pre></div>
+<h2 id="6-run-the-development-server">6. Run the Development Server<a class="headerlink" href="#6-run-the-development-server" title="Permanent link">&para;</a></h2>
+<p>With the database running, you can start the Next.js development servers. Using Turborepo, run this from the root directory:</p>
+<div class="highlight"><pre><span></span><code>pnpm<span class="w"> </span>dev
+</code></pre></div>
+<p>This command simultaneously starts both <code>gdg-hub</code> and <code>gdg-id</code>, and watches for changes across all <code>packages/</code>.</p>
+<ul>
+<li><code>gdg-hub</code> runs on <a href="http://localhost:3001">http://localhost:3001</a></li>
+<li><code>gdg-id</code> runs on <a href="http://localhost:3000">http://localhost:3000</a></li>
+</ul>
+<h2 id="7-useful-commands">7. Useful Commands<a class="headerlink" href="#7-useful-commands" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Build everything:</strong> <code>pnpm build</code></li>
+<li><strong>Lint the codebase:</strong> <code>pnpm lint</code></li>
+<li><strong>Check TypeScript types:</strong> <code>pnpm typecheck</code></li>
+<li><strong>Run repository tests:</strong> <code>pnpm test</code></li>
+<li><strong>Preview the documentation:</strong> <code>pnpm docs:serve</code></li>
+<li><strong>View local database UI:</strong> <code>supabase status</code> will give you the local Studio URL (usually <code>http://127.0.0.1:54323</code>).</li>
+</ul>
               
             </div>
           </div><footer>

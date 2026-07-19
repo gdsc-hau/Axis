@@ -20,7 +20,7 @@ graph TD
     subgraph "Monorepo Shared Packages (@hau/*)"
         AUTH[auth]
         DB_PKG[db]
-        UI[ui]
+        UI[axis-ui]
         LOGIC[points, events, etc.]
     end
 
@@ -61,7 +61,7 @@ Both `gdg-id` and `gdg-hub` are built using **Next.js 15 (App Router)**.
 
 The Turborepo structure allows us to keep the apps thin.
 
-- **UI:** A shared `@hau/axis-ui` design-system package provides Tailwind-styled, application-agnostic primitives for both apps.
+- **UI:** The source-based `@hau/axis-ui` package provides shared design tokens and application-agnostic React components. Both apps transpile the package, scan its source in Tailwind, and import its stylesheet once in their root layout.
 - **Business Logic:** Domain-specific logic (e.g., how points are calculated) is encapsulated in separate packages like `@hau/points` and `@hau/db` to guarantee that both apps interact with the database identically.
 
 ### Backend & Database

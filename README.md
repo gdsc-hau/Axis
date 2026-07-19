@@ -7,7 +7,7 @@
 
 The official ecosystem and digital identity hub for **Google Developer Groups on Campus – Holy Angel University (GDG HAU)**. This platform contains multiple applications and shared packages designed to handle member identities, event management, ticketing, points, badges, and internal community operations.
 
-For complete developer documentation, please refer to our [Documentation Portal](docs/index.md) (or run `mkdocs serve`).
+For complete developer documentation, see the [Documentation Portal](docs/index.md) or run `pnpm docs:serve`.
 
 ---
 
@@ -20,7 +20,7 @@ Follow these steps to get your development environment running locally.
 Ensure you have the following installed before proceeding:
 
 - **[Node.js](https://nodejs.org/)** (v20 or newer)
-- **[pnpm](https://pnpm.io/)** (Fast, disk space efficient package manager: `npm install -g pnpm`)
+- **[Corepack](https://nodejs.org/api/corepack.html)**, included with Node.js, to use the repository's pinned pnpm version
 - **[Supabase CLI](https://supabase.com/docs/guides/cli)** (For local database development)
 
 ### Installation
@@ -28,18 +28,19 @@ Ensure you have the following installed before proceeding:
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/gdg-hau/id-platform.git
-   cd id-platform
+   git clone https://github.com/gdsc-hau/Axis.git
+   cd Axis
    ```
 
 2. **Install dependencies**
 
    ```bash
+   corepack enable
    pnpm install
    ```
 
 3. **Set up environment variables**
-   Copy `.env.example` to `.env.local` or `.env` inside the respective applications (`apps/gdg-hub` and `apps/gdg-id`) and fill in your Supabase credentials.
+   Create `.env.local` inside both `apps/gdg-hub` and `apps/gdg-id`. Use `apps/gdg-hub/.env.example` as the reference for the shared Supabase variables. `gdg-id` also requires a private `QR_SIGNING_SECRET` containing at least 32 characters; its Upstash variables are optional for local development. Never commit either `.env.local` file.
 
 4. **Start local Supabase (Database & Auth)**
    Make sure Docker is running on your machine, then run:
@@ -58,11 +59,11 @@ Ensure you have the following installed before proceeding:
 
 ## 🛠 Tech Stack
 
-- **Frontend:** Next.js 15 (App Router), Tailwind CSS, shadcn/ui
+- **Frontend:** Next.js 15 (App Router), Tailwind CSS, and the shared `@hau/axis-ui` design system
 - **Backend & Database:** Supabase (PostgreSQL, Auth, Storage)
 - **Type Safety:** Zod & TypeScript (End-to-End Type Safety)
 - **Monorepo Management:** Turborepo & pnpm Workspaces
-- **Documentation:** MkDocs (Material theme)
+- **Documentation:** MkDocs with the Read the Docs theme
 
 ---
 
@@ -98,7 +99,9 @@ gdg-axis/
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guidelines](docs/contributing/standards.md) for more details on our workflow, branching strategy, coding standards, and documentation rules.
+We welcome contributions! Start with the root [contribution workflow](CONTRIBUTING.md), then use the detailed [coding standards](docs/contributing/standards.md) as needed.
+
+UI/UX contributors and developers working on shared components should also read the [UI/UX contribution guide](docs/contributing/ui-ux.md) and the [`@hau/axis-ui` package guide](packages/axis-ui/README.md). Applications import supported components from `@hau/axis-ui`; they do not copy shared component code or deep-import package source files.
 
 ---
 

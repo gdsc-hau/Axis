@@ -68,9 +68,11 @@
                   </li>
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">Apps</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#appsgdg-hub">apps/gdg-hub</a>
+    <li class="toctree-l2"><a class="reference internal" href="#gdg-hub">gdg-hub</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#appsgdg-id">apps/gdg-id</a>
+    <li class="toctree-l2"><a class="reference internal" href="#gdg-id">gdg-id</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#shared-ui-integration">Shared UI integration</a>
     </li>
     </ul>
                   </li>
@@ -103,12 +105,16 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/deployment/">Deployment</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../runbooks/security-deployment/">Security Deployment</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/troubleshooting/">Troubleshooting</a>
                   </li>
               </ul>
               <p class="caption"><span class="caption-text">Contributing</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/standards/">Standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contributing/ui-ux/">UI/UX Guide</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/docs-rules/">Documentation Rules</a>
                   </li>
@@ -137,20 +143,50 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="apps">Apps<a class="headerlink" href="#apps" title="Permanent link">&para;</a></h1>
-<h2 id="appsgdg-hub"><code>apps/gdg-hub</code><a class="headerlink" href="#appsgdg-hub" title="Permanent link">&para;</a></h2>
-<p>The primary application surface for public, member, and admin functionality.</p>
-<p>Route groups currently include:</p>
+                <h1 id="applications-deep-dive">Applications Deep Dive<a class="headerlink" href="#applications-deep-dive" title="Permanent link">&para;</a></h1>
+<p>The workspace currently houses two Next.js applications within the <code>apps/</code> directory. Applications own routes, page composition, product copy, and app-specific components. Shared contracts, data access, authorization, business rules, and reusable UI live in <code>packages/</code>.</p>
+<h2 id="gdg-hub">gdg-hub<a class="headerlink" href="#gdg-hub" title="Permanent link">&para;</a></h2>
+<p>The <code>gdg-hub</code> application contains the public community site plus authenticated member and administrator workspaces.</p>
+<p><strong>Implemented today:</strong></p>
 <ul>
-<li><code>(public)</code> for landing pages, about, community, events, contact, FAQ, merch, articles, and products</li>
-<li><code>(auth)</code> for login, signup, and verification entry points</li>
-<li><code>member/</code> for dashboards, profile, rewards, leaderboard, notifications, settings, wallet, and event detail views</li>
-<li><code>admin/</code> for dashboards, members, events, articles, reports, products, rewards, and gyrocoin management</li>
-<li><code>api/</code> for server-side workflows such as attendance, certificates, leaderboard rebuilds, Luma sync, and redemptions</li>
+<li>Invite-only email/password onboarding through Supabase Auth.</li>
+<li>Password recovery and account activation flows.</li>
+<li>Public content routes for organization information, events, articles, products, merchandise, FAQs, and contact details.</li>
+<li>Member dashboard routes for profile, events, wallet, rewards, leaderboard, notifications, and settings.</li>
+<li>An administrator dashboard, member directory, approvals, role changes, invitations, and feature management scaffolds.</li>
+<li>Server Components for database reads and Server Actions for protected mutations.</li>
 </ul>
-<h2 id="appsgdg-id"><code>apps/gdg-id</code><a class="headerlink" href="#appsgdg-id" title="Permanent link">&para;</a></h2>
-<p>A separate app focused on the GDG ID experience and supporting routes.</p>
-<p>Use this app for identity-specific pages and scans rather than the community hub workflows.</p>
+<p>Several events, Gyrocoins, rewards, certificates, reports, and content-management routes are currently scaffolds and should not be documented as complete until their acceptance criteria are implemented and tested.</p>
+<p><strong>Key Routes:</strong></p>
+<ul>
+<li><code>/</code>: Public community landing page.</li>
+<li><code>/events</code>: Public event listing.</li>
+<li><code>/member/dashboard</code>: Authenticated member workspace.</li>
+<li><code>/admin/dashboard</code>: Protected administrator workspace.</li>
+<li><code>/admin/members</code>: Directory of all registered members.</li>
+<li><code>/admin/invite</code>: Invite approved registry members to activate an account.</li>
+</ul>
+<h2 id="gdg-id">gdg-id<a class="headerlink" href="#gdg-id" title="Permanent link">&para;</a></h2>
+<p>The <code>gdg-id</code> application is the public-facing identity portal designed primarily for mobile usage by members.</p>
+<p><strong>Implemented today:</strong></p>
+<ul>
+<li>A public, rate-limited member lookup by email or scanned student barcode.</li>
+<li>A visual GDG card whose QR contains a time-limited, HMAC-signed verification URL. The signed payload contains the member email but cannot be forged without the server secret.</li>
+<li>Client-side PNG/PDF card export and static About/Contact content.</li>
+</ul>
+<p><strong>Key Routes:</strong></p>
+<ul>
+<li><code>/</code>: Member lookup and card display.</li>
+<li><code>/about</code>: Organization information.</li>
+<li><code>/contact</code>: Contact information.</li>
+</ul>
+<p>Dedicated ID, portfolio, verification, and PWA flows are planned but not implemented.</p>
+<h2 id="shared-ui-integration">Shared UI integration<a class="headerlink" href="#shared-ui-integration" title="Permanent link">&para;</a></h2>
+<p>Both applications consume <code>@hau/axis-ui</code> as a <code>workspace:*</code> dependency. Each Next.js configuration includes the package in <code>transpilePackages</code>, each Tailwind configuration scans <code>packages/axis-ui/src</code>, and each root layout imports <code>@hau/axis-ui/styles.css</code> once.</p>
+<p>Pages and app components import only the package's public API:</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Alert</span><span class="p">,</span><span class="w"> </span><span class="nx">Button</span><span class="p">,</span><span class="w"> </span><span class="nx">Card</span><span class="p">,</span><span class="w"> </span><span class="nx">Container</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;@hau/axis-ui&quot;</span><span class="p">;</span>
+</code></pre></div>
+<p>Application-specific compositions stay in their owning app. They move into <code>@hau/axis-ui</code> only after the visual API is stable and reuse is demonstrated or planned.</p>
               
             </div>
           </div><footer>

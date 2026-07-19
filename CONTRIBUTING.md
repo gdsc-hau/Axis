@@ -66,6 +66,12 @@ pnpm typecheck
 pnpm test
 ```
 
+For a shared UI change, also run the package check and exercise the component in its first application screen:
+
+```bash
+pnpm --filter @hau/axis-ui typecheck
+```
+
 Also confirm that:
 
 - no secrets, environment files, or private member data were committed;
@@ -76,14 +82,14 @@ Also confirm that:
 ## Monorepo boundaries
 
 - Keep routes and application-specific composition in `apps/`.
-- Put reusable UI primitives in `@hau/axis-ui` and import them from the package root.
+- Put reusable UI primitives in `@hau/axis-ui`, follow its [package guide](packages/axis-ui/README.md), and import them from the package root.
 - Put runtime input and API schemas in `@hau/contracts`.
 - Put shared database access in `@hau/db` and authorization guards in `@hau/auth`.
 - Put business rules in their domain package, such as `@hau/events` or `@hau/points`.
 - Declare every internal dependency with `workspace:*`.
 - Never import from one app into another, from a package into an app, or through a package's private source path.
 
-UI/UX contributors should follow the [UI/UX contribution guide](docs/contributing/ui-ux.md) when proposing design tokens or shared components for `@hau/axis-ui`.
+UI/UX contributors should follow the [UI/UX contribution guide](docs/contributing/ui-ux.md) when proposing design tokens or shared components for `@hau/axis-ui`. A design-only contribution is valid when it includes the required states, responsive behavior, accessibility expectations, and a linked implementation task.
 
 ## Pull requests
 

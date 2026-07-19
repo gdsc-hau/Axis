@@ -95,13 +95,19 @@
               <ul class="current">
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">Local Development</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#helpful-commands">Helpful commands</a>
+    <li class="toctree-l2"><a class="reference internal" href="#setup-supabase">Setup Supabase</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#important-local-details">Important local details</a>
+    <li class="toctree-l2"><a class="reference internal" href="#starting-the-apps">Starting the Apps</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#adding-a-new-dependency">Adding a New Dependency</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#clean-environment">Clean Environment</a>
     </li>
     </ul>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../deployment/">Deployment</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../security-deployment/">Security Deployment</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../troubleshooting/">Troubleshooting</a>
                   </li>
@@ -109,6 +115,8 @@
               <p class="caption"><span class="caption-text">Contributing</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/standards/">Standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contributing/ui-ux/">UI/UX Guide</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/docs-rules/">Documentation Rules</a>
                   </li>
@@ -137,28 +145,47 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="local-development">Local Development<a class="headerlink" href="#local-development" title="Permanent link">&para;</a></h1>
-<ol>
-<li>Install workspace dependencies with <code>pnpm install</code>.</li>
-<li>Copy <code>env.example</code> to a local environment file and fill in Supabase credentials.</li>
-<li>Start the app with <code>pnpm dev</code> from the root or the app package.</li>
-<li>Run the database locally if your feature needs migrations or auth state.</li>
-<li>Verify the member and admin routes with a logged-in session.</li>
-</ol>
-<h2 id="helpful-commands">Helpful commands<a class="headerlink" href="#helpful-commands" title="Permanent link">&para;</a></h2>
+                <h1 id="local-development-runbook">Local Development Runbook<a class="headerlink" href="#local-development-runbook" title="Permanent link">&para;</a></h1>
+<p>This runbook describes the standard workflow for running the platform on your own machine.</p>
+<h2 id="setup-supabase">Setup Supabase<a class="headerlink" href="#setup-supabase" title="Permanent link">&para;</a></h2>
+<p>Make sure Docker is running.</p>
+<div class="highlight"><pre><span></span><code>supabase<span class="w"> </span>start
+</code></pre></div>
+<p>This boots up the local database, auth service, and storage on your machine.</p>
 <ul>
-<li><code>pnpm dev</code>: start the monorepo dev workflow</li>
-<li><code>pnpm build</code>: build all workspaces through Turbo</li>
-<li><code>pnpm lint</code>: run linting across the repo</li>
-<li><code>pnpm typecheck</code>: run TypeScript checks across the repo</li>
-<li><code>pnpm docs:serve</code>: preview the MkDocs site once MkDocs is installed</li>
+<li>Studio URL: <code>http://127.0.0.1:54323</code></li>
+<li>API URL: <code>http://127.0.0.1:54321</code></li>
 </ul>
-<h2 id="important-local-details">Important local details<a class="headerlink" href="#important-local-details" title="Permanent link">&para;</a></h2>
+<p>To populate the local database with mock members and events for testing:</p>
+<div class="highlight"><pre><span></span><code>supabase<span class="w"> </span>db<span class="w"> </span>reset
+</code></pre></div>
+<p><em>(This applies the migrations and runs the <code>supabase/seed.sql</code> file if it exists).</em></p>
+<h2 id="starting-the-apps">Starting the Apps<a class="headerlink" href="#starting-the-apps" title="Permanent link">&para;</a></h2>
+<p>From the root directory, leverage Turborepo to start all frontend applications simultaneously:</p>
+<div class="highlight"><pre><span></span><code>pnpm<span class="w"> </span>dev
+</code></pre></div>
+<p>By default:</p>
 <ul>
-<li><code>apps/gdg-hub</code> runs on port 3001</li>
-<li>Middleware protects <code>/member</code> and <code>/admin</code> routes and sends unauthenticated users to <code>/login</code></li>
-<li>Auth pages are accessible under the app route group structure in <code>apps/gdg-hub/app</code></li>
+<li><code>gdg-id</code> runs on <code>http://localhost:3000</code></li>
+<li><code>gdg-hub</code> runs on <code>http://localhost:3001</code></li>
 </ul>
+<p>If you only want to run one specific app (for example, to save memory):</p>
+<div class="highlight"><pre><span></span><code>pnpm<span class="w"> </span>--filter<span class="w"> </span>gdg-hub<span class="w"> </span>dev
+</code></pre></div>
+<h2 id="adding-a-new-dependency">Adding a New Dependency<a class="headerlink" href="#adding-a-new-dependency" title="Permanent link">&para;</a></h2>
+<p>Because this is a monorepo, adding dependencies requires specifying which workspace package you want to add it to.</p>
+<p>To add an external package (like <code>lodash</code>) to <code>gdg-id</code>:</p>
+<div class="highlight"><pre><span></span><code>pnpm<span class="w"> </span>--filter<span class="w"> </span>gdg-id<span class="w"> </span>add<span class="w"> </span>lodash
+</code></pre></div>
+<p>To add an internal package (like <code>@hau/axis-ui</code>) to <code>gdg-hub</code>:</p>
+<div class="highlight"><pre><span></span><code>pnpm<span class="w"> </span>--filter<span class="w"> </span>gdg-hub<span class="w"> </span>add<span class="w"> </span>@hau/axis-ui@workspace:*
+</code></pre></div>
+<h2 id="clean-environment">Clean Environment<a class="headerlink" href="#clean-environment" title="Permanent link">&para;</a></h2>
+<p>If Turborepo cache or Next.js cache is causing weird bugs:</p>
+<div class="highlight"><pre><span></span><code>pnpm<span class="w"> </span>clean
+pnpm<span class="w"> </span>install
+pnpm<span class="w"> </span>dev
+</code></pre></div>
               
             </div>
           </div><footer>

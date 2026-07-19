@@ -50,7 +50,13 @@
                   </li>
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">Repository Layout</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#top-level-areas">Top-level areas</a>
+    <li class="toctree-l2"><a class="reference internal" href="#monorepo-structure">Monorepo Structure</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#why-a-monorepo">Why a Monorepo?</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#internal-packages">Internal Packages</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#ownership-rule">Ownership rule</a>
     </li>
     </ul>
                   </li>
@@ -101,12 +107,16 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/deployment/">Deployment</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../runbooks/security-deployment/">Security Deployment</a>
+                  </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../runbooks/troubleshooting/">Troubleshooting</a>
                   </li>
               </ul>
               <p class="caption"><span class="caption-text">Contributing</span></p>
               <ul>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/standards/">Standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contributing/ui-ux/">UI/UX Guide</a>
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="../../contributing/docs-rules/">Documentation Rules</a>
                   </li>
@@ -136,15 +146,49 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="repository-layout">Repository Layout<a class="headerlink" href="#repository-layout" title="Permanent link">&para;</a></h1>
-<p>This repository is organized as a pnpm monorepo with Turbo.</p>
-<h2 id="top-level-areas">Top-level areas<a class="headerlink" href="#top-level-areas" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>apps/</code>: Next.js applications and user-facing products</li>
-<li><code>packages/</code>: Shared libraries and domain modules</li>
-<li><code>supabase/</code>: Database migrations, functions, and config</li>
-<li><code>docs/</code>: Markdown documentation source for MkDocs</li>
-<li><code>tooling/</code>: Scripts and CI helpers</li>
-</ul>
+<p>The GDG HAU Axis project is structured as a <strong>monorepo</strong> using <a href="https://turbo.build/">Turborepo</a> and <a href="https://pnpm.io/workspaces">pnpm workspaces</a>. This architecture allows us to build multiple applications that share code seamlessly without publishing internal packages to npm.</p>
+<h2 id="monorepo-structure">Monorepo Structure<a class="headerlink" href="#monorepo-structure" title="Permanent link">&para;</a></h2>
+<p>The workspace is divided into two main top-level directories: <code>apps/</code> and <code>packages/</code>.</p>
+<div class="highlight"><pre><span></span><code>gdg-axis/
+├── apps/                 # User-facing applications
+│   ├── gdg-hub/          # The internal management hub
+│   └── gdg-id/           # The public ID verification and portfolio app
+├── packages/             # Shared libraries and internal dependencies
+│   ├── auth/             # Supabase auth wrappers &amp; utilities
+│   ├── badges/           # Badge awarding logic
+│   ├── certificates/     # PDF generation for certificates
+│   ├── config/           # Linting and formatting configurations
+│   ├── contracts/        # Zod schemas &amp; types for API boundaries
+│   ├── db/               # Supabase database clients &amp; queries
+│   ├── events/           # Event registration business logic
+│   ├── marketplace/      # Swag and point redemption logic
+│   ├── points/           # Ledger calculations for member points
+│   ├── pwa/              # Progressive Web App configs
+│   ├── types/            # Global TypeScript interfaces
+│   ├── typescript-config/# Shared tsconfig.json bases
+│   └── axis-ui/          # Axis design system, primitives, and React components
+├── supabase/             # Database migrations and seed data
+└── docs/                 # Documentation (you are here)
+</code></pre></div>
+<h2 id="why-a-monorepo">Why a Monorepo?<a class="headerlink" href="#why-a-monorepo" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Code Reusability:</strong> The <code>gdg-hub</code> and <code>gdg-id</code> apps share stable UI primitives, contracts, database clients, authorization guards, and domain rules through <code>packages/</code>.</li>
+<li><strong>Unified Tooling:</strong> Linting, TypeScript compilation, and testing are configured once and applied across the entire repository.</li>
+<li><strong>Atomic Commits:</strong> When updating a shared package (e.g., <code>@hau/db</code>), we can simultaneously update the apps that rely on it in a single pull request, ensuring nothing breaks.</li>
+<li><strong>Fast Builds:</strong> Turborepo caches build artifacts. If you change code in <code>gdg-id</code>, Turborepo knows it doesn't need to rebuild <code>gdg-hub</code>.</li>
+</ol>
+<h2 id="internal-packages">Internal Packages<a class="headerlink" href="#internal-packages" title="Permanent link">&para;</a></h2>
+<p>Internal packages are named with the <code>@hau/*</code> scope (e.g., <code>@hau/axis-ui</code>, <code>@hau/auth</code>).
+Inside any application's <code>package.json</code>, you will see dependencies like:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;@hau/db&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;workspace:*&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;@hau/axis-ui&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;workspace:*&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>The <code>workspace:*</code> version indicator tells pnpm to resolve these packages locally from the monorepo rather than fetching them from the npm registry.</p>
+<h2 id="ownership-rule">Ownership rule<a class="headerlink" href="#ownership-rule" title="Permanent link">&para;</a></h2>
+<p>Code starts in the narrowest correct owner. Route and product-specific code stays in <code>apps/</code>. A module moves to <code>packages/</code> when it represents a stable shared contract, UI primitive, infrastructure service, or domain rule. Packages expose a small public API through <code>src/index.ts</code>; apps do not deep-import package internals, and packages never import from apps.</p>
+<p>For UI work, tokens and reusable presentational components belong in <code>packages/axis-ui</code>; complete screens, route-aware navigation, product copy, and data-bound compositions stay in the relevant app. See the <a href="../../contributing/ui-ux/">UI/UX contribution guide</a> for the handoff and implementation workflow.</p>
               
             </div>
           </div><footer>
