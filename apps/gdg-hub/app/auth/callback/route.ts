@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { requireServerEnv } from '@hau/db';
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -8,13 +9,16 @@ export async function GET(request: Request) {
   // 'next' can be passed explicitly in the invite link (e.g. ?next=/activate).
   // Default: invite links go to /activate to set a password; email-confirm links go to /verify.
   const type = searchParams.get('type');
-  const next = searchParams.get('next') ?? (type === 'invite' ? '/activate' : '/verify');
+  const requestedNext = searchParams.get('next') ?? (type === 'invite' ? '/activate' : '/verify');
+  const next = requestedNext.startsWith('/') && !requestedNext.startsWith('//')
+    ? requestedNext
+    : '/verify';
 
   if (code) {
     const cookieStore = await cookies();
     const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      requireServerEnv('NEXT_PUBLIC_SUPABASE_URL'),
+      requireServerEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY'),
       {
         cookies: {
           getAll() {

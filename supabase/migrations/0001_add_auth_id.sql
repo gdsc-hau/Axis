@@ -4,5 +4,5 @@
 ALTER TABLE public.members 
 ADD COLUMN IF NOT EXISTS auth_id UUID UNIQUE REFERENCES auth.users(id) ON DELETE SET NULL;
 
--- Also issue a NOTIFY to reload the schema cache so postgREST picks up member_profiles and auth_id changes
+-- Reload the PostgREST schema cache after the column change.
 NOTIFY pgrst, 'reload schema';

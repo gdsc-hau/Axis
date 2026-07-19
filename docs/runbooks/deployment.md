@@ -1,6 +1,8 @@
 # Deployment Runbook
 
-Our deployment pipeline is highly automated. The frontend applications are hosted on **Vercel**, and the backend is hosted on **Supabase**.
+The applications are designed for Vercel and Supabase. This repository does not
+currently contain a checked-in CI workflow, so confirm the deployment integration
+in the hosting dashboards rather than assuming migrations run automatically.
 
 ## Vercel Frontend Deployment
 
@@ -15,15 +17,11 @@ Production environment variables are managed directly in the Vercel Dashboard. T
 
 ## Supabase Backend Deployment
 
-Database migrations are also automated using GitHub Actions.
-
-When a pull request containing new SQL in `supabase/migrations/` is merged to `main`:
-1. The GitHub Action authenticates with Supabase using a deployment token.
-2. It runs `supabase db push` against the linked production project.
-3. The schema is updated before the Vercel frontend finishes building.
+Database migrations must be reviewed with `supabase db push --dry-run` and applied
+through an approved CI workflow or by an authorized operator.
 
 > [!IMPORTANT]
-> Never manually run `supabase db push` from your local machine to production unless you are recovering from a critical GitHub Actions failure. Let CI/CD handle it.
+> Never apply a production migration without a backup, a reviewed dry run, and a rollback plan.
 
 ## Rollbacks
 

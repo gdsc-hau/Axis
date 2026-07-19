@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
-import { SearchRequestSchema, PublicMemberProfileSchema } from '@hau/contracts';
-import { searchRateLimit } from '@/lib/ratelimit';
+import { createClient } from '@supabase/supabase-js';
+import { SearchRequestSchema, MemberSearchResultSchema } from '@hau/contracts';
+import { limitSearch } from '@/lib/ratelimit';
+import { createVerificationToken } from '@/lib/verification-token';
 
 export async function POST(request: NextRequest) {
 
@@ -15,8 +15,9 @@ export async function POST(request: NextRequest) {
     }
 
     const ip =
-      (request as any).ip ??
-      request.headers.get('x-forwarded-for')?.split(',')[0].trim();
+      request.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
+      request.headers.get('x-real-ip') ??
+      (process.env.NODE_ENV === 'development' ? 'local-development' : null);
 
     if (!ip) {
       return NextResponse.json(
@@ -26,7 +27,7 @@ export async function POST(request: NextRequest) {
     }
     
     const { success, limit, remaining, reset } =
-      await searchRateLimit.limit(ip);
+      await limitSearch(ip);
 
     if (!success) {
       const retryAfter = Math.max(
@@ -56,32 +57,23 @@ export async function POST(request: NextRequest) {
 
     const { type, value } = parsed.data;
 
-    // Supabase Setup
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll();
-          },
-          setAll(cookiesToSet) {
-            try {
-              cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
-            } catch {
-              // Ignore in API route
-            }
-          },
-        },
-      }
-    );
+    // This endpoint intentionally performs a narrowly scoped server-side lookup.
+    // The service-role credential never reaches the browser and the response is
+    // parsed through the public schema below before it is returned.
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!supabaseUrl || !serviceRoleKey) {
+      throw new Error('Supabase server configuration is incomplete.');
+    }
+    const supabase = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
 
     // Database lookup
     const column = type === 'barcode' ? 'student_id' : 'email';
     const { data: member, error } = await supabase
       .from('members')
-      .select('gdg_id, full_name, program, email, department, is_accepted')
+      .select('gdg_id, full_name, program, email, is_accepted')
       .eq(column, value)
       .single();
 
@@ -94,12 +86,20 @@ export async function POST(request: NextRequest) {
     }
 
     // Apply strict server-side data masking (PublicMemberProfileSchema)
-    const publicProfile = PublicMemberProfileSchema.parse({
+    const qrSecret = process.env.QR_SIGNING_SECRET;
+    if (!qrSecret) throw new Error('QR_SIGNING_SECRET is not configured.');
+    const signedToken = createVerificationToken(member.email, qrSecret);
+    const verificationUrl = new URL('/verify', request.nextUrl.origin);
+    verificationUrl.searchParams.set('token', signedToken.token);
+
+    const publicProfile = MemberSearchResultSchema.parse({
       gdgId: member.gdg_id,
       fullName: member.full_name,
       program: member.program,
       email: member.email,
-      department: member.department,
+      verificationToken: signedToken.token,
+      verificationUrl: verificationUrl.toString(),
+      tokenExpiresAt: signedToken.expiresAt,
     });
 
     return NextResponse.json(publicProfile);

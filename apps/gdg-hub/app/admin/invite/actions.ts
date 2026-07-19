@@ -33,6 +33,11 @@ export async function sendInvites(
   if (emails.length === 0) {
     return { error: 'No valid emails found.' };
   }
+  if (emails.length > 100) {
+    return { error: 'A maximum of 100 invitations can be sent at once.' };
+  }
+  const invalidEmail = emails.find((email) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254);
+  if (invalidEmail) return { error: `Invalid email address: ${invalidEmail}` };
 
   const adminClient = createAdminClient();
   const origin = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001';
@@ -40,7 +45,7 @@ export async function sendInvites(
 
   for (const email of emails) {
     // 3. Validate against members table
-    const { data: rawMember, error: memberError } = await (adminClient.from('members') as any)
+    const { data: rawMember, error: memberError } = await adminClient.from('members')
       .select('id, is_accepted, role, auth_id')
       .eq('email', email)
       .single();

@@ -1,3 +1,4 @@
+import 'server-only';
 import { createServerClientInstance } from '@hau/db';
 import { User, Session } from '@supabase/supabase-js';
 

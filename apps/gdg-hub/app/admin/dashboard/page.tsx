@@ -10,10 +10,10 @@ async function getStats() {
     { count: totalEvents },
     { count: pendingRedemptions },
   ] = await Promise.all([
-    (supabase.from('members') as any).select('*', { count: 'exact', head: true }),
-    (supabase.from('members') as any).select('*', { count: 'exact', head: true }).eq('is_accepted', false),
-    (supabase.from('events') as any).select('*', { count: 'exact', head: true }),
-    (supabase.from('redemptions') as any).select('*', { count: 'exact', head: true }).eq('status', 'PENDING'),
+    supabase.from('members').select('*', { count: 'exact', head: true }),
+    supabase.from('members').select('*', { count: 'exact', head: true }).eq('is_accepted', false),
+    supabase.from('events').select('*', { count: 'exact', head: true }),
+    supabase.from('redemptions').select('*', { count: 'exact', head: true }).eq('status', 'PENDING'),
   ]);
 
   return {
@@ -26,7 +26,7 @@ async function getStats() {
 
 async function getRecentMembers() {
   const supabase = await createServerClientInstance();
-  const { data } = await (supabase.from('members') as any)
+  const { data } = await supabase.from('members')
     .select('id, full_name, email, is_accepted, created_at')
     .order('created_at', { ascending: false })
     .limit(5);

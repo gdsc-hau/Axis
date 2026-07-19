@@ -6,6 +6,7 @@
  * This stub prevents any direct calls to signup from working.
  */
 export async function signup(_formData: FormData) {
+  void _formData;
   return {
     error:
       'Public registration is not available. Access to GDG HAU Axis is by invitation only. Please contact an administrator.',

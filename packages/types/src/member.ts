@@ -1,5 +1,6 @@
 export interface Member {
   id: string; // UUID
+  auth_id: string | null;
   student_id: string;
   gdg_id: string;
   full_name: string;
@@ -13,8 +14,8 @@ export interface Member {
 }
 
 export interface MemberProfile {
-  id: string; // UUID
-  member_id: string;
+  /** @deprecated Profile fields now live directly on Member. */
+  id: string;
   bio: string | null;
   phone_number: string | null;
   links: Record<string, string> | null;

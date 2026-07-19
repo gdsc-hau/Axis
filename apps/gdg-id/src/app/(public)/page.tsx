@@ -4,14 +4,14 @@ import { useState, useEffect } from "react";
 import Scanner from "@/components/Scanner";
 import GdgIdCard from "@/components/GdgIdCard";
 import Navbar from "@/components/Navbar";
-import type { PublicMemberProfile } from "@hau/contracts";
-import { motion, AnimatePresence } from "framer-motion";
+import type { MemberSearchResult } from "@hau/contracts";
+import { motion } from "framer-motion";
 
 export default function DualEntrySearchPage() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [profile, setProfile] = useState<PublicMemberProfile | null>(null);
+  const [profile, setProfile] = useState<MemberSearchResult | null>(null);
   const [showScanner, setShowScanner] = useState(false);
   const [timeleft, setTimeLeft] = useState(0);
 
@@ -90,10 +90,10 @@ export default function DualEntrySearchPage() {
       }
 
       const data = await res.json();
-      setProfile(data as PublicMemberProfile);
+      setProfile(data as MemberSearchResult);
       setEmail("");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred.');
     } finally {
       setLoading(false);
     }

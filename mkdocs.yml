@@ -34,6 +34,7 @@ nav:
   - Runbooks:
       - Local Development: runbooks/local-dev.md
       - Deployment: runbooks/deployment.md
+      - Security Deployment: runbooks/security-deployment.md
       - Troubleshooting: runbooks/troubleshooting.md
   - Contributing:
       - Standards: contributing/standards.md

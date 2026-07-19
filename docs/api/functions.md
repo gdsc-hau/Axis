@@ -22,4 +22,6 @@ const { data, error } = await supabase.rpc('calculate_member_points', {
 ## Important Functions
 
 - `set_updated_at()`: A trigger function attached to nearly all tables that automatically updates the `updated_at` column whenever a row is modified.
-- `handle_new_user()`: Automates the creation of a `public.members` record when someone signs up.
+
+Axis deliberately does not auto-create public member records. Administrators preload
+`public.members`, and account activation links the Auth user through `members.auth_id`.

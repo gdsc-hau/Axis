@@ -12,25 +12,37 @@ export async function completeProfile(formData: FormData) {
     return { error: 'You must be logged in to complete your profile.' };
   }
 
-  const fullName = formData.get('fullName') as string;
-  const bio = formData.get('bio') as string;
-  const linkedin = formData.get('linkedin') as string;
-  const github = formData.get('github') as string;
+  const fullName = String(formData.get('fullName') ?? '').trim();
+  const bio = String(formData.get('bio') ?? '').trim();
+  const linkedin = String(formData.get('linkedin') ?? '').trim();
+  const github = String(formData.get('github') ?? '').trim();
 
   if (!fullName || !bio) {
     return { error: 'Full Name and Bio are required.' };
+  }
+  if (fullName.length > 100 || bio.length > 1000) {
+    return { error: 'Full name or bio exceeds the allowed length.' };
+  }
+  for (const candidate of [linkedin, github].filter(Boolean)) {
+    try {
+      const parsedUrl = new URL(candidate);
+      if (!['http:', 'https:'].includes(parsedUrl.protocol)) throw new Error('Invalid protocol');
+    } catch {
+      return { error: 'Social links must be valid HTTP or HTTPS URLs.' };
+    }
   }
 
   const adminClient = createAdminClient();
 
   // 1. Get the member record corresponding to this auth user
-  let { data: member, error: fetchError } = await (adminClient.from('members') as any)
+  const { data: initialMember, error: fetchError } = await adminClient.from('members')
     .select('id, auth_id')
     .eq('auth_id', user.id)
     .single();
+  let member = initialMember;
 
   if (!member && user.email) {
-    const { data: memberByEmail } = await (adminClient.from('members') as any)
+    const { data: memberByEmail } = await adminClient.from('members')
       .select('id, auth_id')
       .eq('email', user.email)
       .single();
@@ -38,7 +50,7 @@ export async function completeProfile(formData: FormData) {
     if (memberByEmail) {
       member = memberByEmail;
       // Auto-link legacy accounts
-      await (adminClient.from('members') as any).update({ auth_id: user.id }).eq('id', memberByEmail.id);
+      await adminClient.from('members').update({ auth_id: user.id }).eq('id', memberByEmail.id);
     }
   }
 
@@ -53,7 +65,7 @@ export async function completeProfile(formData: FormData) {
   };
 
   // 2. Update member details directly in the flattened members table
-  const { error: updateError } = await (adminClient.from('members') as any)
+  const { error: updateError } = await adminClient.from('members')
     .update({ 
       full_name: fullName,
       bio,

@@ -10,7 +10,7 @@ The database can be conceptually divided into four domains:
 
 1. **Identity & Profiles**
    - Core tables defining who a user is.
-   - Tables: `members`, `member_profiles`, `member_credentials`, `id_qr_codes`.
+   - Tables: `members`, `member_credentials`, `id_qr_codes`. Profile fields are stored on `members`.
 
 2. **Events & Engagement**
    - Tables tracking what is happening and who is attending.
@@ -28,7 +28,6 @@ The database can be conceptually divided into four domains:
 
 ```mermaid
 erDiagram
-    MEMBERS ||--o| MEMBER_PROFILES : has
     MEMBERS ||--o{ ID_QR_CODES : owns
     MEMBERS ||--o{ EVENT_ATTENDANCE : registers
     EVENTS ||--o{ EVENT_ATTENDANCE : includes

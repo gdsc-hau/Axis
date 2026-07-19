@@ -3,7 +3,7 @@ import { MemberTableClient } from './MemberTableClient';
 
 async function getMembers() {
   const supabase = await createServerClientInstance();
-  const { data, error } = await (supabase.from('members') as any)
+  const { data, error } = await supabase.from('members')
     .select('id, full_name, email, student_id, gdg_id, program, department, role, is_accepted, created_at')
     .order('created_at', { ascending: false });
 

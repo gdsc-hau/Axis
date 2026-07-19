@@ -1,12 +1,13 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { requireServerEnv } from '@hau/db';
 
-export async function GET(request: Request) {
+export async function POST(request: Request) {
   const cookieStore = await cookies();
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    requireServerEnv('NEXT_PUBLIC_SUPABASE_URL'),
+    requireServerEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY'),
     {
       cookies: {
         getAll() {
@@ -29,4 +30,8 @@ export async function GET(request: Request) {
   
   const url = new URL(request.url);
   return NextResponse.redirect(`${url.origin}/login`);
+}
+
+export function GET() {
+  return NextResponse.json({ error: 'Method not allowed.' }, { status: 405, headers: { Allow: 'POST' } });
 }

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint . --ext .js,.mjs,.ts,.tsx --ignore-pattern next-env.d.ts --ignore-pattern .next/** --max-warnings=0",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@hau/contracts": "workspace:*",
@@ -18,7 +19,7 @@
     "framer-motion": "^12.40.0",
     "html2canvas": "^1.4.1",
     "html5-qrcode": "^2.3.8",
-    "jspdf": "^2.5.2",
+    "jspdf": "^4.2.1",
     "lru-cache": "^11.5.0",
     "lucide-react": "^0.446.0",
     "next": "^15.1.7",

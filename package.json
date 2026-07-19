@@ -1,21 +1,19 @@
 {
   "name": "gdg-ecosystem",
   "private": true,
-  "packageManager": "pnpm@9.0.0",
+  "packageManager": "pnpm@11.3.0",
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
+    "test": "node --experimental-strip-types --test tests/*.test.mts",
     "docs:build": "python -m mkdocs build",
     "docs:serve": "python -m mkdocs serve",
     "typecheck": "turbo typecheck",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
-    "turbo": "latest"
-  },
-  "dependencies": {
-    "html2canvas": "^1.4.1",
-    "jspdf": "^2.5.1"
+    "prettier": "^3.6.2",
+    "turbo": "^2.10.4"
   }
 }

@@ -18,6 +18,9 @@ export async function activateAccount(formData: FormData) {
   if (password.length < 8) {
     return { error: 'Password must be at least 8 characters.' };
   }
+  if (password.length > 128 || !/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/\d/.test(password)) {
+    return { error: 'Password must include upper- and lowercase letters and a number.' };
+  }
 
   // The user is already authenticated at this point (Supabase exchanged the invite
   // code for a session in /auth/callback). We just need to set their password.
@@ -42,13 +45,13 @@ export async function activateAccount(formData: FormData) {
   // where the invite link created the auth.users row but linkage wasn't written yet)
   const adminClient = createAdminClient();
   if (user.email) {
-    const { data: member } = await (adminClient.from('members') as any)
+    const { data: member } = await adminClient.from('members')
       .select('id, auth_id')
       .eq('email', user.email)
       .single();
 
     if (member && !member.auth_id) {
-      await (adminClient.from('members') as any)
+      await adminClient.from('members')
         .update({ auth_id: user.id })
         .eq('id', member.id);
     }

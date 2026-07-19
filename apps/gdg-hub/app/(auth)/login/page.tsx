@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { login } from './actions';
-import Link from 'next/link';
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);

@@ -4,18 +4,14 @@ This document outlines the core tables in the `public` schema. All tables use `s
 
 ## `members`
 The core identity table.
-- `id` (UUID): Primary key, matches `auth.users.id`.
+- `id` (UUID): Primary key for the member registry.
+- `auth_id` (UUID, nullable): Link to `auth.users.id` after activation.
 - `gdg_id` (TEXT): The human-readable GDG Holy Angel University ID.
 - `role` (TEXT): `MEMBER` or `ADMIN`.
 - `updated_at` (TIMESTAMPTZ)
 
-## `member_profiles`
-Publicly viewable profile data for members.
-- `id` (UUID)
-- `member_id` (UUID): FK to `members`.
-- `bio` (TEXT)
-- `phone_number` (TEXT)
-- `links` (JSONB): Links to GitHub, LinkedIn, etc.
+Profile data is flattened onto `members` through the `bio`, `phone_number`,
+`links`, and `status_message` columns. There is no active `member_profiles` table.
 
 ## `id_qr_codes`
 Stores the active QR code for a member's digital ID.
