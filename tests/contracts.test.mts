@@ -9,6 +9,7 @@ import {
   createVerificationToken,
   verifyVerificationToken,
 } from '../apps/gdg-id/src/lib/verification-token.ts';
+import { validatePassword } from '../apps/gdg-hub/lib/password.ts';
 
 test('public member profiles expose only card and verification fields', () => {
   const profile = PublicMemberProfileSchema.parse({
@@ -50,4 +51,12 @@ test('verification tokens are signed, expire, and reject tampering', () => {
   assert.equal(verifyVerificationToken(issued.token, secret, now)?.email, 'member@example.com');
   assert.equal(verifyVerificationToken(`${issued.token}tampered`, secret, now), null);
   assert.equal(verifyVerificationToken(issued.token, secret, now + 61_000), null);
+});
+
+test('password policy rejects weak or oversized passwords', () => {
+  assert.equal(validatePassword('StrongPass1'), null);
+  assert.match(validatePassword('short') ?? '', /at least 8/);
+  assert.match(validatePassword('alllowercase1') ?? '', /upper- and lowercase/);
+  assert.match(validatePassword('NoNumbersHere') ?? '', /number/);
+  assert.match(validatePassword(`Aa1${'x'.repeat(126)}`) ?? '', /no more than 128/);
 });

@@ -8,6 +8,8 @@ Complete these steps before exposing Axis to real members.
 2. Keep email invitations enabled for the administrator invitation flow.
 3. Confirm email verification is required.
 4. Verify the only active administrator is linked through `members.auth_id`.
+5. Add each deployed `${NEXT_PUBLIC_SITE_URL}/auth/callback` URL to the Supabase Auth redirect allow list so invitation and recovery links can return to the Hub.
+6. If your email provider prefetches links (for example, enterprise safe-link scanning), use a Supabase recovery template with a manually entered OTP or an intermediate confirmation page; otherwise the one-time link may be consumed before the member clicks it.
 
 The local `supabase/config.toml` does not automatically change hosted Auth settings.
 

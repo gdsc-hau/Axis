@@ -12,6 +12,14 @@ This document outlines the major user journeys supported by the GDG HAU Axis pla
 4. **Profile Completion:** The member is redirected to `/verify`, where they enter their full name, bio, and optional social links (LinkedIn, GitHub). These are saved directly to `public.members`.
 5. **Member Access:** The member is redirected to `/member/dashboard` and has full access to the member portal.
 
+### Password recovery
+
+1. The member selects **Forgot password?** on `/login` and submits their account email. The browser client initiates the PKCE request so the code verifier is retained in that browser's cookies.
+2. The UI always returns the same message so it does not reveal whether an Auth account exists.
+3. Supabase sends a time-limited recovery link through `/auth/callback?next=/reset-password`.
+4. The reset action requires the recovery session to match an approved member. It links a missing `members.auth_id`, applies the shared password policy, updates the password, and revokes active sessions.
+5. The member logs in again with the new password.
+
 ## 2. Event Registration & Check-In
 
 1. **Event Creation (Admin):** An `ADMIN` creates an event in `gdg-hub`, setting the title, date, and optionally a Luma URL for external registration.

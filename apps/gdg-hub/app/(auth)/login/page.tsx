@@ -1,11 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import Link from 'next/link';
+import { Suspense, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { login } from './actions';
 
-export default function LoginPage() {
+function LoginForm() {
+  const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const callbackError = searchParams.get('error');
+  const resetSuccessful = searchParams.get('reset') === 'success';
 
   async function handleSubmit(formData: FormData) {
     setLoading(true);
@@ -25,9 +30,15 @@ export default function LoginPage() {
       <div className="w-full max-w-md p-8 bg-white dark:bg-zinc-900 rounded shadow-md border dark:border-zinc-800">
         <h1 className="text-3xl font-bold mb-6 text-center">Log In</h1>
         
-        {error && (
+        {resetSuccessful && (
+          <div className="mb-4 rounded-lg bg-green-100 p-4 text-sm text-green-800 dark:bg-green-900/30 dark:text-green-400">
+            Your password was updated. Log in with your new password.
+          </div>
+        )}
+
+        {(error || callbackError) && (
           <div className="mb-4 p-4 text-sm text-red-800 bg-red-100 rounded-lg dark:bg-red-900/30 dark:text-red-400">
-            {error}
+            {error || callbackError}
           </div>
         )}
         
@@ -54,9 +65,15 @@ export default function LoginPage() {
               name="password"
               type="password"
               required
+              autoComplete="current-password"
               className="w-full px-3 py-2 border rounded-md dark:border-zinc-700 dark:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="••••••••"
             />
+          </div>
+          <div className="text-right">
+            <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
+              Forgot password?
+            </Link>
           </div>
           <button
             type="submit"
@@ -79,5 +96,13 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 dark:bg-zinc-950" />}>
+      <LoginForm />
+    </Suspense>
   );
 }

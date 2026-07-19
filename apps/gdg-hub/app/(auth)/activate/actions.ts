@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation';
 import { createAdminClient, createServerClientInstance } from '@hau/db';
+import { validatePassword } from '@/lib/password';
 
 export async function activateAccount(formData: FormData) {
   const password = formData.get('password') as string;
@@ -15,12 +16,8 @@ export async function activateAccount(formData: FormData) {
     return { error: 'Passwords do not match.' };
   }
 
-  if (password.length < 8) {
-    return { error: 'Password must be at least 8 characters.' };
-  }
-  if (password.length > 128 || !/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/\d/.test(password)) {
-    return { error: 'Password must include upper- and lowercase letters and a number.' };
-  }
+  const passwordError = validatePassword(password);
+  if (passwordError) return { error: passwordError };
 
   // The user is already authenticated at this point (Supabase exchanged the invite
   // code for a session in /auth/callback). We just need to set their password.

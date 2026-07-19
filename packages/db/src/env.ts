@@ -6,7 +6,11 @@ const publicEnvironmentVariables = [
 type PublicEnvironmentVariable = (typeof publicEnvironmentVariables)[number];
 
 export function requirePublicEnv(name: PublicEnvironmentVariable): string {
-  const value = process.env[name];
+  // Next.js replaces NEXT_PUBLIC_* references in browser bundles only when the
+  // property access is static. Do not replace this with process.env[name].
+  const value = name === 'NEXT_PUBLIC_SUPABASE_URL'
+    ? process.env.NEXT_PUBLIC_SUPABASE_URL
+    : process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!value) {
     throw new Error(`Missing required environment variable: ${name}`);
   }

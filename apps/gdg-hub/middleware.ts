@@ -42,11 +42,18 @@ export async function middleware(request: NextRequest) {
   const isAuthRoute =
     path.startsWith('/login') ||
     path.startsWith('/signup') ||
+    path.startsWith('/forgot-password') ||
+    path.startsWith('/reset-password') ||
     path.startsWith('/activate') ||
     path.startsWith('/verify');
 
-  const isOnboardingRoute = path.startsWith('/verify') || path.startsWith('/activate');
+  const isOnboardingRoute =
+    path.startsWith('/verify') ||
+    path.startsWith('/activate') ||
+    path.startsWith('/forgot-password') ||
+    path.startsWith('/reset-password');
   const isProtectedRoute = path.startsWith('/member') || path.startsWith('/admin');
+  const isAuthError = path === '/login' && url.searchParams.has('error');
 
   if (isProtectedRoute && !user) {
     // Redirect unauthenticated users to login
@@ -54,9 +61,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (isAuthRoute && user && !isOnboardingRoute) {
+  if (isAuthRoute && user && !isOnboardingRoute && !isAuthError) {
     // If user is already logged in and NOT in the onboarding flow, send them to the dashboard.
     url.pathname = '/member/dashboard';
+    url.search = '';
     return NextResponse.redirect(url);
   }
 
