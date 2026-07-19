@@ -73,6 +73,18 @@ Also confirm that:
 - database changes are included as migrations;
 - unrelated files and formatting changes are not included.
 
+## Monorepo boundaries
+
+- Keep routes and application-specific composition in `apps/`.
+- Put reusable UI primitives in `@hau/axis-ui` and import them from the package root.
+- Put runtime input and API schemas in `@hau/contracts`.
+- Put shared database access in `@hau/db` and authorization guards in `@hau/auth`.
+- Put business rules in their domain package, such as `@hau/events` or `@hau/points`.
+- Declare every internal dependency with `workspace:*`.
+- Never import from one app into another, from a package into an app, or through a package's private source path.
+
+UI/UX contributors should follow the [UI/UX contribution guide](docs/contributing/ui-ux.md) when proposing design tokens or shared components for `@hau/axis-ui`.
+
 ## Pull requests
 
 - Keep one main purpose per pull request.

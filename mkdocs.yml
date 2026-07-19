@@ -7,7 +7,6 @@ theme:
 extra_css:
   - stylesheets/extra.css
 
-
 nav:
   - Home: index.md
   - Project Overview:
@@ -38,6 +37,7 @@ nav:
       - Troubleshooting: runbooks/troubleshooting.md
   - Contributing:
       - Standards: contributing/standards.md
+      - UI/UX Guide: contributing/ui-ux.md
       - Documentation Rules: contributing/docs-rules.md
 
 markdown_extensions:
