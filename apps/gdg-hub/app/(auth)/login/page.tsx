@@ -68,11 +68,15 @@ export default function LoginPage() {
           </button>
         </form>
         
-        <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-          Not registered?{' '}
-          <Link href="/signup" className="text-blue-600 hover:underline">
-            Sign up
-          </Link>
+        <p className="mt-4 text-center text-sm text-zinc-500 dark:text-zinc-400">
+          Access is by invitation only.{' '}
+          <a
+            href="mailto:gdg@hau.edu.ph"
+            className="text-blue-600 hover:underline"
+          >
+            Contact us
+          </a>{' '}
+          if you need help.
         </p>
       </div>
     </div>

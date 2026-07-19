@@ -5,7 +5,10 @@ import { cookies } from 'next/headers';
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
-  const next = searchParams.get('next') ?? '/verify';
+  // 'next' can be passed explicitly in the invite link (e.g. ?next=/activate).
+  // Default: invite links go to /activate to set a password; email-confirm links go to /verify.
+  const type = searchParams.get('type');
+  const next = searchParams.get('next') ?? (type === 'invite' ? '/activate' : '/verify');
 
   if (code) {
     const cookieStore = await cookies();

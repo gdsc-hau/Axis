@@ -35,7 +35,16 @@ export async function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   const path = url.pathname;
 
-  const isAuthRoute = path.startsWith('/login') || path.startsWith('/signup') || path.startsWith('/verify');
+  // Auth routes: public pages that should redirect to dashboard if already logged in.
+  // /verify and /activate are special — they must remain accessible while logged in
+  // because they are part of the onboarding flow after clicking an invite link.
+  const isAuthRoute =
+    path.startsWith('/login') ||
+    path.startsWith('/signup') ||
+    path.startsWith('/activate') ||
+    path.startsWith('/verify');
+
+  const isOnboardingRoute = path.startsWith('/verify') || path.startsWith('/activate');
   const isProtectedRoute = path.startsWith('/member') || path.startsWith('/admin');
 
   if (isProtectedRoute && !user) {
@@ -44,17 +53,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (isAuthRoute && user) {
-    // If user is already logged in, redirect them away from auth pages
-    // Note: We don't know their role or profile status here efficiently without DB query,
-    // so we redirect to /member/dashboard and let the layout handle role upgrades/redirects if needed.
-    // However, if they are on /verify and we know their profile is incomplete, we should let them stay.
-    // But since middleware doesn't easily check the DB for profile status, we rely on the layouts.
-    // To avoid redirect loops, we let /verify be accessible if they are logged in.
-    if (path !== '/verify') {
-      url.pathname = '/member/dashboard';
-      return NextResponse.redirect(url);
-    }
+  if (isAuthRoute && user && !isOnboardingRoute) {
+    // If user is already logged in and NOT in the onboarding flow, send them to the dashboard.
+    url.pathname = '/member/dashboard';
+    return NextResponse.redirect(url);
   }
 
   return supabaseResponse;

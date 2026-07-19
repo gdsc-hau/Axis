@@ -1,89 +1,53 @@
-'use client';
-
-import { useState } from 'react';
-import { signup } from './actions';
 import Link from 'next/link';
 
 export default function SignupPage() {
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  async function handleSubmit(formData: FormData) {
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
-
-    const result = await signup(formData);
-
-    if (result.error) {
-      setError(result.error);
-    } else if (result.success) {
-      setSuccess(result.success);
-    }
-    
-    setLoading(false);
-  }
-
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-gray-50 dark:bg-zinc-950">
-      <div className="w-full max-w-md p-8 bg-white dark:bg-zinc-900 rounded shadow-md border dark:border-zinc-800">
-        <h1 className="text-3xl font-bold mb-6 text-center">Join GDG HAU</h1>
-        
-        {error && (
-          <div className="mb-4 p-4 text-sm text-red-800 bg-red-100 rounded-lg dark:bg-red-900/30 dark:text-red-400">
-            {error}
-          </div>
-        )}
-        
-        {success ? (
-          <div className="p-4 text-sm text-green-800 bg-green-100 rounded-lg dark:bg-green-900/30 dark:text-green-400">
-            {success}
-          </div>
-        ) : (
-          <form action={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-1" htmlFor="email">
-                Email
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                className="w-full px-3 py-2 border rounded-md dark:border-zinc-700 dark:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="you@example.com"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1" htmlFor="password">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className="w-full px-3 py-2 border rounded-md dark:border-zinc-700 dark:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="••••••••"
-                minLength={6}
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md disabled:opacity-50 transition-colors"
-            >
-              {loading ? 'Verifying...' : 'Sign Up'}
-            </button>
-          </form>
-        )}
-        
-        <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-          Already verified?{' '}
-          <Link href="/login" className="text-blue-600 hover:underline">
-            Log in
-          </Link>
+    <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-zinc-50 dark:bg-zinc-950">
+      <div className="w-full max-w-md p-10 bg-white dark:bg-zinc-900 rounded-2xl shadow-lg border border-zinc-200 dark:border-zinc-800 text-center">
+        {/* Icon */}
+        <div className="mx-auto mb-6 w-16 h-16 rounded-full bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center">
+          <svg
+            className="w-8 h-8 text-blue-600 dark:text-blue-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M21.75 9v.906a2.25 2.25 0 01-1.183 1.981l-6.478 3.488M2.25 9v.906a2.25 2.25 0 001.183 1.981l6.478 3.488m8.839 2.51l-4.66-2.51m0 0l-1.023-.55a2.25 2.25 0 00-2.134 0l-1.022.55m0 0l-4.661 2.51m16.5 1.615a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V8.844a2.25 2.25 0 011.183-1.981l7.5-4.039a2.25 2.25 0 012.134 0l7.5 4.039a2.25 2.25 0 011.183 1.98V19.5z"
+            />
+          </svg>
+        </div>
+
+        <h1 className="text-2xl font-bold text-zinc-900 dark:text-white mb-3">
+          Invite-Only Access
+        </h1>
+        <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-6">
+          GDG HAU Axis is available to verified members only. New accounts are
+          activated via an invitation email sent by an administrator.
+        </p>
+        <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-8">
+          If you're expecting an invite, please check your inbox — including
+          your spam folder.
+        </p>
+
+        <Link
+          href="/login"
+          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors"
+        >
+          Go to Login
+        </Link>
+
+        <p className="mt-6 text-xs text-zinc-400 dark:text-zinc-600">
+          Need access?{' '}
+          <a
+            href="mailto:gdg@hau.edu.ph"
+            className="underline hover:text-zinc-600 dark:hover:text-zinc-400 transition-colors"
+          >
+            Contact the GDG HAU team
+          </a>
         </p>
       </div>
     </div>

@@ -2,13 +2,15 @@
 
 This document outlines the major user journeys supported by the GDG HAU Axis platform. Understanding these flows is crucial for modifying the frontend UI or backend business logic.
 
-## 1. Member Onboarding & Verification
+## 1. Member Onboarding — Invite-Only Flow
 
-1. **Sign Up:** A student navigates to `gdg-id` and signs up using Google OAuth or Email/Password via Supabase Auth.
-2. **Profile Creation:** Upon first login, a new record is created in the `members` and `member_profiles` tables via a database trigger.
-3. **Data Enrichment:** The user is prompted to fill out their profile (bio, social links, phone number).
-4. **ID Generation:** A unique QR code is automatically generated and stored in `id_qr_codes` linked to their `member_id`.
-5. **Viewing ID:** The user views their digital ID card, ready to be scanned at events.
+> **Note:** Public self-registration is disabled. All accounts are created via admin invitation.
+
+1. **Admin Invites:** An `ADMIN` visits `/admin/invite` in `gdg-hub` and enters one or more member email addresses. Each email is validated against the `public.members` table — the member must exist, be approved (`is_accepted = true`), and not already have an active account.
+2. **Invitation Email:** Supabase generates a cryptographically signed, time-limited invite link and sends it to the member's email via the `auth.admin.generateLink` API. The link redirects through `/auth/callback?next=/activate`.
+3. **Account Activation:** The member clicks the invite link. Supabase exchanges the code for a session at `/auth/callback`, which redirects them to `/activate`. On this page the member sets and confirms their password, which is saved via `supabase.auth.updateUser({ password })`. Their `auth_id` is linked to the `public.members` row at this point.
+4. **Profile Completion:** The member is redirected to `/verify`, where they enter their full name, bio, and optional social links (LinkedIn, GitHub). These are saved directly to `public.members`.
+5. **Member Access:** The member is redirected to `/member/dashboard` and has full access to the member portal.
 
 ## 2. Event Registration & Check-In
 

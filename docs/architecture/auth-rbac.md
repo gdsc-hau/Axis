@@ -8,22 +8,27 @@ Supabase maintains an internal table called `auth.users` which safely stores enc
 
 We *never* query `auth.users` directly in our application code. Instead, we use a custom public table called `public.members`.
 
-### The `members` Table Bridge
-When a new user successfully signs up via Supabase Auth, a PostgreSQL trigger fires automatically:
+### The `auth_id` Bridge
+
+Unlike a typical Supabase project where `auth.users.id` and `public.members.id` share the same UUID via a trigger, Axis uses a **pre-populated members table** as the source of truth. Members are added by admins *before* they have a Supabase auth account.
+
+The link between an auth session and a member record is stored in the `auth_id` column on `public.members`:
 
 ```sql
--- Automatically runs when a row is inserted into auth.users
-CREATE FUNCTION public.handle_new_user() 
-RETURNS TRIGGER AS $$
-BEGIN
-  INSERT INTO public.members (id, email, role)
-  VALUES (new.id, new.email, 'MEMBER');
-  RETURN new;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+-- Added via migration 0001_add_auth_id.sql
+ALTER TABLE public.members 
+ADD COLUMN auth_id UUID UNIQUE REFERENCES auth.users(id) ON DELETE SET NULL;
 ```
 
-This ensures that every `auth.user` has exactly one corresponding `public.member` record sharing the identical UUID. Our application logic queries `public.members` to read profiles, assign roles, and calculate points.
+When an admin sends an invitation:
+1. `auth.admin.generateLink({ type: 'invite', email })` creates an `auth.users` row and returns a signed link.
+2. When the member clicks the link and sets their password at `/activate`, the `activateAccount` server action calls `public.members.update({ auth_id: user.id })` to establish the link.
+3. All subsequent lookups use `.eq('auth_id', userId)` instead of `.eq('id', userId)`.
+
+This means `public.members` is **never auto-populated by a trigger** — it is always managed by administrators. The `auth_id` column is `NULL` until the member activates their account.
+
+> **Important:** Public self-registration via `/signup` is disabled. The `/signup` page is now an informational dead-end. All accounts must be invited by an `ADMIN`.
+
 
 ## Role-Based Access Control (RBAC)
 

@@ -24,15 +24,13 @@ export async function completeProfile(formData: FormData) {
   const adminClient = createAdminClient();
 
   // 1. Get the member record corresponding to this auth user
-  let { data: member, error: fetchError } = await adminClient
-    .from('members')
+  let { data: member, error: fetchError } = await (adminClient.from('members') as any)
     .select('id, auth_id')
     .eq('auth_id', user.id)
     .single();
 
   if (!member && user.email) {
-    const { data: memberByEmail } = await adminClient
-      .from('members')
+    const { data: memberByEmail } = await (adminClient.from('members') as any)
       .select('id, auth_id')
       .eq('email', user.email)
       .single();
@@ -40,7 +38,7 @@ export async function completeProfile(formData: FormData) {
     if (memberByEmail) {
       member = memberByEmail;
       // Auto-link legacy accounts
-      await adminClient.from('members').update({ auth_id: user.id }).eq('id', member.id);
+      await (adminClient.from('members') as any).update({ auth_id: user.id }).eq('id', memberByEmail.id);
     }
   }
 
@@ -55,8 +53,7 @@ export async function completeProfile(formData: FormData) {
   };
 
   // 2. Update member details directly in the flattened members table
-  const { error: updateError } = await adminClient
-    .from('members')
+  const { error: updateError } = await (adminClient.from('members') as any)
     .update({ 
       full_name: fullName,
       bio,
