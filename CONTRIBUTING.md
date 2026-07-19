@@ -12,9 +12,9 @@ Thank you for contributing. Keep each change focused, easy to review, and linked
 6. Open a pull request and link the issue.
 7. Address review feedback, then merge when approved.
 
-## Branch names
+## Branch names & Rules
 
-Use a short, descriptive name:
+Use a short, descriptive name prefixed by the change category:
 
 ```text
 feat/member-qr-code
@@ -22,6 +22,12 @@ fix/password-reset
 docs/setup-guide
 chore/update-dependencies
 ```
+
+### Branching Rules
+
+- **Direct Pushes Restricted**: Never push code directly to the `main` branch unless it is an administrative config release explicitly coordinated by core maintainers.
+- **Feature Branches**: All work must be developed on separate feature branches branched off the latest `main`.
+- **Target Branch**: Set your pull request target branch to `main`.
 
 ## Commit messages
 
@@ -56,28 +62,40 @@ git config commit.template .gitmessage
 
 Then run `git commit` to open the template in your configured editor. Do not use `git commit -m` if you want the template to appear.
 
-## Before opening a pull request
+## CI/CD Validation
 
-Run the checks relevant to your change. For application code, use:
+Every pull request targeted at `main` triggers our GitHub Actions validation pipeline. This workflow runs:
+
+1. Code Quality Linting (`pnpm run lint`)
+2. TypeScript Compile Checks (`pnpm run typecheck`)
+3. Project Test Suites (`pnpm run test`)
+
+### Pre-PR Local Verification
+
+To ensure a fast and passing pull request, you **MUST** run all verification steps locally before pushing your branch. Make sure your local environment is configured with **Node.js v22** and execute:
 
 ```bash
-pnpm lint
-pnpm typecheck
-pnpm test
+# Ensure Node 22 is active
+node -v # Should display v22.x.x
+
+# Run validation checks locally
+pnpm run lint
+pnpm run typecheck
+pnpm run test
 ```
 
-For a shared UI change, also run the package check and exercise the component in its first application screen:
+For shared UI package modifications, also verify typing isolation:
 
 ```bash
 pnpm --filter @hau/axis-ui typecheck
 ```
 
-Also confirm that:
+Confirm that:
 
-- no secrets, environment files, or private member data were committed;
-- documentation was updated when behavior or setup changed;
-- database changes are included as migrations;
-- unrelated files and formatting changes are not included.
+- All checks pass cleanly with zero warnings or errors.
+- No secrets, `.env.local` variables, or private registry credentials were committed.
+- Documentation under `docs/` and the database `supabase/migrations/` schemas were updated accordingly.
+- Unrelated styling or formatting changes have been trimmed.
 
 ## Monorepo boundaries
 
@@ -94,10 +112,10 @@ UI/UX contributors should follow the [UI/UX contribution guide](docs/contributin
 ## Pull requests
 
 - Keep one main purpose per pull request.
-- Use a clear title that follows the commit format.
-- Link the issue with `Closes #123`.
-- Explain what changed and how it was tested.
-- Add screenshots for visible interface changes.
-- Request review only when the work is ready.
+- Use a clear title that matches the commit message format.
+- Link the related issue using `Closes #123`.
+- Detail the exact changes introduced and provide a summary of local testing.
+- Add screenshots/videos for visual layout updates.
+- Wait for the GitHub Actions checks to pass successfully before requesting a review from team members.
 
 Project status is updated manually in GitHub Projects: move the issue through `Todo`, `In progress`, `In review`, and `Done` as the work advances.
