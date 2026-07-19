@@ -18,6 +18,7 @@ Follow these steps to get your development environment running locally.
 ### Prerequisites
 
 Ensure you have the following installed before proceeding:
+
 - **[Node.js](https://nodejs.org/)** (v20 or newer)
 - **[pnpm](https://pnpm.io/)** (Fast, disk space efficient package manager: `npm install -g pnpm`)
 - **[Supabase CLI](https://supabase.com/docs/guides/cli)** (For local database development)
@@ -25,12 +26,14 @@ Ensure you have the following installed before proceeding:
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/gdg-hau/id-platform.git
    cd id-platform
    ```
 
 2. **Install dependencies**
+
    ```bash
    pnpm install
    ```
@@ -40,6 +43,7 @@ Ensure you have the following installed before proceeding:
 
 4. **Start local Supabase (Database & Auth)**
    Make sure Docker is running on your machine, then run:
+
    ```bash
    supabase start
    ```
@@ -84,7 +88,7 @@ gdg-axis/
 │   ├── pwa/                  # Progressive Web App configuration logic
 │   ├── types/                # Global TypeScript type definitions
 │   ├── typescript-config/    # Shared `tsconfig.json` configurations
-│   └── ui/                   # Shared UI components (Tailwind + shadcn/ui)
+│   └── axis-ui/              # Shared Axis design system and React components
 ├── supabase/
 │   └── migrations/           # Supabase SQL migration files
 └── docs/                     # MkDocs documentation source files
@@ -97,4 +101,5 @@ gdg-axis/
 We welcome contributions! Please see our [Contributing Guidelines](docs/contributing/standards.md) for more details on our workflow, branching strategy, coding standards, and documentation rules.
 
 ---
+
 Built with ❤️ by the **GDG HAU Core Team**.

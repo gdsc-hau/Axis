@@ -1,48 +1,97 @@
-# Contributing to the GDG HAU ID Platform
+# Contributing to Axis
 
-Welcome! We are thrilled that you want to contribute to the GDG HAU Digital Hub. To maintain our codebase's integrity, quality, and scalability, please follow these guidelines when contributing.
+Thank you for contributing. Keep each change focused, easy to review, and linked to an issue.
 
-## 🛠 Development Workflow
+## Simple workflow
 
-We follow a **Contract-First Architecture**. This means we define the structure and validation of our data before implementing the features.
+1. Create or choose an issue.
+2. Add the issue to the GitHub Project and assign an owner, status, and priority.
+3. Create a branch from the current development branch.
+4. Make and test one focused change.
+5. Commit it using the format below.
+6. Open a pull request and link the issue.
+7. Address review feedback, then merge when approved.
 
-1. **The Contract:** If you are adding a new feature (e.g., "Member Badges"), you must first update the Zod schemas in `packages/contracts`. This ensures the Backend and Frontend stay perfectly in sync.
-2. **Implementation:** Once the types and schemas are defined, implement the logic in the respective applications (`apps/`) or shared packages (`packages/`).
-3. **Pull Request:** All changes must be submitted via a Pull Request (PR) for review.
+## Branch names
 
-## 🌿 Branching Strategy
+Use a short, descriptive name:
 
-Please ensure you are branching off the correct base branch and naming your branches appropriately:
+```text
+feat/member-qr-code
+fix/password-reset
+docs/setup-guide
+chore/update-dependencies
+```
 
-- `main` — Production-ready code.
-- `staging` — Integration testing and pre-production.
-- `feature/<feature-name>` — New features or improvements (e.g., `feature/user-profile`).
-- `fix/<bug-name>` — Bug fixes (e.g., `fix/header-alignment`).
-- `chore/<task-name>` — Maintenance tasks (e.g., `chore/update-dependencies`).
+## Commit messages
 
-## 📝 Coding Standards
+Use this format:
 
-- **Type Safety:** Strictly avoid using `any`. If a type is missing, explicitly define it. We aim for 100% type safety.
-- **Components:** Use functional components and follow the Atomic Design pattern within our UI package (`packages/ui`).
-- **Linting & Formatting:** Run `pnpm lint` and formatting scripts before committing. We use strict ESLint rules to keep the code clean and consistent.
-- **Self-Documentation:** Write code that is easy to read. Variable and function names should be descriptive. Use comments only to explain "Why" a decision was made, not "What" the code is doing.
+```text
+<type>(optional-scope): short description
+```
 
-## 💾 Commit Messages
+Common types:
 
-We strictly follow the [Conventional Commits](https://www.conventionalcommits.org/) specification. This helps us automate changelogs and versioning.
+- `feat`: new feature
+- `fix`: bug fix
+- `docs`: documentation only
+- `refactor`: code change without a new feature or bug fix
+- `test`: tests only
+- `chore`: maintenance
 
 Examples:
-- `feat: add new member badge component`
-- `fix: resolve hydration error on the home page`
-- `docs: update setup instructions in README`
-- `chore: bump typescript version to 5.4`
 
-## 🤝 Code Review Process
+```text
+feat(members): use email in verification QR code
+fix(auth): handle expired password reset links
+docs: clarify local setup
+```
 
-1. **Self-Review:** Before submitting, review your own code. Have you removed console logs? Is the code clean?
-2. **CI/CD:** Ensure all automated CI/CD checks (Lint, Build, Test) are passing on your PR.
-3. **Approval:** Every PR requires at least **one approval** from a Core Team member before it can be merged.
-4. **Constructive Feedback:** Be respectful and constructive during code reviews. We are all here to learn and build something great together!
+To use the included commit template locally:
 
----
-*Questions? Reach out to the GDG HAU Core Team or the CTO.*
+```bash
+git config commit.template .gitmessage
+```
+
+Then run `git commit` to open the template in your configured editor. Do not use `git commit -m` if you want the template to appear.
+
+## Before opening a pull request
+
+Run the checks relevant to your change. For application code, use:
+
+```bash
+pnpm lint
+pnpm typecheck
+pnpm test
+```
+
+Also confirm that:
+
+- no secrets, environment files, or private member data were committed;
+- documentation was updated when behavior or setup changed;
+- database changes are included as migrations;
+- unrelated files and formatting changes are not included.
+
+## Monorepo boundaries
+
+- Keep routes and application-specific composition in `apps/`.
+- Put reusable UI primitives in `@hau/axis-ui` and import them from the package root.
+- Put runtime input and API schemas in `@hau/contracts`.
+- Put shared database access in `@hau/db` and authorization guards in `@hau/auth`.
+- Put business rules in their domain package, such as `@hau/events` or `@hau/points`.
+- Declare every internal dependency with `workspace:*`.
+- Never import from one app into another, from a package into an app, or through a package's private source path.
+
+UI/UX contributors should follow the [UI/UX contribution guide](docs/contributing/ui-ux.md) when proposing design tokens or shared components for `@hau/axis-ui`.
+
+## Pull requests
+
+- Keep one main purpose per pull request.
+- Use a clear title that follows the commit format.
+- Link the issue with `Closes #123`.
+- Explain what changed and how it was tested.
+- Add screenshots for visible interface changes.
+- Request review only when the work is ready.
+
+Project status is updated manually in GitHub Projects: move the issue through `Todo`, `In progress`, `In review`, and `Done` as the work advances.
