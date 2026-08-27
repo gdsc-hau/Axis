@@ -1,14 +1,17 @@
-import { createServerClientInstance } from '@hau/db';
-import { MemberTableClient } from './MemberTableClient';
+import { createServerClientInstance } from "@hau/db";
+import { MemberTableClient } from "./MemberTableClient";
 
 async function getMembers() {
   const supabase = await createServerClientInstance();
-  const { data, error } = await supabase.from('members')
-    .select('id, full_name, email, student_id, gdg_id, program, department, role, is_accepted, created_at')
-    .order('created_at', { ascending: false });
+  const { data, error } = await supabase
+    .from("members")
+    .select(
+      "id, full_name, email, student_id, gdg_id, program, department, role, member_status, invited_at, activated_at, created_at",
+    )
+    .order("created_at", { ascending: false });
 
   if (error) {
-    console.error('Failed to fetch members:', error);
+    console.error("Failed to fetch members:", error);
     return [];
   }
 
@@ -21,7 +24,10 @@ async function getMembers() {
     program: string;
     department: string;
     role: string;
-    is_accepted: boolean;
+    member_status:
+      "PENDING" | "ACTIVE" | "REJECTED" | "SUSPENDED" | "INACTIVE" | "ALUMNI";
+    invited_at: string | null;
+    activated_at: string | null;
     created_at: string;
   }>;
 }
@@ -34,7 +40,9 @@ export default async function AdminMembersPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Members</h1>
+          <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">
+            Members
+          </h1>
           <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
             Manage member applications, approvals, and roles.
           </p>

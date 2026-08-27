@@ -1,0 +1,37 @@
+[
+  {
+    "type": "event",
+    "data": [
+      {
+        "id": 123456,
+        "title": "SYSTEM INITIALIZED: The 2026 Global Sync",
+        "status": "Published",
+        "url": "https://gdg.community.dev/events/details/google-gdg-on-campus-holy-angel-university-angeles-philippines-presents-system-initialized-the-2026-global-sync/",
+        "description_short": "An official GDG on Campus HAU event.",
+        "start_date": "2026-08-08T19:00:00+08:00",
+        "end_date": "2026-08-08T22:30:00+08:00",
+        "event_type_id": 42,
+        "event_type_title": "Tech Talk / Meetup",
+        "picture": {
+          "url": "https://example.com/event.jpg",
+          "thumbnail_url": "https://example.com/event-thumbnail.jpg",
+          "thumbnail_width": 400,
+          "thumbnail_height": 400
+        },
+        "chapter": {
+          "id": 9876,
+          "title": "GDG on Campus Holy Angel University - Angeles, Philippines",
+          "relative_url": "/gdg-on-campus-holy-angel-university-angeles-philippines/",
+          "url": "https://gdg.community.dev/gdg-on-campus-holy-angel-university-angeles-philippines/"
+        },
+        "venue_name": "Holy Angel University",
+        "venue_address": "Sto. Rosario Street",
+        "venue_city": "Angeles City",
+        "venue_zip_code": "2009",
+        "get_event_address": "Holy Angel University, Sto. Rosario Street, Angeles City, 2009",
+        "created_ts": "2026-07-01T10:00:00Z",
+        "updated_ts": "2026-08-01T10:30:00Z"
+      }
+    ]
+  }
+]

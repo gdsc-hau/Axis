@@ -1,9 +1,11 @@
-import { NextResponse } from 'next/server';
-
-export async function GET() {
-  return NextResponse.json({ error: 'Leaderboard rebuild is not implemented.' }, { status: 501 });
-}
+import { NextResponse } from "next/server";
 
 export async function POST() {
-  return NextResponse.json({ error: 'Leaderboard rebuild is not implemented.' }, { status: 501 });
+  return NextResponse.json(
+    {
+      error:
+        "Leaderboard rebuilds are obsolete. Rankings are derived from the live append-only ledger.",
+    },
+    { status: 410 },
+  );
 }

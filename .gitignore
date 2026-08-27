@@ -8,8 +8,12 @@ coverage
 
 # next.js
 .next/
+.next-stale-*/
 out/
 build
+
+# generated documentation
+site/
 
 # turborepo
 .turbo
@@ -35,3 +39,6 @@ pnpm-debug.log*
 
 # vercel
 .vercel
+
+# Supabase CLI local link/cache state
+supabase/.temp/

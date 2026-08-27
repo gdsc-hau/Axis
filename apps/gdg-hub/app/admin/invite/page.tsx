@@ -30,7 +30,9 @@ export default function AdminInvitePage() {
   }
 
   const sentCount = results?.filter((r) => r.status === "sent").length ?? 0;
-  const skippedCount = results?.filter((r) => r.status !== "sent").length ?? 0;
+  const skippedCount =
+    results?.filter((r) => r.status === "skipped").length ?? 0;
+  const errorCount = results?.filter((r) => r.status === "error").length ?? 0;
 
   return (
     <div className="max-w-2xl space-y-8">
@@ -40,8 +42,8 @@ export default function AdminInvitePage() {
           Invite Members
         </h1>
         <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-          Send activation emails to approved members. Each recipient must exist
-          in the member registry and must not already have an active account.
+          Send activation emails to approved members and administrators. Each
+          recipient must be an active, unlinked row in the member registry.
         </p>
       </div>
 
@@ -51,7 +53,7 @@ export default function AdminInvitePage() {
           <FormField
             label="Email Addresses"
             htmlFor="emails"
-            hint="Enter one email per line, or separate with commas."
+            hint="Enter one email per line, or separate with commas. Maximum 25 per batch."
           >
             <Textarea
               id="emails"
@@ -92,6 +94,11 @@ export default function AdminInvitePage() {
             {skippedCount > 0 && (
               <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400">
                 {skippedCount} skipped
+              </span>
+            )}
+            {errorCount > 0 && (
+              <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400">
+                {errorCount} failed
               </span>
             )}
           </div>

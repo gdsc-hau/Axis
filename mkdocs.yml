@@ -33,8 +33,19 @@ nav:
   - Runbooks:
       - Local Development: runbooks/local-dev.md
       - Deployment: runbooks/deployment.md
+      - Environment Configuration: runbooks/environment-configuration.md
+      - Final Acceptance Audit: runbooks/final-acceptance.md
       - Security Deployment: runbooks/security-deployment.md
+      - Member Portal Operations: runbooks/member-portal-operations.md
+      - Notifications and Communications: runbooks/notifications-communications.md
+      - Article Content Publishing: runbooks/article-content-publishing.md
+      - Reporting and Analytics: runbooks/reporting-analytics.md
+      - Rewards and Redemptions: runbooks/rewards-redemptions.md
+      - System Readiness: runbooks/system-readiness.md
       - Troubleshooting: runbooks/troubleshooting.md
+  - Integrations:
+      - Bevy Events: integrations/bevy-events.md
+      - Luma Attendance: integrations/luma-attendance.md
   - Contributing:
       - Standards: contributing/standards.md
       - UI/UX Guide: contributing/ui-ux.md

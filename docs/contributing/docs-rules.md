@@ -23,8 +23,8 @@ We use MkDocs with the Read the Docs theme to generate this documentation site. 
 To preview your changes locally before committing:
 
 ```bash
-# Install the Python documentation dependency if needed
-python -m pip install mkdocs
+# Install the pinned documentation dependencies
+python -m pip install -r docs/requirements.txt
 
 # Run the local server
 pnpm docs:serve
@@ -35,5 +35,5 @@ The documentation site will be available at `http://127.0.0.1:8000/`. Verify tha
 Before opening the pull request, also run the production documentation build:
 
 ```bash
-pnpm docs:build
+python -m mkdocs build --strict
 ```

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
+import { useEffect, useState } from "react";
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 
 interface ScannerProps {
   onScan: (decodedText: string) => void;
@@ -17,7 +17,7 @@ export default function Scanner({ onScan, onClose }: ScannerProps) {
 
   useEffect(() => {
     let isMounted = true;
-    const qrCodeRegionId = 'html5qr-code-full-region';
+    const qrCodeRegionId = "html5qr-code-full-region";
     let html5QrCode: Html5Qrcode | null = null;
 
     // Config for the scanner
@@ -50,14 +50,14 @@ export default function Scanner({ onScan, onClose }: ScannerProps) {
           Html5QrcodeSupportedFormats.UPC_A,
           Html5QrcodeSupportedFormats.UPC_E,
           Html5QrcodeSupportedFormats.ITF,
-          Html5QrcodeSupportedFormats.QR_CODE
+          Html5QrcodeSupportedFormats.QR_CODE,
         ],
-        verbose: false
+        verbose: false,
       });
 
       try {
         await html5QrCode.start(
-          { facingMode: 'environment' }, // Prefer back camera
+          { facingMode: "environment" }, // Prefer back camera
           config,
           (decodedText) => {
             if (!isMounted) return;
@@ -65,20 +65,24 @@ export default function Scanner({ onScan, onClose }: ScannerProps) {
             // Stop the scanner when code is detected, and report scan
             const stopPromise = html5QrCode?.stop() || Promise.resolve();
             scannerCleanupPromise = stopPromise.catch(() => {});
-            stopPromise.then(() => {
-              onScan(decodedText);
-            }).catch((err) => {
-              console.error("Failed to stop scanner", err);
-              onScan(decodedText); // Proceed anyway
-            });
+            stopPromise
+              .then(() => {
+                onScan(decodedText);
+              })
+              .catch((err) => {
+                console.error("Failed to stop scanner", err);
+                onScan(decodedText); // Proceed anyway
+              });
           },
           () => {
             // Parse errors happen constantly as it scans empty frames, ignore them
-          }
+          },
         );
       } catch (err) {
         if (isMounted) {
-          setError("Failed to start camera. Please ensure you have granted camera permissions.");
+          setError(
+            "Failed to start camera. Please ensure you have granted camera permissions.",
+          );
           console.error(err);
         }
       }
@@ -117,7 +121,10 @@ export default function Scanner({ onScan, onClose }: ScannerProps) {
           {error ? (
             <div className="text-red-400 p-6 text-center text-sm">{error}</div>
           ) : (
-            <div id="html5qr-code-full-region" className="!w-full !h-full overflow-hidden [&_video]:!w-full [&_video]:!h-full [&_video]:!object-cover [&_video]:!object-center" />
+            <div
+              id="html5qr-code-full-region"
+              className="!w-full !h-full overflow-hidden [&_video]:!w-full [&_video]:!h-full [&_video]:!object-cover [&_video]:!object-center"
+            />
           )}
         </div>
 

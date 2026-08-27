@@ -2,9 +2,29 @@
 
 This runbook describes the standard workflow for running the platform on your own machine.
 
-## Setup Supabase
+## Use the linked hosted Supabase project (no Docker)
 
-Make sure Docker is running.
+The Hub can run locally against the existing hosted Supabase project. This is the current Axis workflow when Docker Desktop is intentionally unavailable.
+
+1. Copy the variables from `apps/gdg-hub/.env.example` into the untracked `apps/gdg-hub/.env.local`.
+2. Use the hosted project URL, anon key, and server-only service-role key.
+3. Set `NEXT_PUBLIC_SITE_URL=http://localhost:3001`.
+4. In hosted Supabase **Authentication > URL Configuration**, allow `http://localhost:3001/**` while performing local invitation, activation, and recovery tests.
+5. From Git Bash, run `pnpm --filter gdg-hub dev`.
+
+For the local Bevy fixture test, also set the four `BEVY_*` variables shown in
+`apps/gdg-hub/.env.example`. Use a random secret of at least 32 characters. The
+local receiver is called manually with the tracked fixture; Bevy itself cannot
+send to `localhost`.
+
+Do not run `supabase start`, `supabase db reset`, or any command that starts local services in this workflow. Migrations are reviewed with `supabase db push --dry-run`, backed up, then applied to the linked project by an authorized operator.
+
+The complete no-Docker event test is documented in
+`docs/integrations/bevy-events.md`.
+
+## Optional isolated Supabase environment
+
+This repository also supports an isolated local Supabase stack when Docker is available, but it is not required for the hosted-project workflow above.
 
 ```bash
 supabase start

@@ -15,7 +15,7 @@ The `gdg-hub` application contains the public community site plus authenticated 
 - An administrator dashboard, member directory, approvals, role changes, invitations, and feature management scaffolds.
 - Server Components for database reads and Server Actions for protected mutations.
 
-Several events, Gyrocoins, rewards, certificates, reports, and content-management routes are currently scaffolds and should not be documented as complete until their acceptance criteria are implemented and tested.
+Certificates, reports, and content-management routes remain scaffolds and should not be documented as complete until their acceptance criteria are implemented and tested. Event discovery/Luma routing, the Gyrocoin ledger/wallet, and the member-only reward marketplace are implemented. RSVP, attendance, automatic event awards, notifications, and public merchandise remain deferred.
 
 **Key Routes:**
 
@@ -25,6 +25,9 @@ Several events, Gyrocoins, rewards, certificates, reports, and content-managemen
 - `/admin/dashboard`: Protected administrator workspace.
 - `/admin/members`: Directory of all registered members.
 - `/admin/invite`: Invite approved registry members to activate an account.
+- `/member/rewards`: Active reward catalog and member redemption history.
+- `/admin/products`: Reward catalog and available-inventory management.
+- `/admin/rewards`: Redemption review and fulfillment queue.
 
 ## gdg-id
 

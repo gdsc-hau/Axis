@@ -1,16 +1,13 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import Link from 'next/link';
-import Navbar from '@/components/Navbar';
-import { ArrowLeft, Hammer, Wrench } from 'lucide-react';
+import Image from "next/image";
+import Link from "next/link";
+import Navbar from "@/components/Navbar";
+import { ArrowLeft, Hammer, Wrench } from "lucide-react";
 
 export default function ComingSoon() {
   return (
     <main className="min-h-screen relative flex flex-col items-center bg-[#030305] overflow-x-hidden text-cyan-50 font-sans selection:bg-cyan-500 selection:text-black">
-      
-
-
       <Navbar />
 
       {/* TECH BACKGROUND */}
@@ -30,16 +27,15 @@ export default function ComingSoon() {
       </div>
 
       <div className="relative w-full z-10 flex flex-col items-center justify-center min-h-[85vh] px-4 pt-28 md:pt-32 pb-20 text-center flex-grow max-w-4xl mx-auto">
-        
         {/* Animated Gyro Image with Tools */}
         <div className="relative mb-12 animate-in fade-in zoom-in duration-1000">
           <div className="absolute inset-0 bg-[#FBBC05]/20 blur-[80px] rounded-full" />
-          <Image 
-            src="/assets/images/gyro/hiding_curtain.png" 
-            alt="Gyro Sneak Peek" 
-            width={280} 
-            height={280} 
-            className="relative z-10 object-contain drop-shadow-[0_0_30px_rgba(251,188,5,0.4)] animate-[bounce_4s_infinite]" 
+          <Image
+            src="/assets/images/gyro/hiding_curtain.png"
+            alt="Gyro Sneak Peek"
+            width={280}
+            height={280}
+            className="relative z-10 object-contain drop-shadow-[0_0_30px_rgba(251,188,5,0.4)] animate-[bounce_4s_infinite]"
           />
           {/* Floating Tools Micro-Interactions */}
           <div className="absolute top-10 -left-12 text-[#4285F4] animate-[spin_6s_linear_infinite] opacity-80 z-20">
@@ -61,17 +57,24 @@ export default function ComingSoon() {
           <h1 className="text-4xl sm:text-6xl md:text-7xl font-pixelated mb-6 text-white leading-tight drop-shadow-md">
             Under <span className="text-[#FBBC05]">Construction</span>
           </h1>
-          
+
           <p className="text-gray-400 text-sm sm:text-base md:text-lg max-w-xl mx-auto leading-relaxed mb-10">
-            Gyro is busy hammering away in the workshop! We're crafting something awesome for the GDG-HAU Digital ID Platform. Check back soon for exciting updates.
+            Gyro is busy hammering away in the workshop! We're crafting
+            something awesome for the GDG-HAU Digital ID Platform. Check back
+            soon for exciting updates.
           </p>
 
-          <Link href="/" className="inline-flex items-center justify-center gap-3 bg-[#1e1e1f] hover:bg-[#282829] text-white border border-white/10 text-xs sm:text-sm uppercase tracking-widest px-8 py-4 rounded-xl font-bold transition-all duration-200 active:scale-95 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)] group">
-            <ArrowLeft size={18} className="text-[#4285F4] group-hover:-translate-x-1 transition-transform" />
+          <Link
+            href="/"
+            className="inline-flex items-center justify-center gap-3 bg-[#1e1e1f] hover:bg-[#282829] text-white border border-white/10 text-xs sm:text-sm uppercase tracking-widest px-8 py-4 rounded-xl font-bold transition-all duration-200 active:scale-95 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)] group"
+          >
+            <ArrowLeft
+              size={18}
+              className="text-[#4285F4] group-hover:-translate-x-1 transition-transform"
+            />
             Back to Home
           </Link>
         </div>
-
       </div>
     </main>
   );
