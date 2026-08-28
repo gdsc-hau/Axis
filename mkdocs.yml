@@ -12,6 +12,7 @@ nav:
   - Project Overview:
       - Mission and Context: project-overview/mission.md
       - Repository Layout: project-overview/repository-layout.md
+      - File and Directory Guide: project-overview/file-and-directory-guide.md
       - Getting Started: project-overview/getting-started.md
   - Product:
       - Platform: product/platform.md

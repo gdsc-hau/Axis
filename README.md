@@ -1,108 +1,113 @@
-# GDG HAU Axis - ID & Hub Platform
+# GDG HAU Axis
 
-[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue?logo=typescript)](https://www.typescriptlang.org/)
-[![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?logo=supabase)](https://supabase.com/)
-[![Turborepo](https://img.shields.io/badge/Turborepo-Monorepo-EF4444?logo=turborepo)](https://turbo.build/repo)
+Axis is the shared platform for Google Developer Groups on Campus - Holy Angel University. The monorepo contains the GDG Hub member/admin portal, the GDG ID application, reusable packages, Supabase database history, tests, and project documentation.
 
-The official ecosystem and digital identity hub for **Google Developer Groups on Campus – Holy Angel University (GDG HAU)**. This platform contains multiple applications and shared packages designed to handle member identities, event management, ticketing, points, badges, and internal community operations.
+The backend uses a linked hosted Supabase project. Local application development does not require a local database service.
 
-For complete developer documentation, see the [Documentation Portal](docs/index.md) or run `pnpm docs:serve`.
+## Applications
 
----
+| Application    | Purpose                                                                                                                  | Local URL               |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
+| `apps/gdg-hub` | Member portal, administration, events, attendance, Gyrocoins, rewards, credentials, content, communications, and reports | `http://localhost:3001` |
+| `apps/gdg-id`  | Digital member ID and verification experience                                                                            | `http://localhost:3000` |
 
-## 🚀 Quick Start
+## Requirements
 
-Follow these steps to get your development environment running locally.
+- Git
+- Node.js 22 (`.node-version` currently pins `22.17.1`)
+- Corepack, included with Node.js
+- Python 3 and pip only when previewing or building the documentation
+- Supabase CLI only for authorized developers who manage linked database migrations
 
-### Prerequisites
+The repository pins pnpm in `package.json`; do not substitute npm or Yarn for workspace commands.
 
-Ensure you have the following installed before proceeding:
+## Quick start
 
-- **[Node.js](https://nodejs.org/)** (v20 or newer)
-- **[Corepack](https://nodejs.org/api/corepack.html)**, included with Node.js, to use the repository's pinned pnpm version
-- **[Supabase CLI](https://supabase.com/docs/guides/cli)** (For local database development)
-
-### Installation
-
-1. **Clone the repository**
-
-   ```bash
-   git clone https://github.com/gdsc-hau/Axis.git
-   cd Axis
-   ```
-
-2. **Install dependencies**
-
-   ```bash
-   corepack enable
-   pnpm install
-   ```
-
-3. **Set up environment variables**
-   Create `.env.local` inside both `apps/gdg-hub` and `apps/gdg-id`. Use `apps/gdg-hub/.env.example` as the reference for the shared Supabase variables. `gdg-id` also requires a private `QR_SIGNING_SECRET` containing at least 32 characters; its Upstash variables are optional for local development. Never commit either `.env.local` file.
-
-4. **Start local Supabase (Database & Auth)**
-   Make sure Docker is running on your machine, then run:
-
-   ```bash
-   supabase start
-   ```
-
-5. **Start the development server**
-   Using Turborepo, you can start all apps simultaneously:
-   ```bash
-   pnpm dev
-   ```
-
----
-
-## 🛠 Tech Stack
-
-- **Frontend:** Next.js 15 (App Router), Tailwind CSS, and the shared `@hau/axis-ui` design system
-- **Backend & Database:** Supabase (PostgreSQL, Auth, Storage)
-- **Type Safety:** Zod & TypeScript (End-to-End Type Safety)
-- **Monorepo Management:** Turborepo & pnpm Workspaces
-- **Documentation:** MkDocs with the Read the Docs theme
-
----
-
-## 📂 Project Structure
-
-This project uses a monorepo setup powered by Turborepo and pnpm workspaces:
-
-```text
-gdg-axis/
-├── apps/
-│   ├── gdg-hub/              # Internal event, membership, and points management system
-│   └── gdg-id/               # Public-facing digital ID, profile, and portfolio viewer
-├── packages/
-│   ├── auth/                 # Shared authentication logic & Supabase wrappers
-│   ├── badges/               # Badge awarding and verification logic
-│   ├── certificates/         # PDF certificate generation for events
-│   ├── config/               # ESLint, Prettier, and global configs
-│   ├── contracts/            # Shared DB schemas and Zod contracts
-│   ├── db/                   # Database clients, models, and queries
-│   ├── events/               # Event registration and attendance logic
-│   ├── marketplace/          # Point redemption and swag marketplace logic
-│   ├── points/               # Points ledger and calculation logic
-│   ├── pwa/                  # Progressive Web App configuration logic
-│   ├── types/                # Global TypeScript type definitions
-│   ├── typescript-config/    # Shared `tsconfig.json` configurations
-│   └── axis-ui/              # Shared Axis design system and React components
-├── supabase/
-│   └── migrations/           # Supabase SQL migration files
-└── docs/                     # MkDocs documentation source files
+```bash
+git clone https://github.com/gdsc-hau/Axis.git
+cd Axis
+corepack enable
+pnpm install --frozen-lockfile
 ```
 
----
+Create the two untracked application environment files:
 
-## 🤝 Contributing
+```bash
+cp apps/gdg-hub/.env.example apps/gdg-hub/.env.local
+cp apps/gdg-id/.env.example apps/gdg-id/.env.local
+```
 
-We welcome contributions! Start with the root [contribution workflow](CONTRIBUTING.md), then use the detailed [coding standards](docs/contributing/standards.md) as needed.
+Ask a project maintainer for approved **non-production** Supabase values and other development secrets. Never copy secrets into source code, commit them, post them in an issue, or include them in a screenshot.
 
-UI/UX contributors and developers working on shared components should also read the [UI/UX contribution guide](docs/contributing/ui-ux.md) and the [`@hau/axis-ui` package guide](packages/axis-ui/README.md). Applications import supported components from `@hau/axis-ui`; they do not copy shared component code or deep-import package source files.
+Run one application:
 
----
+```bash
+pnpm --filter gdg-hub dev
+```
 
-Built with ❤️ by the **GDG HAU Core Team**.
+or run all workspace development tasks:
+
+```bash
+pnpm dev
+```
+
+See [Getting Started](docs/project-overview/getting-started.md) for environment setup, role-specific instructions, troubleshooting, and expected routes.
+
+## Repository map
+
+| Path                   | Owner and purpose                                                                           |
+| ---------------------- | ------------------------------------------------------------------------------------------- |
+| `apps/`                | Product routes, screens, server actions, and application-specific behavior                  |
+| `packages/axis-ui/`    | Reusable design tokens, primitives, and shared React components                             |
+| `packages/contracts/`  | Shared validation schemas and boundary types                                                |
+| `packages/db/`         | Supabase clients, database type definitions, and domain query modules                       |
+| `packages/*`           | Shared authentication, events, points, marketplace, credentials, and infrastructure modules |
+| `supabase/migrations/` | Ordered, reviewable database schema and security history                                    |
+| `supabase/preflight/`  | Read-only compatibility, verification, and transactional smoke-test SQL                     |
+| `supabase/functions/`  | Supabase Edge Function source code                                                          |
+| `tests/`               | Repository-level Node test suites and tracked fixtures                                      |
+| `docs/`                | Handwritten MkDocs documentation source                                                     |
+| `tooling/`             | CI, generator, and maintenance scripts                                                      |
+
+The [File and Directory Guide](docs/project-overview/file-and-directory-guide.md) explains what the important files do, what may be edited, and what must not be committed.
+
+## Validation
+
+Run these checks from the repository root before opening a pull request:
+
+```bash
+pnpm run format
+pnpm run lint
+pnpm run typecheck
+pnpm run test
+pnpm run build
+```
+
+The required Node version is 22. Formatting may modify files, so review `git diff` afterward.
+
+## Documentation
+
+```bash
+python -m pip install -r docs/requirements.txt
+pnpm docs:serve
+```
+
+Open `http://127.0.0.1:8000`. Edit files under `docs/`; the generated `site/` directory is ignored and must not be committed.
+
+Start with:
+
+- [Repository Layout](docs/project-overview/repository-layout.md)
+- [Coding Standards](docs/contributing/standards.md)
+- [Environment Configuration](docs/runbooks/environment-configuration.md)
+- [Local Development Runbook](docs/runbooks/local-dev.md)
+- [Migration Workflow](docs/schema/migrations.md)
+
+## Security rules
+
+- `NEXT_PUBLIC_*` values are browser-visible. Do not put privileged credentials in them.
+- `SUPABASE_SERVICE_ROLE_KEY`, signing secrets, database URLs, and provider tokens are server-only.
+- Browser code must use the anon key and rely on Row Level Security.
+- Database changes must be represented by committed migrations and reviewed preflight/verification files.
+- Use the shared package boundaries; do not import one application from another or deep-import private package files.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the branch, commit, review, and pull-request workflow.

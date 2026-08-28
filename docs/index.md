@@ -1,30 +1,42 @@
-# GDG HAU Axis Documentation
+# GDG HAU Axis documentation
 
-Welcome to the **GDG HAU Axis** documentation! This site serves as the comprehensive, living reference for the entire GDG HAU digital ecosystem.
+This site is the development and operations reference for the GDG HAU Axis platform.
 
-Axis is the overarching platform designed to handle member identities, event management, ticketing, points, badges, and internal community operations for **Google Developer Groups on Campus – Holy Angel University**.
+Axis currently provides a member registry and invitation-gated account flow, the GDG ID experience, mirrored GDG Community events with Luma registration links, attendance imports, Gyrocoin wallets, rewards, badges, certificates, notifications, articles, reports, portal settings, and system-health checks.
 
-## 🧭 Navigation Guide
+## Start here
 
-This documentation is structured into several core sections. Whether you are a new contributor getting your local environment running, or a lead architect reviewing the database schema, you'll find what you need here:
+- [Getting started](project-overview/getting-started.md) explains the required tools, environment files, and local app commands.
+- [File and directory guide](project-overview/file-and-directory-guide.md) explains what the important repository files do and where new code belongs.
+- [Repository layout](project-overview/repository-layout.md) describes workspace ownership and dependency direction.
+- [Coding standards](contributing/standards.md) defines the TypeScript, Next.js, Supabase, security, testing, and review rules.
+- [Local development](runbooks/local-dev.md) provides the daily development workflow and troubleshooting checks.
+- [Environment configuration](runbooks/environment-configuration.md) lists application and server-only environment variables.
 
-- **[Project Overview](project-overview/mission.md):** Understand the mission, the Turborepo monorepo layout, and the getting started guide.
-- **[Product](product/platform.md):** Learn about the two primary applications (`gdg-hub` and `gdg-id`), user roles, and the core user flows.
-- **[Architecture](architecture/overview.md):** Deep dive into the system architecture, how the apps and packages interact, and our authentication models.
-- **[API](api/overview.md):** Documentation for our Next.js Server Actions, API routes, and how frontend components communicate with the backend.
-- **[Data & Schema](schema/overview.md):** Comprehensive details on our Supabase PostgreSQL schema, table descriptions, and migration strategies.
-- **[Runbooks](runbooks/local-dev.md):** Step-by-step guides for local development, deployment procedures, and troubleshooting common issues.
+## Reference sections
 
-* **[Contributing](contributing/standards.md):** Our coding standards, UI/UX handoff, documentation rules, and pull-request workflow.
+- [Product](product/platform.md): applications, roles, and user flows.
+- [Architecture](architecture/overview.md): system boundaries and data flow.
+- [Applications](architecture/apps.md): responsibilities of `gdg-hub` and `gdg-id`.
+- [Shared packages](architecture/packages.md): reusable package responsibilities and import rules.
+- [API](api/overview.md): Server Actions, route handlers, and external integrations.
+- [Data and schema](schema/overview.md): Supabase tables, policies, and migrations.
+- [Runbooks](runbooks/local-dev.md): development, feature operation, release, and troubleshooting procedures.
+- [Contributing](contributing/standards.md): code, UI/UX, documentation, and pull-request requirements.
 
-## 🚀 Quick Links
+## Documentation commands
 
-- [Getting Started Guide](project-overview/getting-started.md)
-- [Monorepo Apps](architecture/apps.md)
-- [Shared Packages](architecture/packages.md)
-- [UI/UX Contribution Guide](contributing/ui-ux.md)
-- [Database Tables](schema/tables.md)
+From the repository root:
 
----
+```bash
+python -m pip install -r docs/requirements.txt
+pnpm docs:serve
+```
 
-_If you find any outdated information or missing details, please refer to the [Documentation Rules](contributing/docs-rules.md) and submit a pull request._
+Open `http://127.0.0.1:8000`. Validate documentation changes with:
+
+```bash
+pnpm docs:build
+```
+
+Update the relevant guide in the same pull request whenever behavior, configuration, schema, or an operational procedure changes.

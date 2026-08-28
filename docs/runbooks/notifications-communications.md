@@ -54,7 +54,7 @@ The worker claims at most ten rows using `FOR UPDATE SKIP LOCKED`, sends each
 message through Resend, and records success or retryable failure. After five
 failed attempts, an item remains `FAILED` for administrator review.
 
-## Hosted rollout (no Docker required)
+## Hosted rollout
 
 1. Run `supabase/preflight/notifications_communications_preflight.sql` in the
    hosted SQL Editor. Every row must pass.

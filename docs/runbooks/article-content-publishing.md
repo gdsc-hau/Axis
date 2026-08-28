@@ -15,7 +15,7 @@ Every new article begins as `DRAFT`. An administrator can then:
 - restore an archived article to draft before editing or publishing it again.
 
 Scheduled articles become public when `scheduled_for <= now()`. The public read
-function evaluates this condition at request time, so no Docker service, cron
+function evaluates this condition at request time, so no separate service, cron
 job, or deployment worker is required.
 
 ## Administrator operation
@@ -56,7 +56,7 @@ creates an `audit_logs` entry. Operation keys make safe retries idempotent.
 Phase 9 does not permanently delete categories, articles, revisions, or status
 history. Archive content instead.
 
-## Hosted rollout without Docker
+## Hosted rollout
 
 1. In the Supabase SQL Editor, run
    `supabase/preflight/article_content_publishing_preflight.sql`. Every check
@@ -84,5 +84,5 @@ history. Archive content instead.
 6. Restart the local Hub if it was already running, then test the admin and
    public flows on `http://localhost:3001`.
 
-No Vercel deployment, invitation sending, email delivery, or Docker Desktop is
+No Vercel deployment, invitation sending, or email delivery is
 part of this rollout.

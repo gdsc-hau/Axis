@@ -7,11 +7,12 @@ This document catalogs common issues encountered during local development and th
 **Symptom:** You made a change in `@hau/axis-ui` or `@hau/db`, but the change isn't reflecting in `gdg-hub` or `gdg-id`.
 **Cause:** Turborepo or Next.js might be serving heavily cached build artifacts.
 **Solution:**
-Delete the `.turbo` and `.next` folders across the workspace.
+Stop the development process, remove only the affected application's `.next`
+directory, and restart that application. Remove the root `.turbo` cache only if
+the problem affects multiple workspaces.
 
 ```bash
-pnpm clean
-pnpm dev
+pnpm --filter gdg-hub dev
 ```
 
 ## pnpm Workspace Phantom Dependencies

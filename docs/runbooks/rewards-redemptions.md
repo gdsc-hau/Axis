@@ -6,7 +6,7 @@ points.
 
 ## Production migration checkpoint
 
-Do not use Docker Desktop and do not paste the migration body into the hosted
+Do not paste the migration body into the hosted
 SQL Editor.
 
 1. In the hosted Supabase SQL Editor, run `supabase/preflight/reward_redemption_marketplace_preflight.sql` and require every `passed` value to be `true`.

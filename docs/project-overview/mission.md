@@ -17,7 +17,7 @@ The GDG HAU Axis platform was created to centralize and automate the operations 
 Axis serves as the digital backbone of GDG HAU, providing:
 
 - **Member Identity:** A central, verified digital identity (GDG ID) for every member.
-- **Event Management:** Streamlined event registration, ticketing, and attendance tracking.
+- **Event Operations:** Mirrored GDG Community event information, registration redirects to Luma, and privacy-conscious attendance reconciliation from Luma exports.
 - **Gamification & Rewards:** A points ledger system where members earn points for participation and can redeem them in a marketplace.
 - **Credentials:** Automated generation and verification of event certificates and digital badges.
 

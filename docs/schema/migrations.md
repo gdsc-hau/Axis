@@ -1,6 +1,6 @@
 # Supabase Migrations
 
-We manage all database schema changes through **Supabase Migrations**. This ensures that the local database, staging, and production are always perfectly synchronized.
+Axis manages every database schema and security change through committed Supabase migrations. The repository history is the reproducible contract for development, staging, production, application types, verification, and later phases.
 
 ## Never Mutate Production Manually
 
@@ -8,39 +8,47 @@ We manage all database schema changes through **Supabase Migrations**. This ensu
 > Do **not** use the Supabase Studio UI in production to create tables, add columns, or write SQL directly.
 > All changes must be captured in a migration file and checked into Git.
 
-## Creating a Migration
+## Creating a migration
 
-1. **Make changes locally:** You can use the local Supabase Studio (`http://127.0.0.1:54323` when `supabase start` is running) to create tables or columns via the UI.
-2. **Generate the migration file:** Once you are happy with the local schema changes, ask the CLI to look at the difference between your local database and the last migration file:
-   ```bash
-   supabase db diff -f "describe_your_change"
-   ```
-   This will generate a file like `supabase/migrations/20260711123456_describe_your_change.sql`.
-3. **Review the SQL:** Open the generated file and verify it only contains the expected `CREATE TABLE` or `ALTER TABLE` statements.
-4. **Commit to Git:** Add this file to your pull request.
+1. Start from the latest migration history on the maintainer-designated integration branch.
+2. Create a new ordered migration file. Use `npx supabase migration new describe_your_change` or follow the existing timestamp naming pattern.
+3. Write the smallest forward-only SQL change that preserves deployed data and compatibility.
+4. Add a read-only preflight under `supabase/preflight/` that proves the expected baseline exists and rejects ambiguous data.
+5. Add post-deployment verification. Behavioral changes also need a transactional smoke test whose fixture writes roll back.
+6. Update `packages/db/src/database.types.ts`, domain modules, contracts, application code, tests, and runbooks affected by the schema.
+7. Review the complete diff and commit all migration assets together.
+
+Do not prototype shared-project schema changes by editing tables in Studio. Write and review the migration first. The SQL Editor is used for the tracked preflight, verification, smoke-test, and narrowly documented operational queries.
 
 ## Writing Migrations by Hand
 
 Sometimes it is safer or cleaner to write the SQL by hand:
 
 ```bash
-supabase migration new "add_new_feature_table"
+npx supabase migration new add_new_feature_table
 ```
 
 This creates an empty `.sql` file in `supabase/migrations/` for you to write your SQL manually.
 
-## Applying Migrations
+## Applying migrations to a linked project
 
-- **Locally:** If you pull down a new migration from `main`, run `supabase db reset` or `supabase migration up` to apply it to your local Docker database.
-- **Production:** An authorized operator or approved deployment workflow must review `supabase db push --dry-run`, create a backup, and then run `supabase db push`. The repository does not currently contain an automatic production database deployment workflow.
+Only an authorized operator should apply migrations to a shared project:
 
-## Rollbacks
+1. Confirm the intended Supabase organization, project reference, branch/environment, and current backup plan.
+2. Run the migration's preflight in the hosted SQL Editor; every required row must pass.
+3. Compare local and remote migration history.
+4. Run `npx supabase db push --dry-run` and confirm the exact expected pending list.
+5. Apply with `npx supabase db push` only after review and backup requirements are satisfied.
+6. Run the tracked verification and transactional smoke test in the SQL Editor.
+7. Rerun relevant Security and Performance Advisor checks and record the outcome.
 
-If a migration fails in production, it usually rolls back automatically (since Supabase wraps migrations in a transaction). If you need to revert a change locally to try again:
+Do not paste a migration body into the SQL Editor. That changes the schema without recording its version in `supabase_migrations.schema_migrations`.
 
-```bash
-supabase migration down
-```
+## Corrections and rollback planning
+
+Migrations are forward-only. Prefer transactional statements so a failure leaves no partial deployment. If a deployed behavior needs correction, create a new ordered migration with its own preflight and verification; never edit or delete a migration that is already recorded remotely.
+
+For a high-risk data change, document the restoration source, affected tables, validation query, and recovery decision before applying it. Schema backups and data exports must be stored outside the repository because they can contain personal or privileged information.
 
 ## Phase 1 member lifecycle migration
 
@@ -86,7 +94,7 @@ unindexed-foreign-key findings exported from the hosted Performance Advisor on
 functions, grants, or application behavior. Nullable actor and audit references
 use partial indexes so null-only entries do not consume index space.
 
-Use the linked hosted project without Docker:
+Use the linked hosted project:
 
 1. Run `supabase/preflight/release_advisor_foreign_key_indexes_preflight.sql` in
    the SQL Editor; every row must pass.
@@ -132,11 +140,11 @@ integration without enabling Axis RSVP or attendance behavior:
 5. Adds an audited, active-admin-only `set_event_luma_url` RPC.
 6. Makes published, completed legacy, and cancelled events visible while keeping drafts private to admins.
 
-Use the linked hosted project without Docker:
+Use the linked hosted project:
 
 1. Run `supabase/preflight/bevy_event_mirror_preflight.sql` in the hosted SQL Editor; every row must pass.
 2. Run `npx supabase db push --dry-run` and confirm only `20260821092708_bevy_event_mirror.sql` is pending.
-3. Without Docker, export the current `events` rows from the hosted Table Editor as CSV and retain the preflight output. The migration is transactional and does not mutate member rows.
+3. Export the current `events` rows from the hosted Table Editor as CSV and retain the preflight output. The migration is transactional and does not mutate member rows.
 4. Apply the tracked migration with `npx supabase db push`.
 5. Run `supabase/preflight/bevy_event_mirror_verify.sql` in the SQL Editor; every row must pass.
 6. Run `supabase/preflight/bevy_event_mirror_smoke_test.sql`; it must pass and confirm that its event and audit writes were rolled back.
@@ -158,7 +166,7 @@ safe to use from the administrator and member portals:
 6. Adds an active-admin-only manual adjustment RPC that records the administrator, reason, operation key, resulting balance, and audit event atomically.
 7. Adds authenticated read RPCs for the current member wallet summary and the administrator account list.
 
-Use the linked hosted project without Docker:
+Use the linked hosted project:
 
 1. Run `supabase/preflight/gyrocoin_ledger_wallet_preflight.sql` in the hosted SQL Editor; every row must pass.
 2. Run `npx supabase db push --dry-run` and confirm only `20260821104059_gyrocoin_ledger_wallet.sql` is pending.
@@ -205,7 +213,7 @@ The migration deliberately refuses to run if the existing `redemptions` table
 contains rows because the old schema has no trustworthy reward/catalog key to
 backfill.
 
-Use the linked hosted project without Docker:
+Use the linked hosted project:
 
 1. Run `supabase/preflight/reward_redemption_marketplace_preflight.sql` in the hosted SQL Editor. Every row must pass.
 2. Export `redemptions`, `points_ledger`, and `audit_logs` from the hosted Table Editor as CSV, even when `redemptions` is empty.
@@ -226,7 +234,7 @@ authoritative `members.full_name` value:
 3. Continues to save the member-editable `bio` and `links` fields exactly once.
 4. Reasserts the private helper's hardened search path and the public wrapper's security-invoker execution boundary.
 
-Use the linked hosted project without Docker:
+Use the linked hosted project:
 
 1. Run `supabase/preflight/profile_registry_name_lock_preflight.sql`; every row must pass.
 2. Run `npx supabase db push --dry-run` and confirm only `20260821182815_lock_registry_name_during_profile_completion.sql` is pending.

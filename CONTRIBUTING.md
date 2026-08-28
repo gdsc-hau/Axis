@@ -6,7 +6,7 @@ Thank you for contributing. Keep each change focused, easy to review, and linked
 
 1. Create or choose an issue.
 2. Add the issue to the GitHub Project and assign an owner, status, and priority.
-3. Create a branch from the current development branch.
+3. Create a branch from the maintainer-designated integration branch.
 4. Make and test one focused change.
 5. Commit it using the format below.
 6. Open a pull request and link the issue.
@@ -26,8 +26,8 @@ chore/update-dependencies
 ### Branching Rules
 
 - **Direct Pushes Restricted**: Never push code directly to the `main` branch unless it is an administrative config release explicitly coordinated by core maintainers.
-- **Feature Branches**: All work must be developed on separate feature branches branched off the latest `main`.
-- **Target Branch**: Set your pull request target branch to `main`.
+- **Feature Branches**: Develop all changes on separate feature branches based on the latest maintainer-designated integration branch.
+- **Target Branch**: During active development, this is normally `staging`. Use `main` only for a coordinated release or when a maintainer explicitly requests it.
 
 ## Commit messages
 
@@ -64,7 +64,7 @@ Then run `git commit` to open the template in your configured editor. Do not use
 
 ## CI/CD Validation
 
-Every pull request targeted at `main` triggers our GitHub Actions validation pipeline. This workflow runs:
+Every pull request to a protected integration branch triggers the GitHub Actions validation pipeline. This workflow runs:
 
 1. Code Quality Linting (`pnpm run lint`)
 2. TypeScript Compile Checks (`pnpm run typecheck`)
@@ -79,6 +79,7 @@ To ensure a fast and passing pull request, you **MUST** run all verification ste
 node -v # Should display v22.x.x
 
 # Run validation checks locally
+pnpm run format
 pnpm run lint
 pnpm run typecheck
 pnpm run test

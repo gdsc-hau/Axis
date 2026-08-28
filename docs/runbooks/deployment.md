@@ -49,7 +49,7 @@ exit code as permission to ignore them.
 
 ## 3. Reconcile hosted Supabase manually
 
-This workflow intentionally avoids Docker. Run the following against the linked
+Run the following against the linked
 hosted project:
 
 ```bash

@@ -1,57 +1,69 @@
 # Repository Layout
 
-The GDG HAU Axis project is structured as a **monorepo** using [Turborepo](https://turbo.build/) and [pnpm workspaces](https://pnpm.io/workspaces). This architecture allows us to build multiple applications that share code seamlessly without publishing internal packages to npm.
-
-## Monorepo Structure
-
-The workspace is divided into two main top-level directories: `apps/` and `packages/`.
+Axis is a pnpm workspace and Turborepo monorepo. Product applications live in `apps/`; stable reusable capabilities live in `packages/`; database history lives in `supabase/`; cross-application tests live in `tests/`; and handwritten documentation lives in `docs/`.
 
 ```text
-gdg-axis/
-├── apps/                 # User-facing applications
-│   ├── gdg-hub/          # The internal management hub
-│   └── gdg-id/           # The public ID verification and portfolio app
-├── packages/             # Shared libraries and internal dependencies
-│   ├── auth/             # Supabase auth wrappers & utilities
-│   ├── badges/           # Badge awarding logic
-│   ├── certificates/     # PDF generation for certificates
-│   ├── config/           # Linting and formatting configurations
-│   ├── contracts/        # Zod schemas & types for API boundaries
-│   ├── db/               # Supabase database clients & queries
-│   ├── events/           # Event registration business logic
-│   ├── marketplace/      # Swag and point redemption logic
-│   ├── points/           # Ledger calculations for member points
-│   ├── pwa/              # Progressive Web App configs
-│   ├── types/            # Global TypeScript interfaces
-│   ├── typescript-config/# Shared tsconfig.json bases
-│   └── axis-ui/          # Axis design system, primitives, and React components
-├── supabase/             # Database migrations and seed data
-└── docs/                 # Documentation (you are here)
+Axis/
+|-- apps/                 Product applications
+|   |-- gdg-hub/          Member and administrator portal
+|   `-- gdg-id/           Digital member ID application
+|-- packages/             Shared internal packages published as @hau/*
+|-- supabase/             Migrations, checks, functions, and templates
+|-- tests/                Repository-level tests and fixtures
+|-- docs/                 MkDocs source
+|-- tooling/              CI and maintenance utilities
+|-- Source of Truth/      Product and architecture reference material
+|-- package.json          Root commands and toolchain requirements
+|-- pnpm-workspace.yaml   Workspace membership
+`-- turbo.json            Task dependency and cache rules
 ```
 
-## Why a Monorepo?
+For a file-by-file explanation, generated-file policy, and guidance on where to implement a change, see the [File and Directory Guide](file-and-directory-guide.md).
 
-1. **Code Reusability:** The `gdg-hub` and `gdg-id` apps share stable UI primitives, contracts, database clients, authorization guards, and domain rules through `packages/`.
-2. **Unified Tooling:** Linting, TypeScript compilation, and testing are configured once and applied across the entire repository.
-3. **Atomic Commits:** When updating a shared package (e.g., `@hau/db`), we can simultaneously update the apps that rely on it in a single pull request, ensuring nothing breaks.
-4. **Fast Builds:** Turborepo caches build artifacts. If you change code in `gdg-id`, Turborepo knows it doesn't need to rebuild `gdg-hub`.
+## Ownership boundaries
 
-## Internal Packages
+Code begins in the narrowest correct owner:
 
-Internal packages are named with the `@hau/*` scope (e.g., `@hau/axis-ui`, `@hau/auth`).
-Inside any application's `package.json`, you will see dependencies like:
+- Complete pages, route-aware navigation, application copy, and product-specific server actions stay in the relevant application.
+- Reusable visual primitives and design tokens belong in `packages/axis-ui`.
+- Shared input/output validation belongs in `packages/contracts`.
+- Supabase clients, generated database types, and domain query modules belong in `packages/db`.
+- Stable shared domain behavior belongs in the matching package, such as `events`, `points`, `marketplace`, `badges`, or `certificates`.
+
+Applications do not import from other applications. Packages do not import from applications. Consumers import a package's supported public API, normally through its package export or `src/index.ts`, rather than deep-importing internal files.
+
+## Workspace dependencies
+
+Internal packages use the `@hau/*` scope and the `workspace:*` version range:
 
 ```json
-"dependencies": {
-  "@hau/db": "workspace:*",
-  "@hau/axis-ui": "workspace:*"
+{
+  "dependencies": {
+    "@hau/axis-ui": "workspace:*",
+    "@hau/db": "workspace:*"
+  }
 }
 ```
 
-The `workspace:*` version indicator tells pnpm to resolve these packages locally from the monorepo rather than fetching them from the npm registry.
+This ensures pnpm links the local package and lets Turborepo understand the dependency graph. Add a dependency to the owning workspace instead of the repository root unless it is genuinely a root tool.
 
-## Ownership rule
+## Task orchestration
 
-Code starts in the narrowest correct owner. Route and product-specific code stays in `apps/`. A module moves to `packages/` when it represents a stable shared contract, UI primitive, infrastructure service, or domain rule. Packages expose a small public API through `src/index.ts`; apps do not deep-import package internals, and packages never import from apps.
+The root scripts delegate to Turborepo:
 
-For UI work, tokens and reusable presentational components belong in `packages/axis-ui`; complete screens, route-aware navigation, product copy, and data-bound compositions stay in the relevant app. See the [UI/UX contribution guide](../contributing/ui-ux.md) for the handoff and implementation workflow.
+- `pnpm dev` runs persistent development tasks.
+- `pnpm build` builds packages and applications in dependency order.
+- `pnpm lint` runs workspace lint checks.
+- `pnpm typecheck` runs TypeScript checks.
+- `pnpm test` runs repository-level Node test suites.
+- `pnpm format` formats supported TypeScript and Markdown files.
+
+Turborepo cache output and application build output are local artifacts. They are not source files and must not be committed.
+
+## Why this structure matters
+
+1. **Clear ownership:** Product code stays close to its route while shared behavior has one maintained implementation.
+2. **Safe database access:** Apps use shared environment guards and database modules instead of duplicating privileged clients.
+3. **Atomic changes:** A shared contract, implementation, test, migration, and consuming screen can change in one pull request.
+4. **Independent frontend work:** UI contributors can build against exported contracts and placeholder data without rewriting backend rules.
+5. **Consistent verification:** The same root commands validate every workspace before review.

@@ -27,7 +27,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-qr-code": "^2.0.21",
-    "zod": "latest"
+    "zod": "4.4.3"
   },
   "devDependencies": {
     "@hau/typescript-config": "workspace:*",

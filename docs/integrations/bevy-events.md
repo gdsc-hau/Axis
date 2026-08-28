@@ -33,7 +33,7 @@ BEVY_CHAPTER_SLUG=gdg-on-campus-holy-angel-university-angeles-philippines
 If the official numeric Bevy chapter ID is known, set `BEVY_CHAPTER_ID`; exact
 ID matching then takes precedence over slug matching. Never commit the secret.
 
-## Local no-Docker test
+## Local fixture test
 
 Prerequisites:
 
