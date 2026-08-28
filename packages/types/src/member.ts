@@ -8,7 +8,15 @@ export interface Member {
   program: string;
   department: string;
   role: string;
+  member_status:
+    "PENDING" | "ACTIVE" | "REJECTED" | "SUSPENDED" | "INACTIVE" | "ALUMNI";
+  /** @deprecated Derived compatibility field. Use member_status. */
   is_accepted: boolean;
+  invited_at: string | null;
+  activated_at: string | null;
+  profile_completed_at: string | null;
+  deactivated_at: string | null;
+  deactivation_reason: string | null;
   created_at: string;
   updated_at: string;
 }

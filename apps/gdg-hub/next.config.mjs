@@ -12,7 +12,7 @@ const contentSecurityPolicy = [
 ].join("; ");
 
 const nextConfig = {
-  transpilePackages: ["@hau/axis-ui"],
+  transpilePackages: ["@hau/axis-ui", "@hau/events", "@hau/points"],
   poweredByHeader: false,
   images: {
     formats: ["image/avif", "image/webp"],

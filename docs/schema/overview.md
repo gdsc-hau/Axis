@@ -40,7 +40,9 @@ erDiagram
 
     MEMBERS {
         UUID id PK
+        UUID auth_id UK
         TEXT role
+        TEXT member_status
         TIMESTAMPTZ updated_at
     }
     EVENTS {
@@ -62,4 +64,4 @@ erDiagram
     }
 ```
 
-*Note: This is a simplified diagram. For the exhaustive list of columns and relationships, refer to the [Tables Data Dictionary](tables.md).*
+_Note: This is a simplified diagram. For the exhaustive list of columns and relationships, refer to the [Tables Data Dictionary](tables.md)._

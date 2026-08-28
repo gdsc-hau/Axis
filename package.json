@@ -1,13 +1,16 @@
 {
   "name": "gdg-ecosystem",
   "private": true,
+  "engines": {
+    "node": ">=22 <23"
+  },
   "packageManager": "pnpm@11.3.0",
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
     "test": "node --experimental-strip-types --test tests/*.test.mts",
-    "docs:build": "python -m mkdocs build",
+    "docs:build": "python -m mkdocs build --strict",
     "docs:serve": "python -m mkdocs serve",
     "typecheck": "turbo typecheck",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""

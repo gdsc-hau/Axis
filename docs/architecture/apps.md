@@ -1,57 +1,97 @@
-# Applications Deep Dive
+# Applications
 
-The workspace currently houses two Next.js applications within the `apps/` directory. Applications own routes, page composition, product copy, and app-specific components. Shared contracts, data access, authorization, business rules, and reusable UI live in `packages/`.
+Axis contains two Next.js applications. Applications own routes, page composition, product copy, route-specific components, and Server Actions. Shared contracts, database access, reusable UI, and stable domain rules live in `packages/`.
 
-## gdg-hub
+## GDG Hub
 
-The `gdg-hub` application contains the public community site plus authenticated member and administrator workspaces.
+`apps/gdg-hub` is the community, member, and administrator platform. It runs locally on port 3001.
 
-**Implemented today:**
+### Public experience
 
-- Invite-only email/password onboarding through Supabase Auth.
-- Password recovery and account activation flows.
-- Public content routes for organization information, events, articles, products, merchandise, FAQs, and contact details.
-- Member dashboard routes for profile, events, wallet, rewards, leaderboard, notifications, and settings.
-- An administrator dashboard, member directory, approvals, role changes, invitations, and feature management scaffolds.
-- Server Components for database reads and Server Actions for protected mutations.
+- Published event mirror sourced from GDG Community/Bevy data.
+- External Luma registration redirects managed by administrators.
+- Published article listings, categories, detail pages, and administrative previews.
+- Public certificate verification by certificate number.
+- Authentication, activation, recovery, and reset flows.
 
-Several events, Gyrocoins, rewards, certificates, reports, and content-management routes are currently scaffolds and should not be documented as complete until their acceptance criteria are implemented and tested.
+### Member experience
 
-**Key Routes:**
+- Versioned editable profile fields while registry identity remains locked.
+- Dashboard aggregates for Gyrocoins, events, rewards, credentials, and notifications.
+- Event discovery and attendance history.
+- Immutable Gyrocoin wallet history and privacy-safe leaderboard.
+- Reward catalog, redemption, cancellation/refund, and status tracking.
+- Badge and private certificate access.
+- In-app notifications, read/dismiss lifecycle, and opt-in email preferences.
+- Account settings and support-channel information.
 
-- `/`: Public community landing page.
-- `/events`: Public event listing.
-- `/member/dashboard`: Authenticated member workspace.
-- `/admin/dashboard`: Protected administrator workspace.
-- `/admin/members`: Directory of all registered members.
-- `/admin/invite`: Invite approved registry members to activate an account.
+### Administrator experience
 
-## gdg-id
+- Member registry search, roles, lifecycle status, activation, and invitations.
+- Event mirror review, Luma-link management, Luma CSV attendance imports, manual attendance correction, and confirmation.
+- Audited Gyrocoin adjustments with non-negative running balances.
+- Reward catalog inventory, redemption review, approval, cancellation, and fulfillment.
+- Badge definitions, individual/batch awards, revocation, certificate batches, and private storage workflows.
+- Announcement campaigns and the gated email outbox.
+- Versioned article authoring, previews, revisions, scheduling, publication, and archive history.
+- Operational reports, CSV export, portal settings, and immutable system-readiness checks.
 
-The `gdg-id` application is the public-facing identity portal designed primarily for mobile usage by members.
+The visual design is intentionally replaceable while UI/UX finalizes the production system. The current screens expose the complete backend states and serve as functional acceptance interfaces.
 
-**Implemented today:**
+### Important routes
 
-- A public, rate-limited member lookup by email or scanned student barcode.
-- A visual GDG card whose QR contains a time-limited, HMAC-signed verification URL. The signed payload contains the member email but cannot be forged without the server secret.
-- Client-side PNG/PDF card export and static About/Contact content.
+| Route                   | Purpose                                 |
+| ----------------------- | --------------------------------------- |
+| `/login`                | Account login                           |
+| `/events`               | Public event listing                    |
+| `/articles`             | Public published content                |
+| `/member/dashboard`     | Authenticated member overview           |
+| `/member/events`        | Member event and attendance view        |
+| `/member/wallet`        | Gyrocoin balance and immutable ledger   |
+| `/member/rewards`       | Reward catalog and redemption history   |
+| `/member/credentials`   | Badges and certificates                 |
+| `/member/notifications` | In-app inbox and preferences            |
+| `/admin/dashboard`      | Administrator overview                  |
+| `/admin/members`        | Registry and lifecycle operations       |
+| `/admin/events`         | Event and attendance operations         |
+| `/admin/gyrocoins`      | Wallet accounts and audited adjustments |
+| `/admin/products`       | Reward catalog and inventory            |
+| `/admin/rewards`        | Redemption queue and fulfillment        |
+| `/admin/credentials`    | Badge and certificate operations        |
+| `/admin/articles`       | Content management                      |
+| `/admin/communications` | Campaigns and delivery gate             |
+| `/admin/reports`        | Operational analytics and CSV export    |
+| `/admin/settings`       | Versioned portal settings               |
+| `/admin/system`         | Release-readiness health runs           |
 
-**Key Routes:**
+## GDG ID
 
-- `/`: Member lookup and card display.
-- `/about`: Organization information.
-- `/contact`: Contact information.
+`apps/gdg-id` is the digital membership identity application. It runs locally on port 3000.
 
-Dedicated ID, portfolio, verification, and PWA flows are planned but not implemented.
+Implemented behavior includes:
+
+- Rate-limited member lookup using registry data.
+- A visual GDG member card.
+- A time-limited HMAC-signed QR verification URL.
+- Client-side PNG and PDF card export.
+- Organization About and Contact content.
+
+GDG ID and GDG Hub use the same `public.members` registry. Neither application should invent an alternate identity source.
 
 ## Shared UI integration
 
-Both applications consume `@hau/axis-ui` as a `workspace:*` dependency. Each Next.js configuration includes the package in `transpilePackages`, each Tailwind configuration scans `packages/axis-ui/src`, and each root layout imports `@hau/axis-ui/styles.css` once.
-
-Pages and app components import only the package's public API:
+Both applications consume `@hau/axis-ui` as a `workspace:*` dependency. Their Next.js configurations transpile the package, their Tailwind configurations scan its source, and each root layout imports its shared stylesheet once.
 
 ```tsx
 import { Alert, Button, Card, Container } from "@hau/axis-ui";
 ```
 
-Application-specific compositions stay in their owning app. They move into `@hau/axis-ui` only after the visual API is stable and reuse is demonstrated or planned.
+Application-specific compositions stay in the owning app. A component moves to `@hau/axis-ui` after its visual API is stable and reuse is demonstrated or planned.
+
+## Request and mutation boundaries
+
+- Server Components perform protected reads through `@hau/db`.
+- Server Actions handle authenticated user-initiated mutations.
+- Route handlers exist only for genuine HTTP boundaries such as webhook ingestion, downloads, or external verification.
+- Shared Zod contracts validate input before it reaches domain or database code.
+- Middleware refreshes sessions and enforces route access before protected page rendering.

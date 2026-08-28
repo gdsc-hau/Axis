@@ -42,13 +42,13 @@ export default function DualEntrySearchPage() {
 
   useEffect(() => {
     const event = new CustomEvent("chatbot-visibility", {
-      detail: { visible: !profile }
+      detail: { visible: !profile },
     });
     window.dispatchEvent(event);
 
     return () => {
       const restoreEvent = new CustomEvent("chatbot-visibility", {
-        detail: { visible: true }
+        detail: { visible: true },
       });
       window.dispatchEvent(restoreEvent);
     };
@@ -93,7 +93,9 @@ export default function DualEntrySearchPage() {
       setProfile(data as MemberSearchResult);
       setEmail("");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'An unexpected error occurred.');
+      setError(
+        err instanceof Error ? err.message : "An unexpected error occurred.",
+      );
     } finally {
       setLoading(false);
     }

@@ -24,7 +24,8 @@ export default function ChatbotWidget() {
     };
 
     window.addEventListener("chatbot-visibility", handleVisibility);
-    return () => window.removeEventListener("chatbot-visibility", handleVisibility);
+    return () =>
+      window.removeEventListener("chatbot-visibility", handleVisibility);
   }, []);
 
   if (!isMounted) return null;
@@ -42,7 +43,12 @@ export default function ChatbotWidget() {
           <AnimatePresence>
             {isOpen && (
               <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 30, transformOrigin: "bottom right" }}
+                initial={{
+                  opacity: 0,
+                  scale: 0.9,
+                  y: 30,
+                  transformOrigin: "bottom right",
+                }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 30 }}
                 transition={{ type: "spring", stiffness: 400, damping: 25 }}
@@ -55,14 +61,18 @@ export default function ChatbotWidget() {
                       <Sparkles className="w-4 h-4 text-[#4285f4]" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-sm text-gray-800">Gyro the Bot</h3>
+                      <h3 className="font-bold text-sm text-gray-800">
+                        Gyro the Bot
+                      </h3>
                       <div className="flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                        <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Online</span>
+                        <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">
+                          Online
+                        </span>
                       </div>
                     </div>
                   </div>
-                  <button 
+                  <button
                     onClick={() => setIsOpen(false)}
                     className="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-500"
                   >
@@ -112,13 +122,13 @@ export default function ChatbotWidget() {
                   y: {
                     duration: 3,
                     repeat: Infinity,
-                    ease: "easeInOut"
+                    ease: "easeInOut",
                   },
                   opacity: { duration: 0.2 },
-                  scale: { duration: 0.2 }
+                  scale: { duration: 0.2 },
                 }}
                 className="absolute right-[68px] sm:right-[76px] bottom-[12px] bg-[#1f2937] text-white px-3.5 py-1.5 rounded-xl border-2 border-[#fbbc05] font-mono text-[0.9rem] sm:text-[1.1rem] whitespace-nowrap shadow-lg pointer-events-none z-50"
-                style={{ fontFamily: 'var(--font-vt323), monospace' }}
+                style={{ fontFamily: "var(--font-vt323), monospace" }}
               >
                 Ask Gyro the Bot! 🤖
               </motion.div>
@@ -137,27 +147,29 @@ export default function ChatbotWidget() {
               onHoverStart={() => !isOpen && setTeaserVisible(true)}
               onClick={() => setIsOpen(!isOpen)}
               className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full shadow-[0_10px_30px_rgba(66,133,244,0.4)] flex items-center justify-center transition-all duration-500 overflow-hidden ${
-                isOpen ? "bg-white text-gray-800 rotate-90" : "bg-white text-white p-0 border-4 border-[#4285f4] hover:border-[#34a853]"
+                isOpen
+                  ? "bg-white text-gray-800 rotate-90"
+                  : "bg-white text-white p-0 border-4 border-[#4285f4] hover:border-[#34a853]"
               }`}
             >
-            {isOpen ? (
-              <X className="w-6 h-6 sm:w-8 sm:h-8" />
-            ) : (
-              <Image
-                src="/assets/images/chatbot_icon.png"
-                alt="Gyro the Bot"
-                fill
-                className="object-cover"
-              />
-            )}
-            
-            {!isOpen && (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="absolute -top-1 -right-1 w-3.5 h-3.5 sm:w-4 sm:h-4 bg-green-500 rounded-full border-2 border-white" 
-              />
-            )}
+              {isOpen ? (
+                <X className="w-6 h-6 sm:w-8 sm:h-8" />
+              ) : (
+                <Image
+                  src="/assets/images/chatbot_icon.png"
+                  alt="Gyro the Bot"
+                  fill
+                  className="object-cover"
+                />
+              )}
+
+              {!isOpen && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="absolute -top-1 -right-1 w-3.5 h-3.5 sm:w-4 sm:h-4 bg-green-500 rounded-full border-2 border-white"
+                />
+              )}
             </motion.button>
           </motion.div>
         </motion.div>

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 
 interface FaqItem {
   q: string;
@@ -15,7 +15,11 @@ interface FaqAccordionProps {
   icon?: React.ReactNode;
 }
 
-export default function FaqAccordion({ category, items, icon }: FaqAccordionProps) {
+export default function FaqAccordion({
+  category,
+  items,
+  icon,
+}: FaqAccordionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggleOpen = (index: number) => {
@@ -34,29 +38,31 @@ export default function FaqAccordion({ category, items, icon }: FaqAccordionProp
         {items.map((item, index) => {
           const isOpen = openIndex === index;
           return (
-            <div 
+            <div
               key={index}
-              className={`border rounded-xl overflow-hidden transition-all duration-300 ${isOpen ? 'bg-white/10 border-blue-500/30 shadow-[0_0_15px_rgba(66,133,244,0.15)]' : 'bg-[#030305]/60 border-white/10 hover:bg-white/5 hover:border-white/20'}`}
+              className={`border rounded-xl overflow-hidden transition-all duration-300 ${isOpen ? "bg-white/10 border-blue-500/30 shadow-[0_0_15px_rgba(66,133,244,0.15)]" : "bg-[#030305]/60 border-white/10 hover:bg-white/5 hover:border-white/20"}`}
             >
               <button
                 onClick={() => toggleOpen(index)}
                 className="w-full text-left px-5 py-4 flex items-center justify-between focus:outline-none"
               >
-                <span className="font-semibold text-gray-200 pr-4">{item.q}</span>
+                <span className="font-semibold text-gray-200 pr-4">
+                  {item.q}
+                </span>
                 <motion.div
                   animate={{ rotate: isOpen ? 180 : 0 }}
                   transition={{ duration: 0.3 }}
-                  className={`shrink-0 ${isOpen ? 'text-blue-400' : 'text-gray-400'}`}
+                  className={`shrink-0 ${isOpen ? "text-blue-400" : "text-gray-400"}`}
                 >
                   <ChevronDown className="w-5 h-5" />
                 </motion.div>
               </button>
-              
+
               <AnimatePresence>
                 {isOpen && (
                   <motion.div
                     initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
+                    animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                     className="overflow-hidden"

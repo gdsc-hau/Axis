@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Link from "next/link";
 
 export default function SignupPage() {
   return (
@@ -41,7 +41,7 @@ export default function SignupPage() {
         </Link>
 
         <p className="mt-6 text-xs text-zinc-400 dark:text-zinc-600">
-          Need access?{' '}
+          Need access?{" "}
           <a
             href="mailto:gdg@hau.edu.ph"
             className="underline hover:text-zinc-600 dark:hover:text-zinc-400 transition-colors"

@@ -1,47 +1,76 @@
 # Core User Flows
 
-This document outlines the major user journeys supported by the GDG HAU Axis platform. Understanding these flows is crucial for modifying the frontend UI or backend business logic.
+This document outlines the major user journeys supported by the GDG HAU Axis platform.
 
 ## 1. Member Onboarding — Invite-Only Flow
 
-> **Note:** Public self-registration is disabled. All accounts are created via admin invitation.
+Public self-registration is disabled. All Auth accounts originate from an administrator invitation tied to the pre-populated member registry.
 
-1. **Admin Invites:** An `ADMIN` visits `/admin/invite` in `gdg-hub` and enters one or more member email addresses. Each email is validated against the `public.members` table — the member must exist, be approved (`is_accepted = true`), and not already have an active account.
-2. **Invitation Email:** Supabase generates a cryptographically signed, time-limited invite link and sends it to the member's email via the `auth.admin.generateLink` API. The link redirects through `/auth/callback?next=/activate`.
-3. **Account Activation:** The member clicks the invite link. Supabase exchanges the code for a session at `/auth/callback`, which redirects them to `/activate`. On this page the member sets and confirms their password, which is saved via `supabase.auth.updateUser({ password })`. Their `auth_id` is linked to the `public.members` row at this point.
-4. **Profile Completion:** The member is redirected to `/verify`, where they enter their full name, bio, and optional social links (LinkedIn, GitHub). These are saved directly to `public.members`.
-5. **Member Access:** The member is redirected to `/member/dashboard` and has full access to the member portal.
+1. **Admin Approval:** An active `ADMIN` changes the registry row from `PENDING` to `ACTIVE`. The database writes an audit record and protects the last active administrator.
+2. **Admin Invites:** The admin submits up to 25 normalized, deduplicated emails at `/admin/invite`. One batch lookup requires every recipient to be an `ACTIVE`, unlinked `members` row. Both `MEMBER` and pre-approved `ADMIN` rows use this controlled path.
+3. **Auth Boundary Check:** The Supabase Before User Created hook independently rejects new Auth identities whose email is not an active, unlinked registry row.
+4. **Invitation Email:** Supabase sends a time-limited 6-digit code through `auth.admin.inviteUserByEmail`. A successful send records `invited_at`; a resend receives its own audit action.
+5. **Invitation Confirmation:** At `/confirm-invite`, the recipient enters the member email and code. The server verifies an `invite` OTP and establishes the session without exposing a one-click token to email link scanners.
+6. **Account Activation:** At `/activate`, the member sets a password, then `link_current_member_account()` verifies the Auth email and records `auth_id` and `activated_at`. Already activated accounts cannot reuse this endpoint to change their password.
+7. **Profile Completion:** At `/verify`, the registry-owned full name is displayed read-only. `complete_current_member_profile()` saves only member-editable biography and social-link fields and sets `profile_completed_at`; it cannot overwrite `members.full_name`.
+8. **Member Access:** Protected layouts and member-owned RLS policies require `member_status = 'ACTIVE'`.
+
+If membership becomes `REJECTED`, `SUSPENDED`, `INACTIVE`, or `ALUMNI`, protected routes redirect to `/account-status`. RLS denies protected domain rows immediately even while an Auth session cookie exists.
 
 ### Password recovery
 
 1. The member selects **Forgot password?** on `/login` and submits their account email. The browser client initiates the PKCE request so the code verifier is retained in that browser's cookies.
 2. The UI always returns the same message so it does not reveal whether an Auth account exists.
 3. Supabase sends a time-limited recovery link through `/auth/callback?next=/reset-password`.
-4. The reset action requires the recovery session to match an approved member. It links a missing `members.auth_id`, applies the shared password policy, updates the password, and revokes active sessions.
+4. The reset action requires the recovery session to match an `ACTIVE` member. It safely links a missing `members.auth_id`, applies the shared password policy, updates the password, and revokes active sessions.
 5. The member logs in again with the new password.
 
-## 2. Event Registration & Check-In
+## 2. Event Discovery and External Registration
 
-1. **Event Creation (Admin):** An `ADMIN` creates an event in `gdg-hub`, setting the title, date, and optionally a Luma URL for external registration.
-2. **Registration:** A `MEMBER` RSVPs for the event. A record is created in `event_attendance` with status `REGISTERED`.
-3. **Check-In (At Event):** 
-   - The member presents their digital GDG ID (QR Code) via `gdg-id`.
-   - An `ADMIN` uses a scanner (or the `gdg-hub` interface) to scan the QR code.
-   - The system verifies the QR code, marks the attendance record as `CHECKED_IN`, and logs the `verified_by` ID.
-4. **Points Awarded:** The system automatically triggers a points ledger entry, awarding the member points for attendance.
+Axis does not own GDG event content or registration. RSVP, attendance, and
+check-in work remain explicitly deferred.
 
-## 3. Point Redemption (Marketplace)
+1. **GDG Event Management:** The chapter team creates and edits an event in GDG Community (Bevy), which remains the content source of truth.
+2. **Event Synchronization:** Bevy sends an authenticated event webhook. Axis validates the documented payload, filters it to the HAU chapter, and atomically mirrors the record into `events`.
+3. **Stale Delivery Protection:** Axis compares Bevy's `updated_ts` value and ignores delayed webhook deliveries that are older than the stored snapshot.
+4. **Luma Destination:** An active Axis `ADMIN` may attach or remove an HTTPS `luma.com`/`lu.ma` event URL. This is the only event field editable in Axis.
+5. **Discovery:** Public and member pages display mirrored upcoming and past events. A published event remains `PUBLISHED` after it concludes; the UI derives past/upcoming from `end_at`.
+6. **Registration:** The call to action redirects to Luma. If no Luma URL exists, it redirects to the official GDG Community event page.
 
-1. **Earning Points:** Members accumulate points via event attendance, hackathon wins, or manual admin awards.
-2. **Browsing:** The member views available swag or perks in the marketplace interface.
-3. **Redemption Request:** The member clicks "Redeem". A record is created in `redemptions` with a `PENDING` status. The required points are deducted from their ledger to prevent double-spending.
-4. **Fulfillment (Admin):** An `ADMIN` reviews the pending redemption in `gdg-hub`. Upon handing over the physical swag, they mark the redemption as `FULFILLED`.
-5. **Rejection (Edge Case):** If the item is out of stock or the request is invalid, the `ADMIN` rejects it, and the points are refunded to the member's ledger.
+Axis does not scrape GDG Community HTML, call the Luma attendee API, create
+`event_attendance` rows, or award points during this phase.
 
-## 4. Certificate Generation
+## 3. Gyrocoin Wallet and Manual Adjustments
 
-1. **Post-Event:** After an event concludes, an `ADMIN` triggers certificate generation for all members who were marked `CHECKED_IN`.
-2. **PDF Creation:** The `@hau/certificates` package dynamically generates PDFs with the member's name and event details.
-3. **Storage:** The PDFs are uploaded to a Supabase Storage bucket.
-4. **Database Record:** A record is added to the `certificates` table linking the member, event, and the public URL of the PDF.
-5. **Member Access:** The member visits their `gdg-id` portfolio and can view or download their newly earned certificate.
+1. An active administrator selects an active registry member and enters an award or deduction with a required reason.
+2. The server validates the request and submits a UUID operation key to the database.
+3. The database independently verifies the active administrator, locks the member wallet, and returns the existing row for an exact retry.
+4. A new immutable ledger row stores the signed amount and calculated non-negative `balance_after` value.
+5. The same transaction records an administrator audit event.
+6. The member can view their current balance, earned/spent totals, and recent history at `/member/wallet`.
+
+Members cannot mutate the ledger, and authenticated administrators cannot
+insert ledger rows directly. Automatic event awards are intentionally not
+connected.
+
+## 4. Point Redemption
+
+1. An active member views active rewards and their current available stock at `/member/rewards`.
+2. The request supplies a quantity and UUID operation key. The database locks the catalog item and member wallet.
+3. Available stock is reserved, an immutable `MARKETPLACE_REDEMPTION` debit is appended, and a `PENDING` redemption plus history/audit rows are created in one transaction.
+4. The member may cancel only while pending; cancellation atomically restores stock and appends a `MARKETPLACE_REFUND` entry.
+5. An active administrator approves or rejects the pending request at `/admin/rewards`. Rejection also restores stock and refunds the member.
+6. An approved request remains reserved until an administrator records the physical handoff as `FULFILLED`.
+7. Exact retries return the existing result. Reusing an operation key for different input is rejected.
+
+Reward image URLs are optional placeholders during the design phase. Public
+merchandise, shipping, payment processing, and event-attendance awards are not
+part of this flow.
+
+## 5. Certificate Generation
+
+1. An admin starts certificate generation after an event.
+2. The certificates package generates the PDF.
+3. The file is stored in Supabase Storage.
+4. A `certificates` row links the member, event, verifier number, and file location.
+5. The member can view or download the issued certificate.

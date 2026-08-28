@@ -48,6 +48,7 @@ The organization conducts various technical and non-technical programs, includin
 
 **Workshops:**
 Hands-on sessions covering programming, frameworks, tools, and modern technologies such as:
+
 - Web development (HTML, CSS, JavaScript, React)
 - Mobile development (Flutter, Android development)
 - Backend development (APIs, databases, Node.js)
@@ -75,6 +76,7 @@ Collaborative development of applications or systems aimed at solving real-world
 The organization is led by student officers who manage different departments:
 
 **Executive Leadership:**
+
 - Chief Executive Officer (CEO) / Chapter Lead
 - Chief Operations Officer (COO)
 - Chief Technology Officer (CTO)
@@ -91,9 +93,11 @@ Each role is responsible for managing specific areas such as operations, technic
 ## Organizers and Members
 
 **Consultants:**
+
 - Arron Parejas
 
 **Executive Team:**
+
 - Arron Kian Parejas - Consultants
 - John Benedict Berceles – CEO / Chapter Lead 2026–2027
 - George Louie Mendoza – Chief Compliance Officer
@@ -135,11 +139,13 @@ One of the strongest benefits of joining GDG-HAU is exposure to high-level hacka
 ## Events
 
 **Upcoming Event:**
+
 - **GDG HAU Organizational Festival Freshmen Orientation 2026–2027**
   - **Date:** June 2, 2026
   - **Description:** Introductory program for new students featuring workshops, interactive booths, and presentations.
 
 **Past Events:**
+
 - Notion x GDG-HAU University Days
 - Intro to AI with Google: Gamify Your Study Life
 - Connecting the Dots: Mastering API Fundamentals with Notion
@@ -156,6 +162,7 @@ One of the strongest benefits of joining GDG-HAU is exposure to high-level hacka
 ## Community Highlights
 
 The GDG community regularly recognizes student achievements including:
+
 - Certification achievements (e.g., data science, SQL, cloud certifications)
 - Leaderboard rankings in learning platforms
 - Participation in hackathons and competitions
@@ -164,15 +171,15 @@ The GDG community regularly recognizes student achievements including:
 
 ## Branding Guidelines
 
-*(Placeholder: Branding guidelines, logos, color palettes, and typography specifications to be provided later.)*
+_(Placeholder: Branding guidelines, logos, color palettes, and typography specifications to be provided later.)_
 
 ## Partnerships
 
-*(Placeholder: Information about university partners, sponsors, and global GDG network partners to be provided later.)*
+_(Placeholder: Information about university partners, sponsors, and global GDG network partners to be provided later.)_
 
 ## FAQs
 
-*(Placeholder: Frequently asked questions from new members or the community to be provided later.)*
+_(Placeholder: Frequently asked questions from new members or the community to be provided later.)_
 
 ## Contact Information
 
@@ -186,7 +193,8 @@ Holy Angel University
 [gdsc.holyangel@gmail.com](mailto:gdsc.holyangel@gmail.com)
 
 **Social Media Platforms:**
-- **Facebook:** [GDG on Campus Holy Angel University](https://facebook.com/...) *(Placeholder URL)*
-- **Instagram:** [GDG on Campus HAU](https://instagram.com/...) *(Placeholder URL)*
-- **LinkedIn:** [GDG on Campus HAU](https://linkedin.com/...) *(Placeholder URL)*
-- **Twitter/X:** [GDG on Campus HAU](https://twitter.com/...) *(Placeholder URL)*
+
+- **Facebook:** [GDG on Campus Holy Angel University](https://facebook.com/...) _(Placeholder URL)_
+- **Instagram:** [GDG on Campus HAU](https://instagram.com/...) _(Placeholder URL)_
+- **LinkedIn:** [GDG on Campus HAU](https://linkedin.com/...) _(Placeholder URL)_
+- **Twitter/X:** [GDG on Campus HAU](https://twitter.com/...) _(Placeholder URL)_

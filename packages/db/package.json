@@ -6,13 +6,18 @@
   "dependencies": {
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.106.2",
-    "next": "^15.1.7"
+    "next": "^15.5.21"
   },
   "exports": {
     ".": "./src/index.ts",
     "./client": "./src/client.ts",
     "./server": "./src/server.ts",
     "./admin": "./src/admin.ts",
-    "./env": "./src/env.ts"
+    "./env": "./src/env.ts",
+    "./notifications": "./src/notifications.ts",
+    "./articles": "./src/articles.ts",
+    "./reporting": "./src/reporting.ts",
+    "./portal": "./src/portal.ts",
+    "./system-health": "./src/system-health.ts"
   }
 }

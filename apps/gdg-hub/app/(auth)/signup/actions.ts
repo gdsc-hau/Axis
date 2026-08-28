@@ -1,4 +1,4 @@
-'use server';
+"use server";
 
 /**
  * Public self-registration is disabled.
@@ -9,6 +9,6 @@ export async function signup(_formData: FormData) {
   void _formData;
   return {
     error:
-      'Public registration is not available. Access to GDG HAU Axis is by invitation only. Please contact an administrator.',
+      "Public registration is not available. Access to GDG HAU Axis is by invitation only. Please contact an administrator.",
   };
 }

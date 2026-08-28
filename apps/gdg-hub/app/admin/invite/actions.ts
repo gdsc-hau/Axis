@@ -1,85 +1,117 @@
-'use server';
+"use server";
 
-import { createAdminClient } from '@hau/db';
-import { getUser, getUserRole } from '@hau/auth';
-import { revalidatePath } from 'next/cache';
+import { getActiveAdmin } from "@hau/auth";
+import { InviteMemberEmailsSchema } from "@hau/contracts";
+import { createAdminClient, createServerClientInstance } from "@hau/db";
+import { revalidatePath } from "next/cache";
 
 type InviteResult = {
   email: string;
-  status: 'sent' | 'skipped' | 'error';
+  status: "sent" | "skipped" | "error";
   reason?: string;
 };
 
+type EligibleMember = {
+  id: string;
+  email: string;
+  full_name: string;
+  member_status: string;
+  role: string;
+  auth_id: string | null;
+};
+
+function getInviteRedirectUrl() {
+  const fallback = "http://localhost:3001";
+
+  try {
+    const url = new URL(process.env.NEXT_PUBLIC_SITE_URL?.trim() || fallback);
+    url.pathname = "/confirm-invite";
+    url.search = "";
+    url.hash = "";
+    return url.toString();
+  } catch {
+    return `${fallback}/confirm-invite`;
+  }
+}
+
+function friendlyInviteError(message?: string) {
+  const normalized = message?.toLowerCase() ?? "";
+
+  if (normalized.includes("rate limit")) {
+    return "The email rate limit was reached. Wait before retrying this address.";
+  }
+
+  if (
+    normalized.includes("already registered") ||
+    normalized.includes("already been registered") ||
+    normalized.includes("email_exists")
+  ) {
+    return "A confirmed Auth account already exists for this email. Link or recover that account instead.";
+  }
+
+  return "Supabase Auth could not send this invitation. Check the Auth logs before retrying.";
+}
+
 export async function sendInvites(
-  formData: FormData
+  formData: FormData,
 ): Promise<{ results?: InviteResult[]; error?: string }> {
-  // 1. Verify the caller is an ADMIN
-  const user = await getUser();
-  if (!user) return { error: 'Not authenticated.' };
-  const role = await getUserRole(user.id);
-  if (role !== 'ADMIN') return { error: 'Unauthorized.' };
+  const access = await getActiveAdmin();
+  if (!access) return { error: "Active administrator access required." };
 
-  const rawEmails = formData.get('emails') as string;
-  if (!rawEmails || !rawEmails.trim()) {
-    return { error: 'Please enter at least one email address.' };
+  const parsed = InviteMemberEmailsSchema.safeParse(formData.get("emails"));
+  if (!parsed.success) {
+    return {
+      error:
+        parsed.error.issues[0]?.message ??
+        "Enter valid member email addresses.",
+    };
   }
 
-  // 2. Parse emails — support comma and newline separators
-  const emails = rawEmails
-    .split(/[\n,]+/)
-    .map((e) => e.trim().toLowerCase())
-    .filter((e) => e.length > 0);
-
-  if (emails.length === 0) {
-    return { error: 'No valid emails found.' };
-  }
-  if (emails.length > 100) {
-    return { error: 'A maximum of 100 invitations can be sent at once.' };
-  }
-  const invalidEmail = emails.find((email) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254);
-  if (invalidEmail) return { error: `Invalid email address: ${invalidEmail}` };
-
+  const emails = parsed.data;
   const adminClient = createAdminClient();
-  const origin = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001';
+  const supabase = await createServerClientInstance();
+  const redirectTo = getInviteRedirectUrl();
   const results: InviteResult[] = [];
 
+  // Resolve the batch once. Sending remains sequential so this action does not
+  // create a burst against the project's configured SMTP rate limit.
+  const { data: rawMembers, error: membersError } = await adminClient
+    .from("members")
+    .select("id, email, full_name, member_status, role, auth_id")
+    .in("email", emails);
+
+  if (membersError) {
+    console.error("Failed to resolve invitation registry batch:", membersError);
+    return {
+      error:
+        "The member registry could not be checked. No invitations were sent.",
+    };
+  }
+
+  const membersByEmail = new Map(
+    ((rawMembers as EligibleMember[] | null) ?? []).map((member) => [
+      member.email,
+      member,
+    ]),
+  );
+
   for (const email of emails) {
-    // 3. Validate against members table
-    const { data: rawMember, error: memberError } = await adminClient.from('members')
-      .select('id, is_accepted, role, auth_id')
-      .eq('email', email)
-      .single();
+    const member = membersByEmail.get(email);
 
-    const member = rawMember as {
-      id: string;
-      is_accepted: boolean;
-      role: string;
-      auth_id: string | null;
-    } | null;
-
-    if (memberError || !member) {
+    if (!member) {
       results.push({
         email,
-        status: 'skipped',
-        reason: 'Not found in the member registry.',
+        status: "skipped",
+        reason: "Not found in the member registry.",
       });
       continue;
     }
 
-    if (!member.is_accepted) {
+    if (member.member_status !== "ACTIVE") {
       results.push({
         email,
-        status: 'skipped',
-        reason: 'Member is not yet approved.',
-      });
-      continue;
-    }
-
-    if (member.role === 'ADMIN') {
-      results.push({
-        email,
-        status: 'skipped',
-        reason: 'Admin accounts must be provisioned internally.',
+        status: "skipped",
+        reason: `Member status is ${member.member_status.toLowerCase()}.`,
       });
       continue;
     }
@@ -87,35 +119,58 @@ export async function sendInvites(
     if (member.auth_id) {
       results.push({
         email,
-        status: 'skipped',
-        reason: 'Account is already activated.',
+        status: "skipped",
+        reason: "Account is already activated.",
       });
       continue;
     }
 
-    // 4. Send an invite email — Supabase Admin API creates the auth.users row
-    //    and sends the email. We append ?next=/activate so the callback
-    //    redirects them to the password-setting step.
-    const { data: linkData, error: linkError } =
+    // The service credential stays on the server. Registry role remains the
+    // authority, so an approved ADMIN row can be provisioned through the same
+    // controlled invitation path as an approved MEMBER row.
+    const { data: inviteData, error: inviteError } =
       await adminClient.auth.admin.inviteUserByEmail(email, {
-        redirectTo: `${origin}/auth/callback?next=/activate`,
+        redirectTo,
+        data: {
+          axis_member_id: member.id,
+          full_name: member.full_name,
+        },
       });
 
-    if (linkError || !linkData) {
-      console.error(`Failed to send invite email to ${email}:`, linkError);
+    if (inviteError || !inviteData.user) {
+      console.error(`Failed to send invite email to ${email}:`, inviteError);
       results.push({
         email,
-        status: 'error',
-        reason: linkError?.message ?? 'Failed to send invite email.',
+        status: "error",
+        reason: friendlyInviteError(inviteError?.message),
       });
       continue;
     }
 
-    results.push({ email, status: 'sent' });
+    const { error: recordError } = await supabase.rpc(
+      "record_member_invitation",
+      { p_member_id: member.id },
+    );
+
+    if (recordError) {
+      console.error(
+        `Invitation sent but lifecycle recording failed for ${email}:`,
+        recordError.message,
+      );
+      results.push({
+        email,
+        status: "error",
+        reason:
+          "Invitation was sent, but its audit record could not be saved. Contact an operator before retrying.",
+      });
+      continue;
+    }
+
+    results.push({ email, status: "sent" });
   }
 
-  revalidatePath('/admin/invite');
-  revalidatePath('/admin/members');
+  revalidatePath("/admin/invite");
+  revalidatePath("/admin/members");
 
   return { results };
 }
