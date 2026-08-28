@@ -93,6 +93,10 @@ Before any linked database action:
 4. Run a linked migration dry run and review the exact pending list.
 5. Follow the [Migration Workflow](../schema/migrations.md) and feature runbook.
 
+The migration guide includes the complete Studio procedure for copying the
+tracked SQL file, interpreting `check_name`, `passed`, and `details`, and deciding
+which checks to rerun when the migration is already deployed.
+
 Do not use production for exploratory schema work. Do not paste a tracked migration into the SQL Editor because that bypasses migration-history recording.
 
 ## Integration fixture tests

@@ -3,7 +3,7 @@
 This audit converts the phase-by-phase database checks into one release decision.
 It does not deploy the applications or authorize invitations, email, or webhooks.
 
-## Current audit snapshot — 2026-08-27
+## Current audit snapshot — 2026-08-28
 
 | Gate                     | Result      | Evidence                                                                                     |
 | ------------------------ | ----------- | -------------------------------------------------------------------------------------------- |
@@ -14,8 +14,8 @@ It does not deploy the applications or authorize invitations, email, or webhooks
 | Automated tests          | Pass        | 56 passed, 0 failed                                                                          |
 | Production builds        | Pass        | GDG Hub (47 routes) and GDG ID (11 routes) built with Next.js 15.5.24 on Node 22             |
 | Documentation            | Pass        | MkDocs strict build completed                                                                |
-| Migration reconciliation | Conditional | 28 deployed versions match; one reviewed release-advisor migration remains local and pending |
-| Migration dry run        | Pass        | Hosted dry run identified only `20260827014255_release_advisor_foreign_key_indexes.sql`      |
+| Migration reconciliation | Pass        | All 29 tracked versions match the linked hosted project                                      |
+| Migration dry run        | Pass        | Linked dry run reports the remote database is up to date with zero pending migrations        |
 | Linked schema lint       | Pass        | Public schema returned no errors at warning level                                            |
 | Phase verification       | Pass        | Phase 1–12 verification and transactional smoke-test evidence supplied during implementation |
 | System Health            | Conditional | 13 pass, 2 expected rollout warnings, 0 failures                                             |
@@ -61,12 +61,11 @@ representative production traffic, so index-usage statistics cannot yet justify
 dropping query, integrity, history, foreign-key, or report indexes. Review them
 after at least 30 days of real traffic using query plans and index statistics.
 
-**Current decision: release preparation passes conditionally, but production
-release is not yet approved.** Remaining acceptance work is confirming migration
-history reconciliation for the Advisor index migration, completing the exact hosted
-Auth/Storage/Data API checks, configuring a Preview environment, and executing
-Preview manual flow tests. Invitations, webhook registration, and email delivery
-remain off.
+**Current decision: the branch is ready for a staging pull request, while production
+release remains conditional.** Database migration history is reconciled. Remaining
+production acceptance work is completing the exact hosted Auth/Storage/Data API
+checks, configuring a Preview environment, and executing the same manual flows
+against Preview. Invitations, webhook registration, and email delivery remain off.
 
 ## Evidence required
 

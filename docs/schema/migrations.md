@@ -44,6 +44,92 @@ Only an authorized operator should apply migrations to a shared project:
 
 Do not paste a migration body into the SQL Editor. That changes the schema without recording its version in `supabase_migrations.schema_migrations`.
 
+## Running preflight, verification, and smoke-test SQL
+
+The SQL files under `supabase/preflight/` are operator checks for an approved
+hosted Supabase project. They are not migrations, and the Supabase CLI does not
+apply them through `db push`.
+
+Each feature normally has files with the same base name:
+
+| File suffix        | When to run                  | Purpose                                                                                            |
+| ------------------ | ---------------------------- | -------------------------------------------------------------------------------------------------- |
+| `*_preflight.sql`  | Before the related migration | Confirms the expected baseline and data are safe for that migration                                |
+| `*_verify.sql`     | After the related migration  | Confirms the schema, constraints, indexes, policies, grants, and functions were deployed correctly |
+| `*_smoke_test.sql` | After verification           | Exercises important behavior; test fixture writes are rolled back by the tracked script            |
+
+### Run a SQL check in Supabase Studio
+
+1. In this repository, open the required file under `supabase/preflight/`.
+2. Confirm its filename matches the migration or corrective migration being
+   tested. Follow the exact order in the applicable feature runbook when a phase
+   has more than one migration.
+3. In Supabase Dashboard, select the intended organization, project, and
+   environment. Confirm these before running anything; staging and production
+   results are not interchangeable.
+4. Open **SQL Editor** and choose **New query**.
+5. Copy the **entire contents** of the tracked SQL file into the query. Do not run
+   only the currently selected fragment and do not add your own `COMMIT`.
+6. Select **Run** once and wait for the complete result.
+7. For a multi-row check, require every value in the `passed` column to be
+   `true`. Read `check_name` and `details` for the exact assertion. For a smoke
+   test, require its final result row to report `passed = true` and state that
+   fixture writes were rolled back or that no data was written.
+8. If any row is `false`, or the SQL Editor reports an error, stop. Save the full
+   result and error text and fix or classify the finding before continuing. Do
+   not repeatedly run a failing migration or manually edit hosted tables to make
+   the check pass.
+9. Save the result as release evidence without copying member exports, secret
+   values, access tokens, or database credentials into Git or a pull request.
+
+Example successful result:
+
+```text
+check_name                         passed  details
+phase_dependencies_deployed       true    required migrations are recorded
+existing_rows_valid               true    invalid rows=0
+```
+
+### Complete migration sequence
+
+Use Studio and the CLI together in this order:
+
+```text
+1. SQL Editor: run the tracked *_preflight.sql file; require all checks to pass.
+2. Terminal:   npx supabase migration list --linked
+3. Terminal:   npx supabase db push --dry-run
+4. Backup:     complete the phase-specific backup/export requirement.
+5. Terminal:   npx supabase db push
+6. SQL Editor: run the tracked *_verify.sql file; require all checks to pass.
+7. SQL Editor: run the tracked *_smoke_test.sql file, when present.
+8. Studio:     refresh Security Advisor and Performance Advisor.
+```
+
+Only files in `supabase/migrations/` are applied by `npx supabase db push`.
+Never paste one of those migration files into the SQL Editor merely because its
+preflight passed.
+
+### When the migration is already deployed
+
+A preflight describes the state **before** its migration. It may intentionally
+return a failed row after that migration is already recorded, such as
+`migration_should_not_already_be_deployed`. Do not repair or roll back a healthy
+database to make an old preflight pass.
+
+For an already-deployed migration:
+
+1. Confirm its local and remote timestamp match with
+   `npx supabase migration list --linked`.
+2. Run its `*_verify.sql` file against the intended hosted project.
+3. Run its rollback-only `*_smoke_test.sql` when the phase provides one and its
+   documented prerequisites are available.
+4. Rerun System Health and the relevant Supabase Advisors.
+
+Preflight files remain committed because they are required when the migration is
+promoted to a different environment, reviewed by another developer, or audited
+later. Verification and smoke-test files remain the repeatable evidence for the
+database contract.
+
 ## Corrections and rollback planning
 
 Migrations are forward-only. Prefer transactional statements so a failure leaves no partial deployment. If a deployed behavior needs correction, create a new ordered migration with its own preflight and verification; never edit or delete a migration that is already recorded remotely.
