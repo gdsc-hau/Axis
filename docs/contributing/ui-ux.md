@@ -16,7 +16,9 @@ Do not copy the component into each application and do not deep-import files suc
 
 The current public API includes:
 
-- components: `Alert`, `Button`, `Card`, `FormField`, `Input`, and `Textarea`;
+- components: `Alert`, `ApplicationShell`, `Button`, `Card`,
+  `ConfirmationDialog`, `EmptyState`, `FormField`, `Input`, `LoadingSkeleton`,
+  `ResponsiveSidebar`, `StatusBadge`, and `Textarea`;
 - primitives: `Box`, `Container`, `Stack`, and `Text`;
 - utility: `cn`.
 
@@ -207,6 +209,9 @@ import { Alert, Button, FormField, Input } from "@hau/axis-ui";
 ```
 
 This is a source-based internal package. Next.js transpiles it directly, so component updates are available to both applications without publishing to npm.
+
+For shell composition, responsive navigation, loading boundaries, and common
+page states, follow the [application shell guide](application-shells.md).
 
 ## Review checklist
 

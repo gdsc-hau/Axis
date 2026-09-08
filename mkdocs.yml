@@ -50,6 +50,7 @@ nav:
   - Contributing:
       - Standards: contributing/standards.md
       - UI/UX Guide: contributing/ui-ux.md
+      - Application Shells: contributing/application-shells.md
       - Documentation Rules: contributing/docs-rules.md
 
 markdown_extensions:

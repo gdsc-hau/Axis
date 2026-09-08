@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getMemberForAuthUser, getUser } from "@hau/auth";
+import { ApplicationShell } from "@hau/axis-ui";
 import { AdminSidebar } from "./AdminSidebar";
 
 export default async function AdminLayout({
@@ -24,13 +25,12 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-zinc-50 dark:bg-zinc-950">
-      <AdminSidebar />
-      <main className="flex-1 min-h-screen overflow-y-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {children}
-        </div>
-      </main>
-    </div>
+    <ApplicationShell
+      navigation={<AdminSidebar />}
+      contentClassName="min-h-screen overflow-y-auto"
+      containerClassName="mx-auto max-w-7xl px-4 py-20 sm:px-6 md:py-8 lg:px-8"
+    >
+      {children}
+    </ApplicationShell>
   );
 }

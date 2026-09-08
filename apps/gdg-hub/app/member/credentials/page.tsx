@@ -1,5 +1,6 @@
 import { getBadgeAwardSourceLabel } from "@hau/badges";
 import { listCurrentMemberCredentials } from "@hau/db";
+import { EmptyState, StatusBadge } from "@hau/axis-ui";
 
 function date(value: string | null) {
   if (!value) return "Not recorded";
@@ -41,11 +42,11 @@ export default async function MemberCredentialsPage() {
                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500/10 text-lg">
                         ★
                       </div>
-                      <span
-                        className={`rounded-full px-2 py-1 text-[11px] font-semibold ${award.status === "AWARDED" ? "bg-emerald-500/10 text-emerald-500" : "bg-red-500/10 text-red-500"}`}
+                      <StatusBadge
+                        tone={award.status === "AWARDED" ? "success" : "danger"}
                       >
                         {award.status}
-                      </span>
+                      </StatusBadge>
                     </div>
                     <h3 className="mt-4 font-semibold">
                       {award.badge?.name ?? "Archived badge"}
@@ -68,9 +69,10 @@ export default async function MemberCredentialsPage() {
                 ))}
               </div>
             ) : (
-              <p className="rounded-xl border border-dashed border-zinc-300 p-8 text-center text-sm text-zinc-500 dark:border-zinc-700">
-                You have not earned a badge yet.
-              </p>
+              <EmptyState
+                title="No badges yet"
+                description="Badges awarded by an administrator will appear here."
+              />
             )}
           </section>
 
@@ -93,11 +95,17 @@ export default async function MemberCredentialsPage() {
                         {certificate.certificate_number}
                       </p>
                     </div>
-                    <span
-                      className={`rounded-full px-2 py-1 text-xs font-semibold ${certificate.status === "ISSUED" ? "bg-emerald-500/10 text-emerald-500" : certificate.status === "REVOKED" ? "bg-red-500/10 text-red-500" : "bg-amber-500/10 text-amber-500"}`}
+                    <StatusBadge
+                      tone={
+                        certificate.status === "ISSUED"
+                          ? "success"
+                          : certificate.status === "REVOKED"
+                            ? "danger"
+                            : "warning"
+                      }
                     >
                       {certificate.status}
-                    </span>
+                    </StatusBadge>
                   </div>
                   {certificate.status === "ISSUED" && (
                     <div className="mt-4 flex flex-wrap gap-4">
@@ -128,9 +136,10 @@ export default async function MemberCredentialsPage() {
                 </article>
               ))
             ) : (
-              <p className="rounded-xl border border-dashed border-zinc-300 p-8 text-center text-sm text-zinc-500 dark:border-zinc-700">
-                No certificates have been issued to you yet.
-              </p>
+              <EmptyState
+                title="No certificates yet"
+                description="Attendance-backed certificates will appear here after they are issued."
+              />
             )}
           </section>
         </>
