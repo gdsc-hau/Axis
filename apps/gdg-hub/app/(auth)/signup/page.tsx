@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SUPPORT_EMAIL_HREF } from "@/lib/site";
 
 export default function SignupPage() {
   return (
@@ -43,7 +44,7 @@ export default function SignupPage() {
         <p className="mt-6 text-xs text-zinc-400 dark:text-zinc-600">
           Need access?{" "}
           <a
-            href="mailto:gdg@hau.edu.ph"
+            href={SUPPORT_EMAIL_HREF}
             className="underline hover:text-zinc-600 dark:hover:text-zinc-400 transition-colors"
           >
             Contact the GDG HAU team

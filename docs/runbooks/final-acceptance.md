@@ -67,6 +67,27 @@ production acceptance work is completing the exact hosted Auth/Storage/Data API
 checks, configuring a Preview environment, and executing the same manual flows
 against Preview. Invitations, webhook registration, and email delivery remain off.
 
+## Phase 13 repository cleanup — 2026-09-08
+
+The post-backend cleanup removed unused PWA and shared-configuration scaffolds,
+the machine-specific route restructuring script, the retired leaderboard rebuild
+route, and its empty Edge Function stub. PWA behavior is explicitly deferred to
+a future version. Authentication support links now use the canonical GDG HAU
+support address, and the broken GDG ID `Coming Soon` navigation item was removed.
+
+Fresh local acceptance after the cleanup completed with:
+
+- 13 active package/application workspaces;
+- uncached lint and TypeScript checks passing;
+- 56 automated tests passing with zero failures;
+- uncached production builds passing for GDG Hub (46 routes) and GDG ID (11
+  routes);
+- zero known production dependency vulnerabilities; and
+- a successful strict MkDocs build.
+
+This local evidence supplements rather than replaces the hosted Supabase results
+above. No schema migration or hosted configuration change is required for Phase 13.
+
 ## Evidence required
 
 | Area                   | Required evidence                                                                                                                |

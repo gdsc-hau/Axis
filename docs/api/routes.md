@@ -43,7 +43,9 @@ export async function POST(request: Request) {
 - `gdg-hub /forgot-password`: Requests a non-enumerating Supabase password recovery email.
 - `gdg-hub /reset-password`: Validates the temporary recovery session and updates the password for an approved member.
 - `gdg-hub POST /api/integrations/bevy/events`: Secret-authenticated Bevy event webhook. It accepts documented event batches, filters to the HAU chapter, and invokes the service-only event sync RPC. It returns `503` until `BEVY_WEBHOOK_SECRET` is configured.
+- `gdg-hub GET /api/certificates/[certificateId]/download`: Streams an administrator-authorized generated certificate PDF.
 
-The remaining feature handlers under `gdg-hub/app/api` are placeholders and
-must not be treated as implemented APIs. The former Luma sync placeholder was
-removed: Luma is a redirect destination in this phase, not a data source.
+There are no placeholder feature APIs in the current route tree. Luma is an
+external registration destination and CSV attendance source, not an Axis API.
+Leaderboard rankings are derived directly from the append-only ledger and do
+not require a rebuild endpoint.

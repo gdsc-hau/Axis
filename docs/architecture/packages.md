@@ -6,7 +6,6 @@ Axis keeps reusable logic in `packages/` so both applications can share stable c
 
 | Package                  | Responsibility                                                                 | Typical consumers                                   |
 | ------------------------ | ------------------------------------------------------------------------------ | --------------------------------------------------- |
-| `@hau/config`            | Shared ESLint and Prettier configuration.                                      | All workspaces                                      |
 | `@hau/typescript-config` | Base TypeScript configurations for Next.js, React libraries, and Node tooling. | All TypeScript workspaces                           |
 | `@hau/types`             | Shared TypeScript-only domain types.                                           | Apps and domain packages                            |
 | `@hau/contracts`         | Zod schemas and runtime-safe request/response contracts.                       | Forms, Server Actions, route handlers, integrations |
@@ -18,9 +17,12 @@ Axis keeps reusable logic in `packages/` so both applications can share stable c
 | `@hau/marketplace`       | Reward catalog, redemption, and fulfillment rules.                             | Member rewards and admin queues                     |
 | `@hau/badges`            | Badge eligibility and award rules.                                             | Credential workflows                                |
 | `@hau/certificates`      | Certificate template, PDF, private storage, and email helpers.                 | Credential workflows                                |
-| `@hau/pwa`               | Manifest, cache, and service-worker helpers.                                   | Installable/offline app behavior                    |
 
 The current event registration flow is external: Axis mirrors GDG Community event information and redirects registration to the configured Luma link. The codebase does not currently treat an internal Axis RSVP record as the registration source of truth.
+
+Progressive Web App support is intentionally deferred to a future version. The
+current applications do not register an Axis service worker or promise offline
+behavior.
 
 ## Ownership rules
 
