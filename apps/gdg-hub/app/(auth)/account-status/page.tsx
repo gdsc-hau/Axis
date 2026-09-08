@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getMemberForAuthUser, getUser } from "@hau/auth";
+import { SUPPORT_EMAIL_HREF } from "@/lib/site";
 
 const statusContent = {
   PENDING: {
@@ -67,7 +68,7 @@ export default async function AccountStatusPage() {
         </p>
         <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Link
-            href="mailto:gdg@hau.edu.ph"
+            href={SUPPORT_EMAIL_HREF}
             className="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
           >
             Contact support

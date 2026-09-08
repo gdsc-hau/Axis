@@ -55,5 +55,5 @@ is required. The general reports page intentionally shows aggregate counts only.
    **You**.
 5. Sign out and confirm both member and admin routes redirect to `/login`.
 
-The legacy `/api/leaderboard/rebuild` endpoint now returns HTTP 410 because
-ranking is calculated from the live append-only ledger.
+The legacy leaderboard rebuild endpoint has been removed. Rankings are derived
+live from the append-only ledger and there is no rebuild operation to authorize.

@@ -233,8 +233,6 @@ importers:
         specifier: ^4.2.1
         version: 4.2.1
 
-  packages/config: {}
-
   packages/contracts:
     dependencies:
       zod:
@@ -266,8 +264,6 @@ importers:
       '@hau/contracts':
         specifier: workspace:*
         version: link:../contracts
-
-  packages/pwa: {}
 
   packages/types: {}
 

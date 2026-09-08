@@ -12,6 +12,7 @@ import {
   Input,
 } from "@hau/axis-ui";
 import { login } from "./actions";
+import { SUPPORT_EMAIL_HREF } from "@/lib/site";
 
 function LoginForm() {
   const searchParams = useSearchParams();
@@ -93,7 +94,7 @@ function LoginForm() {
           <p className="mt-4 text-center text-sm text-zinc-500 dark:text-zinc-400">
             Access is by invitation only.{" "}
             <a
-              href="mailto:gdg@hau.edu.ph"
+              href={SUPPORT_EMAIL_HREF}
               className="text-blue-600 hover:underline"
             >
               Contact us

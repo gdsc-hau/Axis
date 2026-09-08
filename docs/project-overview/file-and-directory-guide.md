@@ -57,15 +57,17 @@ Registry identity comes from `public.members`; do not create a second profile ta
 | `packages/axis-ui`           | Design tokens, primitives, icons, and reusable presentational components |
 | `packages/badges`            | Shared badge recognition rules and types                                 |
 | `packages/certificates`      | Certificate-generation and verification support                          |
-| `packages/config`            | Shared linting, formatting, and repository configuration                 |
 | `packages/contracts`         | Zod schemas and types at application/domain boundaries                   |
 | `packages/db`                | Supabase clients, environment guards, database types, and domain queries |
 | `packages/events`            | Shared event and attendance domain behavior                              |
 | `packages/marketplace`       | Reward catalog and redemption domain behavior                            |
 | `packages/points`            | Gyrocoin ledger types and calculations                                   |
-| `packages/pwa`               | Progressive Web App configuration helpers                                |
 | `packages/types`             | General TypeScript types that do not belong to a narrower contract       |
 | `packages/typescript-config` | Base TypeScript configurations                                           |
+
+Progressive Web App support is not part of the current release. It may be added
+in a future version after installability, caching, offline behavior, and update
+handling have their own acceptance criteria.
 
 Every package exposes a deliberately small public API. Add exports to the package's supported entry point when a capability becomes shared. Do not import a private file by reaching into another package's `src/` tree.
 
@@ -124,6 +126,8 @@ The generated `site/` directory is disposable output. Do not edit or commit it.
 | `pnpm-lock.yaml`         | Exact dependency graph; update through pnpm only              |
 | `turbo.json`             | Task ordering, cache output, and global environment inputs    |
 | `.node-version`          | Team Node 22 baseline                                         |
+| `.editorconfig`          | Shared editor defaults for indentation, UTF-8, and LF endings |
+| `.gitattributes`         | Cross-platform Git text and binary-file normalization         |
 | `.gitignore`             | Local secret, cache, build, and generated-output exclusions   |
 | `env.example`            | Operator-only root variable names for linked database tooling |
 | `mkdocs.yml`             | Documentation site configuration and navigation               |
