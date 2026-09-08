@@ -88,6 +88,13 @@ import { Alert, Button, Card, Container } from "@hau/axis-ui";
 
 Application-specific compositions stay in the owning app. A component moves to `@hau/axis-ui` after its visual API is stable and reuse is demonstrated or planned.
 
+The GDG Hub member and administrator route groups use the shared
+`ApplicationShell` and `ResponsiveSidebar` components. Their layouts still own
+all authentication and role redirects, while their sidebar components own route
+labels, active-link behavior, and sign-out actions. The public route group uses
+an application-owned responsive header and footer. This keeps navigation easy to
+change without moving product routes or authorization into the UI package.
+
 ## Request and mutation boundaries
 
 - Server Components perform protected reads through `@hau/db`.

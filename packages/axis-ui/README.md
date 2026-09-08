@@ -15,7 +15,13 @@ Declare the package in the consuming application's `package.json`:
 Then import from the package's public entry point:
 
 ```tsx
-import { Alert, Button, FormField, Input } from "@hau/axis-ui";
+import {
+  ApplicationShell,
+  Button,
+  EmptyState,
+  ResponsiveSidebar,
+  StatusBadge,
+} from "@hau/axis-ui";
 ```
 
 Both Next.js applications transpile `@hau/axis-ui`, and their Tailwind content configuration scans this package's source files.
@@ -44,11 +50,31 @@ src/
 
 ## Available components
 
-- Components: `Alert`, `Button`, `Card`, `FormField`, `Input`, and `Textarea`
+- Components: `Alert`, `ApplicationShell`, `Button`, `Card`,
+  `ConfirmationDialog`, `EmptyState`, `FormField`, `Input`, `LoadingSkeleton`,
+  `ResponsiveSidebar`, `StatusBadge`, and `Textarea`
 - Primitives: `Box`, `Container`, `Stack`, and `Text`
 - Utilities: `cn`
 
 `Card` also exports `CardHeader`, `CardTitle`, `CardDescription`, and `CardContent`. Public prop and variant types are exported from the package root where they are defined. Treat this list and `src/index.ts` as the public API.
+
+## Application shell components
+
+`ApplicationShell` provides the shared two-column page frame. Pass the app-owned
+navigation component through `navigation`; authentication, route definitions,
+labels, and permissions remain in the consuming application.
+
+`ResponsiveSidebar` provides the accessible mobile drawer and fixed desktop
+sidebar behavior. The consuming app supplies its brand, navigation, and footer.
+It closes after navigation and when the user presses Escape.
+
+The Hub currently uses these components for both member and administrator
+layouts. Public pages use an app-owned header and footer because their horizontal
+navigation has a different composition.
+
+`LoadingSkeleton`, `EmptyState`, and `StatusBadge` standardize common async and
+data states. `ConfirmationDialog` is for explicit confirmation of consequential
+user actions; it must not contain business logic or invoke a backend directly.
 
 ## Adding or changing a component
 

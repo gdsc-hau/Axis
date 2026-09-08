@@ -1,13 +1,14 @@
 import type { SystemHealthResult, SystemHealthRun } from "@hau/db";
 import { getAdminSystemHealthData } from "@hau/db";
+import { StatusBadge, type StatusBadgeTone } from "@hau/axis-ui";
 import { SystemHealthControl } from "./SystemHealthControl";
 
-const statusClass = {
-  PASS: "border-emerald-500/30 bg-emerald-500/10 text-emerald-500",
-  WARN: "border-amber-500/30 bg-amber-500/10 text-amber-500",
-  FAIL: "border-red-500/30 bg-red-500/10 text-red-500",
-  RUNNING: "border-blue-500/30 bg-blue-500/10 text-blue-500",
-} as const;
+const statusTone: Record<SystemHealthRun["status"], StatusBadgeTone> = {
+  PASS: "success",
+  WARN: "warning",
+  FAIL: "danger",
+  RUNNING: "info",
+};
 
 function formatDate(value: string | null) {
   if (!value) return "In progress";
@@ -36,11 +37,9 @@ function CheckResult({ result }: { result: SystemHealthResult }) {
         <h3 className="font-medium">{result.check_key.replaceAll("_", " ")}</h3>
         <p className="mt-1 text-sm text-zinc-500">{result.details}</p>
       </div>
-      <span
-        className={`shrink-0 rounded-full border px-2.5 py-1 text-xs font-semibold ${statusClass[result.status]}`}
-      >
+      <StatusBadge tone={statusTone[result.status]} className="shrink-0">
         {result.status}
-      </span>
+      </StatusBadge>
     </article>
   );
 }
@@ -54,11 +53,7 @@ function RunHistory({ run }: { run: SystemHealthRun }) {
           {run.application_version} · {run.total_checks} checks
         </p>
       </div>
-      <span
-        className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${statusClass[run.status]}`}
-      >
-        {run.status}
-      </span>
+      <StatusBadge tone={statusTone[run.status]}>{run.status}</StatusBadge>
     </div>
   );
 }
@@ -111,11 +106,9 @@ export default async function AdminSystemHealthPage() {
                   {latestRun.application_version}
                 </p>
               </div>
-              <span
-                className={`rounded-full border px-3 py-1.5 text-sm font-semibold ${statusClass[latestRun.status]}`}
-              >
+              <StatusBadge tone={statusTone[latestRun.status]}>
                 {latestRun.status}
-              </span>
+              </StatusBadge>
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <SummaryCard
