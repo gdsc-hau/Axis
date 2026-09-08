@@ -51,7 +51,22 @@ or run all workspace development tasks:
 pnpm dev
 ```
 
-See [Getting Started](docs/project-overview/getting-started.md) for environment setup, role-specific instructions, troubleshooting, and expected routes.
+See the [Developer Handbook](docs/project-overview/developer-handbook.md) for the
+system mental model and where each kind of change belongs. Use
+[Getting Started](docs/project-overview/getting-started.md) for exact environment
+setup, commands, troubleshooting, and expected routes.
+
+## Choose your task
+
+| Task                                              | Start here                                                        |
+| ------------------------------------------------- | ----------------------------------------------------------------- |
+| First day in the repository                       | [Developer Handbook](docs/project-overview/developer-handbook.md) |
+| Work on the member/admin/public Hub               | [GDG Hub README](apps/gdg-hub/README.md)                          |
+| Work on digital ID or QR verification             | [GDG ID README](apps/gdg-id/README.md)                            |
+| Add or change shared code                         | [Packages README](packages/README.md)                             |
+| Implement a page, action, endpoint, or dependency | [Change Playbooks](docs/contributing/change-playbooks.md)         |
+| Change the database                               | [Migration Workflow](docs/schema/migrations.md)                   |
+| Operate or test a feature                         | [Runbook Index](docs/runbooks/README.md)                          |
 
 ## Repository map
 
@@ -96,6 +111,7 @@ Open `http://127.0.0.1:8000`. Edit files under `docs/`; the generated `site/` di
 
 Start with:
 
+- [Developer Handbook](docs/project-overview/developer-handbook.md)
 - [Repository Layout](docs/project-overview/repository-layout.md)
 - [Coding Standards](docs/contributing/standards.md)
 - [Environment Configuration](docs/runbooks/environment-configuration.md)
