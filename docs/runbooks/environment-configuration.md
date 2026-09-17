@@ -17,10 +17,17 @@ Template: `apps/gdg-hub/.env.example`
 | `BEVY_WEBHOOK_SECRET_HEADER`    | Server config | No              | Defaults to `x-axis-bevy-secret`                                       |
 | `BEVY_CHAPTER_ID`               | Server config | No              | Preferred exact chapter filter when available                          |
 | `BEVY_CHAPTER_SLUG`             | Server config | Yes for webhook | Fallback chapter filter                                                |
+| `GDG_EVENT_SYNC_SECRET`         | Server secret | For scheduling  | Bearer token for the public-page scheduled synchronization route       |
 
 Keep the Bevy endpoint unregistered until the Hub has an approved public HTTPS
 origin. Luma requires no API key because Axis stores only the validated redirect
 URL and attendance is imported through the approved CSV workflow.
+
+The administrator's manual public-page sync does not require
+`GDG_EVENT_SYNC_SECRET`. Configure a unique value of at least 32 random
+characters only when an external scheduler will call the sync route. Never use
+the Bevy secret, service-role key, or another application's secret for this
+purpose.
 
 ## GDG ID
 

@@ -1,10 +1,27 @@
 import Link from "next/link";
+import { EventPeriodSchema } from "@hau/contracts";
 import { listAdminEvents } from "@hau/db";
-import { formatEventDate } from "@/lib/events";
+import { EventPeriodFilter } from "@/components/events/EventPeriodFilter";
+import { formatEventDate, isPastEvent } from "@/lib/events";
 import { EventLumaForm } from "./EventLumaForm";
+import { GdgCommunitySyncControl } from "./GdgCommunitySyncControl";
 
-export default async function AdminEventsPage() {
+type SearchParams = Promise<{ period?: string }>;
+
+export default async function AdminEventsPage({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
+  const query = await searchParams;
+  const parsedPeriod = EventPeriodSchema.safeParse(query.period ?? "all");
+  const period = parsedPeriod.success ? parsedPeriod.data : "all";
   const { data: events, error } = await listAdminEvents();
+  const visibleEvents = (events ?? []).filter((event) => {
+    if (period === "upcoming") return !isPastEvent(event);
+    if (period === "past") return isPastEvent(event);
+    return true;
+  });
 
   return (
     <div className="space-y-6">
@@ -19,9 +36,19 @@ export default async function AdminEventsPage() {
       </div>
 
       <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800 dark:border-blue-500/20 dark:bg-blue-500/10 dark:text-blue-300">
-        The Bevy receiver is implemented but inactive until the database
-        migration is applied and a public HTTPS Hub URL is configured in Bevy.
-        No invitations, RSVPs, or attendee records are sent by this page.
+        Axis can import public GDG Community pages now. The Bevy webhook remains
+        available for future organization-level access. No invitations, RSVPs,
+        organizer profiles, or attendee records are imported.
+      </div>
+
+      <GdgCommunitySyncControl />
+
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <EventPeriodFilter basePath="/admin/events" period={period} />
+        <p className="text-sm text-zinc-500">
+          {visibleEvents.length}{" "}
+          {visibleEvents.length === 1 ? "event" : "events"}
+        </p>
       </div>
 
       {error ? (
@@ -29,9 +56,9 @@ export default async function AdminEventsPage() {
           Events could not be loaded. Apply the Phase 3 migration, then refresh
           this page.
         </div>
-      ) : events?.length ? (
+      ) : visibleEvents.length ? (
         <div className="space-y-4">
-          {events.map((event) => (
+          {visibleEvents.map((event) => (
             <article
               key={event.id}
               className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
@@ -86,10 +113,12 @@ export default async function AdminEventsPage() {
       ) : (
         <div className="rounded-xl border border-dashed border-zinc-300 p-12 text-center dark:border-zinc-700">
           <h2 className="font-semibold text-zinc-900 dark:text-white">
-            No mirrored events yet
+            No {period === "all" ? "mirrored" : period} events
           </h2>
           <p className="mt-2 text-sm text-zinc-500">
-            Events will appear after a valid HAU Bevy event webhook is received.
+            {period === "all"
+              ? "Import an event URL or synchronize the HAU chapter events."
+              : "Choose another filter or synchronize the HAU chapter events."}
           </p>
         </div>
       )}

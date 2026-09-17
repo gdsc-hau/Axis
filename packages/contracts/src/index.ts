@@ -151,6 +151,10 @@ export const EventSourceProviderSchema = z.enum(["MANUAL", "BEVY"]);
 
 export type EventSourceProvider = z.infer<typeof EventSourceProviderSchema>;
 
+export const EventPeriodSchema = z.enum(["all", "upcoming", "past"]);
+
+export type EventPeriod = z.infer<typeof EventPeriodSchema>;
+
 export const BevyEventStatusSchema = z.enum(["Draft", "Published", "Canceled"]);
 
 export type BevyEventStatus = z.infer<typeof BevyEventStatusSchema>;
@@ -235,6 +239,114 @@ export const BevyWebhookPayloadSchema = z
   .array(BevyWebhookEnvelopeSchema)
   .min(1)
   .max(20);
+
+export const GdgCommunityEventUrlSchema = z
+  .string()
+  .trim()
+  .max(2_048)
+  .refine(
+    (value) => {
+      try {
+        const url = new URL(value);
+        return (
+          url.protocol === "https:" &&
+          url.hostname === "gdg.community.dev" &&
+          url.pathname.startsWith("/events/details/") &&
+          url.pathname.split("/").filter(Boolean).length === 3 &&
+          !url.username &&
+          !url.password &&
+          !url.port
+        );
+      } catch {
+        return false;
+      }
+    },
+    {
+      message:
+        "Use a public https://gdg.community.dev/events/details/... event URL.",
+    },
+  );
+
+export const ImportGdgCommunityEventSchema = z.object({
+  eventUrl: GdgCommunityEventUrlSchema,
+});
+
+export const GdgCommunityJsonLdEventSchema = z
+  .object({
+    "@type": z.literal("Event"),
+    name: z.string().trim().min(1).max(300),
+    startDate: z.string().datetime({ offset: true }),
+    endDate: z.string().datetime({ offset: true }),
+    description: z.string().max(20_000).optional().nullable(),
+    eventStatus: z.string().trim().max(200).optional().nullable(),
+    eventAttendanceMode: z.string().trim().max(200).optional().nullable(),
+    image: z
+      .union([BevyHttpsUrlSchema, z.array(BevyHttpsUrlSchema).max(20)])
+      .optional()
+      .nullable(),
+  })
+  .passthrough()
+  .refine(
+    ({ startDate, endDate }) =>
+      new Date(endDate).getTime() >= new Date(startDate).getTime(),
+    {
+      path: ["endDate"],
+      message: "GDG Community event end date must not precede its start date.",
+    },
+  );
+
+export const GdgCommunityPageEventSchema = z
+  .object({
+    id: BevyIdentifierSchema,
+    title: z.string().trim().min(1).max(300),
+    url: GdgCommunityEventUrlSchema,
+    description: z.string().max(20_000).optional().nullable(),
+    description_short: z.string().max(20_000).optional().nullable(),
+    start_date_iso: z.string().datetime({ offset: true }),
+    end_date_iso: z.string().datetime({ offset: true }),
+    chapter_id: BevyIdentifierSchema,
+    chapter_slug: z.string().trim().min(1).max(300),
+    chapter_title: z.string().trim().min(1).max(300),
+    chapter_url: BevyHttpsUrlSchema,
+    event_type_title: z.string().trim().max(300).optional().nullable(),
+    picture: BevyHttpsUrlSchema.optional().nullable(),
+    is_hidden: z.boolean().optional().default(false),
+    is_virtual_event: z.boolean().optional().default(false),
+    venue_name: z.string().trim().max(500).optional().nullable(),
+    venue_address: z.string().trim().max(1_000).optional().nullable(),
+    venue_city: z.string().trim().max(300).optional().nullable(),
+    venue_state: z.string().trim().max(300).optional().nullable(),
+    venue_zip_code: z.string().trim().max(100).optional().nullable(),
+    tags: z.array(z.string().trim().min(1).max(200)).max(50).optional(),
+  })
+  .passthrough()
+  .refine(
+    ({ start_date_iso, end_date_iso }) =>
+      new Date(end_date_iso).getTime() >= new Date(start_date_iso).getTime(),
+    {
+      path: ["end_date_iso"],
+      message: "GDG Community event end date must not precede its start date.",
+    },
+  );
+
+export const GdgCommunityEventListingSchema = z.object({
+  pagination: z.object({
+    previous_page: z.number().int().positive().nullable().optional(),
+    current_page: z.number().int().positive(),
+    next_page: z.number().int().positive().nullable().optional(),
+    page_size: z.number().int().positive().max(1_000),
+  }),
+  results: z
+    .array(
+      z
+        .object({
+          chapter_id: BevyIdentifierSchema,
+          url: GdgCommunityEventUrlSchema,
+        })
+        .passthrough(),
+    )
+    .max(500),
+});
 
 export const LumaUrlSchema = z
   .string()

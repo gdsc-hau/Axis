@@ -43,6 +43,7 @@ export async function POST(request: Request) {
 - `gdg-hub /forgot-password`: Requests a non-enumerating Supabase password recovery email.
 - `gdg-hub /reset-password`: Validates the temporary recovery session and updates the password for an approved member.
 - `gdg-hub POST /api/integrations/bevy/events`: Secret-authenticated Bevy event webhook. It accepts documented event batches, filters to the HAU chapter, and invokes the service-only event sync RPC. It returns `503` until `BEVY_WEBHOOK_SECRET` is configured.
+- `gdg-hub GET|POST /api/integrations/gdg-community/events`: Optional scheduler endpoint for public HAU event-page synchronization. It requires `Authorization: Bearer <GDG_EVENT_SYNC_SECRET>`, imports public event content only, and returns `503` until the dedicated secret is configured.
 - `gdg-hub GET /api/certificates/[certificateId]/download`: Streams an administrator-authorized generated certificate PDF.
 
 There are no placeholder feature APIs in the current route tree. Luma is an
