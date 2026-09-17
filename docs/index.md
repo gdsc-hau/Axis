@@ -6,6 +6,9 @@ Axis currently provides a member registry and invitation-gated account flow, the
 
 ## Start here
 
+- [Developer handbook](project-overview/developer-handbook.md) gives a
+  five-minute system model, task-routing table, normal request flow, and
+  definition of done.
 - [Getting started](project-overview/getting-started.md) explains the required tools, environment files, and local app commands.
 - [File and directory guide](project-overview/file-and-directory-guide.md) explains what the important repository files do and where new code belongs.
 - [Repository layout](project-overview/repository-layout.md) describes workspace ownership and dependency direction.
@@ -23,6 +26,8 @@ Axis currently provides a member registry and invitation-gated account flow, the
 - [Data and schema](schema/overview.md): Supabase tables, policies, and migrations.
 - [Runbooks](runbooks/local-dev.md): development, feature operation, release, and troubleshooting procedures.
 - [Contributing](contributing/standards.md): code, UI/UX, documentation, and pull-request requirements.
+- [Change playbooks](contributing/change-playbooks.md): implementation checklists
+  for pages, Server Actions, integrations, migrations, dependencies, and docs.
 
 ## Documentation commands
 

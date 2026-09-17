@@ -8,6 +8,33 @@ Axis manages every database schema and security change through committed Supabas
 > Do **not** use the Supabase Studio UI in production to create tables, add columns, or write SQL directly.
 > All changes must be captured in a migration file and checked into Git.
 
+## Current migration history
+
+Migration timestamps define deployment order. The files remain committed after
+deployment because a new environment, reviewer, or incident investigation must
+be able to reconstruct the exact database contract.
+
+| Stage             | Migration files                                      | Capability                                                                            |
+| ----------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Baseline          | `0000` through `20260720020000`                      | Core tables, Auth link, normalized columns, constraints, RPCs, RLS, and RLS hardening |
+| Phase 1           | `20260820123815`, `20260820144434`, `20260821081201` | Member lifecycle, Advisor hardening, and retry-safe profile completion                |
+| Phase 2           | `20260821083404`                                     | Invitation and account-creation guardrails                                            |
+| Phase 3           | `20260821092708`                                     | Read-only GDG Community/Bevy event mirror and managed Luma URLs                       |
+| Phase 4           | `20260821104059`, `20260821125016`                   | Gyrocoin ledger, wallet, and deterministic ordering                                   |
+| Phase 5           | `20260821172810`, `20260821182815`                   | Reward marketplace and registry-name protection                                       |
+| Phase 6           | `20260825154838`                                     | Luma CSV attendance import and reconciliation                                         |
+| Phase 7           | `20260825170545`                                     | Badge and certificate recognition workflows                                           |
+| Phase 8           | `20260826001721`, `20260826004121`                   | Notifications, communications, email outbox, and policy cleanup                       |
+| Phase 9           | `20260826014432`, `20260826060920`, `20260826072424` | Article authoring, publication consistency, and public reading                        |
+| Phase 10          | `20260826090000`                                     | Reporting, CSV export support, and leaderboard queries                                |
+| Phase 11          | `20260826160000`                                     | Versioned member profiles and portal settings                                         |
+| Phase 12          | `20260826170000`                                     | Immutable administrator system-readiness health checks                                |
+| Release hardening | `20260827014255`                                     | Foreign-key indexes requested by the hosted Performance Advisor                       |
+
+Use the full filename in `supabase/migrations/` when reviewing or deploying; the
+short timestamps above are only a navigation aid. Feature-specific acceptance
+steps live in the [Runbook Index](../runbooks/README.md).
+
 ## Creating a migration
 
 1. Start from the latest migration history on the maintainer-designated integration branch.

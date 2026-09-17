@@ -10,6 +10,7 @@ extra_css:
 nav:
   - Home: index.md
   - Project Overview:
+      - Developer Handbook: project-overview/developer-handbook.md
       - Mission and Context: project-overview/mission.md
       - Repository Layout: project-overview/repository-layout.md
       - File and Directory Guide: project-overview/file-and-directory-guide.md
@@ -18,20 +19,25 @@ nav:
       - Platform: product/platform.md
       - Roles: product/roles.md
       - User Flows: product/flows.md
+      - Planning Notes: prd/README.md
   - Architecture:
+      - Architecture Guide: architecture/README.md
       - System Overview: architecture/overview.md
       - Apps: architecture/apps.md
       - Shared Packages: architecture/packages.md
       - Auth and RBAC: architecture/auth-rbac.md
   - API:
+      - API Guide: api/README.md
       - API Overview: api/overview.md
       - Routes: api/routes.md
       - Functions: api/functions.md
   - Data:
+      - Data Guide: schema/README.md
       - Schema Overview: schema/overview.md
       - Migrations: schema/migrations.md
       - Tables: schema/tables.md
   - Runbooks:
+      - Runbook Index: runbooks/README.md
       - Local Development: runbooks/local-dev.md
       - Deployment: runbooks/deployment.md
       - Environment Configuration: runbooks/environment-configuration.md
@@ -49,6 +55,7 @@ nav:
       - Luma Attendance: integrations/luma-attendance.md
   - Contributing:
       - Standards: contributing/standards.md
+      - Change Playbooks: contributing/change-playbooks.md
       - UI/UX Guide: contributing/ui-ux.md
       - Application Shells: contributing/application-shells.md
       - Documentation Rules: contributing/docs-rules.md
