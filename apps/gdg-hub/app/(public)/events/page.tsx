@@ -1,8 +1,19 @@
+import { EventPeriodSchema } from "@hau/contracts";
 import { listPublicEvents } from "@hau/db";
+import { EventPeriodFilter } from "@/components/events/EventPeriodFilter";
 import { isPastEvent } from "@/lib/events";
 import { EventCard } from "./EventCard";
 
-export default async function EventsPage() {
+type SearchParams = Promise<{ period?: string }>;
+
+export default async function EventsPage({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
+  const query = await searchParams;
+  const parsedPeriod = EventPeriodSchema.safeParse(query.period ?? "all");
+  const period = parsedPeriod.success ? parsedPeriod.data : "all";
   const { data: events, error } = await listPublicEvents();
   const upcoming = events?.filter((event) => !isPastEvent(event)) ?? [];
   const past = events?.filter(isPastEvent).reverse() ?? [];
@@ -24,39 +35,49 @@ export default async function EventsPage() {
           </p>
         </header>
 
+        <EventPeriodFilter basePath="/events" period={period} />
+
         {error ? (
           <div className="rounded-xl border border-red-200 bg-red-50 p-5 text-red-700 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-300">
             Events are temporarily unavailable.
           </div>
         ) : (
           <>
-            <section className="space-y-5">
-              <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">
-                Upcoming
-              </h2>
-              {upcoming.length ? (
-                <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-                  {upcoming.map((event) => (
-                    <EventCard key={event.id} event={event} />
-                  ))}
-                </div>
-              ) : (
-                <p className="rounded-xl border border-dashed border-zinc-300 p-8 text-zinc-500 dark:border-zinc-700">
-                  No upcoming events have been published yet.
-                </p>
-              )}
-            </section>
+            {period !== "past" && (
+              <section className="space-y-5">
+                <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">
+                  Upcoming
+                </h2>
+                {upcoming.length ? (
+                  <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+                    {upcoming.map((event) => (
+                      <EventCard key={event.id} event={event} />
+                    ))}
+                  </div>
+                ) : (
+                  <p className="rounded-xl border border-dashed border-zinc-300 p-8 text-zinc-500 dark:border-zinc-700">
+                    No upcoming events have been published yet.
+                  </p>
+                )}
+              </section>
+            )}
 
-            {past.length > 0 && (
+            {period !== "upcoming" && (
               <section className="space-y-5">
                 <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">
                   Past events
                 </h2>
-                <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-                  {past.map((event) => (
-                    <EventCard key={event.id} event={event} />
-                  ))}
-                </div>
+                {past.length ? (
+                  <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+                    {past.map((event) => (
+                      <EventCard key={event.id} event={event} />
+                    ))}
+                  </div>
+                ) : (
+                  <p className="rounded-xl border border-dashed border-zinc-300 p-8 text-zinc-500 dark:border-zinc-700">
+                    No past events have been synchronized yet.
+                  </p>
+                )}
               </section>
             )}
           </>

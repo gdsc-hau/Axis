@@ -14,7 +14,8 @@
     "BEVY_WEBHOOK_SECRET",
     "BEVY_WEBHOOK_SECRET_HEADER",
     "BEVY_CHAPTER_ID",
-    "BEVY_CHAPTER_SLUG"
+    "BEVY_CHAPTER_SLUG",
+    "GDG_EVENT_SYNC_SECRET"
   ],
   "tasks": {
     "build": {

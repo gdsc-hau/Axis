@@ -264,3 +264,25 @@ export async function syncBevyEvent(args: BevySyncArgs) {
   const supabase = createAdminClient();
   return supabase.rpc("sync_bevy_event", args);
 }
+
+export async function getBevyEventBySourceId(sourceEventId: string) {
+  const supabase = createAdminClient();
+  return supabase
+    .from("events")
+    .select("id, source_event_id, source_payload_hash, source_url, end_at")
+    .eq("source_provider", "BEVY")
+    .eq("source_event_id", sourceEventId)
+    .maybeSingle();
+}
+
+export async function listRefreshableBevyEventUrls() {
+  const supabase = createAdminClient();
+  const refreshFrom = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  return supabase
+    .from("events")
+    .select("source_url")
+    .eq("source_provider", "BEVY")
+    .not("source_url", "is", null)
+    .gte("end_at", refreshFrom)
+    .limit(100);
+}
